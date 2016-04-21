@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Api" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://bbcagents.ecr.bg/Api.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://bbcagents.ecr.bg/Api.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://bbcagents.ecr.bg/Api.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IApi_TourList_InputMessage">
+    <wsdl:part name="parameters" element="tns:TourList" />
+  </wsdl:message>
+  <wsdl:message name="IApi_TourList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:TourListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApi_Availability_InputMessage">
+    <wsdl:part name="parameters" element="tns:Availability" />
+  </wsdl:message>
+  <wsdl:message name="IApi_Availability_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AvailabilityResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApi_Booking_InputMessage">
+    <wsdl:part name="parameters" element="tns:Booking" />
+  </wsdl:message>
+  <wsdl:message name="IApi_Booking_OutputMessage">
+    <wsdl:part name="parameters" element="tns:BookingResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApi_BookingAmendment_InputMessage">
+    <wsdl:part name="parameters" element="tns:BookingAmendment" />
+  </wsdl:message>
+  <wsdl:message name="IApi_BookingAmendment_OutputMessage">
+    <wsdl:part name="parameters" element="tns:BookingAmendmentResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApi_BookingCancelation_InputMessage">
+    <wsdl:part name="parameters" element="tns:BookingCancelation" />
+  </wsdl:message>
+  <wsdl:message name="IApi_BookingCancelation_OutputMessage">
+    <wsdl:part name="parameters" element="tns:BookingCancelationResponse" />
+  </wsdl:message>
+  <wsdl:message name="IApi_BookingStatus_InputMessage">
+    <wsdl:part name="parameters" element="tns:BookingStatus" />
+  </wsdl:message>
+  <wsdl:message name="IApi_BookingStatus_OutputMessage">
+    <wsdl:part name="parameters" element="tns:BookingStatusResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IApi">
+    <wsdl:operation name="TourList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApi/TourList" message="tns:IApi_TourList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApi/TourListResponse" message="tns:IApi_TourList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Availability">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApi/Availability" message="tns:IApi_Availability_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApi/AvailabilityResponse" message="tns:IApi_Availability_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Booking">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApi/Booking" message="tns:IApi_Booking_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApi/BookingResponse" message="tns:IApi_Booking_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="BookingAmendment">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApi/BookingAmendment" message="tns:IApi_BookingAmendment_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApi/BookingAmendmentResponse" message="tns:IApi_BookingAmendment_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="BookingCancelation">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApi/BookingCancelation" message="tns:IApi_BookingCancelation_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApi/BookingCancelationResponse" message="tns:IApi_BookingCancelation_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="BookingStatus">
+      <wsdl:input wsaw:Action="http://tempuri.org/IApi/BookingStatus" message="tns:IApi_BookingStatus_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IApi/BookingStatusResponse" message="tns:IApi_BookingStatus_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="Api" type="tns:IApi">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="TourList">
+      <soap:operation soapAction="http://tempuri.org/IApi/TourList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Availability">
+      <soap:operation soapAction="http://tempuri.org/IApi/Availability" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Booking">
+      <soap:operation soapAction="http://tempuri.org/IApi/Booking" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BookingAmendment">
+      <soap:operation soapAction="http://tempuri.org/IApi/BookingAmendment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BookingCancelation">
+      <soap:operation soapAction="http://tempuri.org/IApi/BookingCancelation" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BookingStatus">
+      <soap:operation soapAction="http://tempuri.org/IApi/BookingStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Api">
+    <wsdl:port name="Api" binding="tns:Api">
+      <soap:address location="http://bbcagents.ecr.bg/Api.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

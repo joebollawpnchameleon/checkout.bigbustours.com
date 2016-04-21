@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="TourListResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Tour" nillable="true" type="tns:ArrayOfTour" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TourListResponse" nillable="true" type="tns:TourListResponse" />
+  <xs:complexType name="BaseResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="RequestStatus" nillable="true" type="tns:RequestStatus" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BaseResponse" nillable="true" type="tns:BaseResponse" />
+  <xs:complexType name="RequestStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Status" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="RequestStatus" nillable="true" type="tns:RequestStatus" />
+  <xs:complexType name="ArrayOfTour">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Tour" nillable="true" type="tns:Tour" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTour" nillable="true" type="tns:ArrayOfTour" />
+  <xs:complexType name="Tour">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseTour">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Options" nillable="true" type="tns:ArrayOfTourOption" />
+          <xs:element minOccurs="0" name="SupplierProductCode" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="SupplierProductName" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Tour" nillable="true" type="tns:Tour" />
+  <xs:complexType name="BaseTour">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="TourDescription" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TourDuration" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BaseTour" nillable="true" type="tns:BaseTour" />
+  <xs:complexType name="ArrayOfTourOption">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="TourOption" nillable="true" type="tns:TourOption" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTourOption" nillable="true" type="tns:ArrayOfTourOption" />
+  <xs:complexType name="TourOption">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AgeBand" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Price" type="xs:decimal" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TourOption" nillable="true" type="tns:TourOption" />
+  <xs:complexType name="AvailabilityResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="SupplierProductCode" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="TourAvailability" nillable="true" type="tns:ArrayOfTourAvailability" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="AvailabilityResponse" nillable="true" type="tns:AvailabilityResponse" />
+  <xs:complexType name="ArrayOfTourAvailability">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="TourAvailability" nillable="true" type="tns:TourAvailability" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTourAvailability" nillable="true" type="tns:ArrayOfTourAvailability" />
+  <xs:complexType name="TourAvailability">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseTour">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AvailabilityHold" nillable="true" type="tns:AvailabilityHold" />
+          <xs:element minOccurs="0" name="AvailabilityStatus" type="xs:int" />
+          <xs:element minOccurs="0" name="Date" type="xs:dateTime" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TourAvailability" nillable="true" type="tns:TourAvailability" />
+  <xs:complexType name="AvailabilityHold">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Expiry" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Reference" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="AvailabilityHold" nillable="true" type="tns:AvailabilityHold" />
+  <xs:complexType name="BookingRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AgentCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Amount" type="xs:decimal" />
+      <xs:element minOccurs="0" name="BookingReference" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ContactInfo" nillable="true" type="tns:ContactInfo" />
+      <xs:element minOccurs="0" name="CurrencyCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Location" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PickupPoint" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RequiredInfo" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SpecialRequirement" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SupplierNote" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SupplierProductCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TourDescription" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TourDuration" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TravelDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Travellers" nillable="true" type="tns:ArrayOfTraveller" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BookingRequest" nillable="true" type="tns:BookingRequest" />
+  <xs:complexType name="ContactInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ContactName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ContactType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ContactValue" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ContactInfo" nillable="true" type="tns:ContactInfo" />
+  <xs:complexType name="ArrayOfTraveller">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Traveller" nillable="true" type="tns:Traveller" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTraveller" nillable="true" type="tns:ArrayOfTraveller" />
+  <xs:complexType name="Traveller">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AgeBand" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="GivenName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="LeadTraveller" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Price" type="xs:decimal" />
+      <xs:element minOccurs="0" name="Surname" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TravellerBarcode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TravellerIdentifier" type="xs:int" />
+      <xs:element minOccurs="0" name="TravellerTitle" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Traveller" nillable="true" type="tns:Traveller" />
+  <xs:complexType name="BookingResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="BookingBarcode" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="BookingReference" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="BookingShortReference" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="SupplierConfirmationNumber" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="TransactionStatus" nillable="true" type="tns:TransactiontStatus" />
+          <xs:element minOccurs="0" name="Travellers" nillable="true" type="tns:ArrayOfTraveller" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="BookingResponse" nillable="true" type="tns:BookingResponse" />
+  <xs:complexType name="TransactiontStatus">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:RequestStatus">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TransactiontStatus" nillable="true" type="tns:TransactiontStatus" />
+  <xs:complexType name="BookingCancellationResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Author" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="BookingReference" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="CancelDate" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Reason" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="SupplierConfirmationNumber" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="SupplierProductCode" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="SupplierProductName" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="TransactionStatus" nillable="true" type="tns:TransactiontStatus" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="BookingCancellationResponse" nillable="true" type="tns:BookingCancellationResponse" />
+</xs:schema>
