@@ -17,15 +17,11 @@ namespace bigbus.checkout
         private Basket _basket;
         private string _basketId;
 
-        public EcrResponseCodes EcrBookingStatus;
-        public IBasketService BasketService { get; set; }
-        public IAuthenticationService AuthenticationService { get; set; }
+        public EcrResponseCodes EcrBookingStatus;       
         public IPciApiServiceNoASync PciApiServices { get; set; }
         public ICheckoutService CheckoutService { get; set; }
         public IImageDbService ImageDbService { get; set; }
         public IImageService ImageService { get; set; }
-        public ITicketService TicketService { get; set; }
-        public ISiteService SiteService { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -78,10 +74,20 @@ namespace bigbus.checkout
                 GoToErrorPage(GetTranslation("Basket_BadPci_Status"), "Basket status object casting crashed. basketid:" + _basketId);
             }
 
+            //clear cookie sessions and remove session from checkout mode
+            ClearCheckoutCookies();
+
             //Prepare email notifications
 
             //Redirect user to order confirmation page or error
             Response.Redirect(string.Format("~/{0}/Checkout/Completed/{1}",MicrositeId, CurrentLanguageId));
+        }
+
+        private void ClearCheckoutCookies()
+        {
+            AuthenticationService.ExpireCookie(SessionCookieName);
+            AuthenticationService.ExpireCookie(BasketCookieName);
+            //put session in complete mode
         }
 
         private void LoadSession()

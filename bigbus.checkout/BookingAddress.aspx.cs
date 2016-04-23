@@ -17,30 +17,17 @@ namespace bigbus.checkout
 {
     public partial class BookingAddress : BasePage
     {
-        #region Injectable properties (need to be public)
-
-            public IApiConnectorService ApiConnector { get; set;}
-            public IBasketService BasketService { get; set; }
-            public ICountryService CountryService { get; set; }
-            public IUserService UserService { get; set; }
-            public IPciApiServiceNoASync PciApiService { get;set; }
-            public ICurrencyService CurrencyService { get; set; }
-            public ITicketService TicketService { get; set; }
-            public IAuthenticationService AuthenticationService { get; set; }
-            public ISiteService SiteService { get; set; }
-        #endregion
-           
-
         protected void Page_Load(object sender, EventArgs e)
         {
+            var test = BasketService.GetBasket(new Guid());
+
             if (!IsPostBack)
             {
                 LoadTitles();
                 LoadCountries();
                  GetExternalBasket();
                 //make sure language is generated from base page.
-            }
-           
+            }           
         }
 
         private void LoadTitles()

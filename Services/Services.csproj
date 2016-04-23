@@ -74,6 +74,7 @@
     <Compile Include="Implementation\CheckoutService.cs" />
     <Compile Include="Implementation\CountryService.cs" />
     <Compile Include="Implementation\CurrencyService.cs" />
+    <Compile Include="Implementation\DBLoggerService.cs" />
     <Compile Include="Implementation\ImageDbService.cs" />
     <Compile Include="Implementation\ImageService.cs" />
     <Compile Include="Implementation\PciApiService.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="Infrastructure\ICurrencyService.cs" />
     <Compile Include="Infrastructure\IImageDbService.cs" />
     <Compile Include="Infrastructure\IImageService.cs" />
+    <Compile Include="Infrastructure\ILoggerService.cs" />
     <Compile Include="Infrastructure\IPciApiService.cs" />
     <Compile Include="Infrastructure\IPciApiServiceNoASync.cs" />
     <Compile Include="Infrastructure\ISiteService.cs" />

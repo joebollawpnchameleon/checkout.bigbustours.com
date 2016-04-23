@@ -25,6 +25,9 @@ namespace bigbus.checkout.data
 
         #region Models Declaration
 
+        public virtual DbSet<Phrase> Phrases { get; set; }
+        public virtual DbSet<PhraseLanguage> PhraseLanguages { get; set; }
+        public virtual DbSet<Log> Logs { get; set; }
         public virtual DbSet<MicroSite> MicroSites { get; set; }
         public virtual DbSet<Language> Languages { get; set; }
         public virtual DbSet<MicroSiteLanguage> MicroSiteLanguages { get; set; }

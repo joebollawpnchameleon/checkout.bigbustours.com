@@ -3,13 +3,30 @@ using System;
 using System.Configuration;
 using System.Linq;
 using Services.Infrastructure;
+using Autofac.Integration.Web;
+using System.Web;
+using Autofac;
 
 namespace bigbus.checkout.Models
 {
     public class BasePage : System.Web.UI.Page
-    {
-        //private IAuthenticationService _authenticationService;
-        
+    {        
+        #region Injectable properties (need to be public)
+
+        public IApiConnectorService ApiConnector { get; set; }
+        public IBasketService BasketService { get; set; }
+        public ICountryService CountryService { get; set; }
+        public IUserService UserService { get; set; }
+        public IPciApiServiceNoASync PciApiService { get; set; }
+        public ICurrencyService CurrencyService { get; set; }
+        public ITicketService TicketService { get; set; }
+        public IAuthenticationService AuthenticationService { get; set; }
+        public ISiteService SiteService { get; set; }
+        public ILoggerService LoggerService { get; set; }
+        public ITranslationService TranslationService { get; set; }
+
+        #endregion
+
         public string ExternalBasketCookieName { get { return ConfigurationManager.AppSettings["External.Basket.CookieName"]; } }
         public string SessionCookieName { get { return ConfigurationManager.AppSettings["Session.CookieName"]; } }
         public string SessionCookieDomain { get { return ConfigurationManager.AppSettings["Session.CookieDomain"]; } }
@@ -36,15 +53,23 @@ namespace bigbus.checkout.Models
             return siteService.GetMicroSiteById(MicrositeId).IsUS;
         }
 
+        protected void Page_PreInit(object sender, EventArgs e)
+        {
+            var cpa = (IContainerProviderAccessor)HttpContext.Current.ApplicationInstance;
+            var cp = cpa.ContainerProvider;
+            cp.RequestLifetime.InjectProperties(this);
+        }
+
         public string GetTranslation(string keyPhrase)
         {
-            //***use translation service here by injecting it.
+
             return keyPhrase;
         }
 
         public void Log(string message)
         {
-            //***implement
+            var sessionId = AuthenticationService.GetSessionId(SessionCookieName);
+            LoggerService.Log(message, sessionId.ToString());
         }
 
         public string GetClientIpAddress()

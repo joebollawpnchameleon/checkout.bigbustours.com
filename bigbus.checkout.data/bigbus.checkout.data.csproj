@@ -58,10 +58,13 @@
     <Compile Include="Model\ImageFolder.cs" />
     <Compile Include="Model\ImageMetaData.cs" />
     <Compile Include="Model\Language.cs" />
+    <Compile Include="Model\Log.cs" />
     <Compile Include="Model\Microsite.cs" />
     <Compile Include="Model\MicroSiteLanguage.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\OrderLine.cs" />
+    <Compile Include="Model\Phrase.cs" />
+    <Compile Include="Model\PhraseLanguage.cs" />
     <Compile Include="Model\Session.cs" />
     <Compile Include="Model\Ticket.cs" />
     <Compile Include="Model\User.cs" />

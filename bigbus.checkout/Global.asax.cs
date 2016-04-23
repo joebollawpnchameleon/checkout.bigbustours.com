@@ -49,6 +49,7 @@ namespace bigbus.checkout
 
             var fullUrl = ConfigurationManager.AppSettings["BaseUrl"] + ConfigurationManager.AppSettings["BasketApiUrl"];
             var picEndPoint = ConfigurationManager.AppSettings["PciWebsite.ApiDomain"];
+            var defaultLanguage = ConfigurationManager.AppSettings["Default.Language"];
 
             builder.RegisterType<ApiConnectorService>().As<IApiConnectorService>()
                 .WithParameter("fullUrl", fullUrl);
@@ -68,8 +69,11 @@ namespace bigbus.checkout
             builder.RegisterType<GenericDataRepository<MicroSiteLanguage>>().As<IGenericDataRepository<MicroSiteLanguage>>();
             builder.RegisterType<GenericDataRepository<Order>>().As<IGenericDataRepository<Order>>();
             builder.RegisterType<GenericDataRepository<Image>>().As<IGenericDataRepository<Image>>();
-             builder.RegisterType<GenericDataRepository<ImageFolder>>().As<IGenericDataRepository<ImageFolder>>();
-             builder.RegisterType<GenericDataRepository<ImageMetaData>>().As<IGenericDataRepository<ImageMetaData>>();
+            builder.RegisterType<GenericDataRepository<ImageFolder>>().As<IGenericDataRepository<ImageFolder>>();
+            builder.RegisterType<GenericDataRepository<ImageMetaData>>().As<IGenericDataRepository<ImageMetaData>>();
+            builder.RegisterType<GenericDataRepository<Log>>().As<IGenericDataRepository<Log>>();
+            builder.RegisterType<GenericDataRepository<Phrase>>().As<IGenericDataRepository<Phrase>>();
+            builder.RegisterType<GenericDataRepository<PhraseLanguage>>().As<IGenericDataRepository<PhraseLanguage>>();
 
             builder.RegisterType<TranslationService>().As<ITranslationService>();
             builder.RegisterType<CheckoutService>().As<ICheckoutService>();
@@ -132,6 +136,18 @@ namespace bigbus.checkout
                    c.Resolve<IGenericDataRepository<Currency>>()
                )
            ).As<ICheckoutService>();
+
+            builder.Register(c => new DBLoggerService(
+                c.Resolve<IGenericDataRepository<Log>>()
+                )).As<ILoggerService>();
+
+    
+            builder.Register(c => new TranslationService(
+                c.Resolve<IGenericDataRepository<Language>>(),
+                c.Resolve<IGenericDataRepository<Phrase>>(),
+                c.Resolve<IGenericDataRepository<PhraseLanguage>>(),
+                defaultLanguage
+                )).As<ITranslationService>();
 
             // provider up with your registrations.
             _containerProvider = new ContainerProvider(builder.Build());
