@@ -11,7 +11,7 @@ namespace Services.Implementation
 
         public DBLoggerService(IGenericDataRepository<Log> logRepository)
         {
-            _logRepository = logRepository;
+            _logRepository = logRepository;  
         }
 
         public void Log(string message, string loggerId)
