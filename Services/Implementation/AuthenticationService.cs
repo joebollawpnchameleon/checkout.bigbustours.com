@@ -138,5 +138,6 @@ namespace Services.Implementation
         {
             _sessionRepository.Update(session);
         }
+       
     }
 }

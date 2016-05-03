@@ -77,6 +77,7 @@
     <Compile Include="Implementation\DBLoggerService.cs" />
     <Compile Include="Implementation\ImageDbService.cs" />
     <Compile Include="Implementation\ImageService.cs" />
+    <Compile Include="Implementation\PayPalService.cs" />
     <Compile Include="Implementation\PciApiService.cs" />
     <Compile Include="Implementation\PciApiServiceNoASync.cs" />
     <Compile Include="Implementation\SiteService.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Infrastructure\IImageDbService.cs" />
     <Compile Include="Infrastructure\IImageService.cs" />
     <Compile Include="Infrastructure\ILoggerService.cs" />
+    <Compile Include="Infrastructure\IPaypalService.cs" />
     <Compile Include="Infrastructure\IPciApiService.cs" />
     <Compile Include="Infrastructure\IPciApiServiceNoASync.cs" />
     <Compile Include="Infrastructure\ISiteService.cs" />

@@ -168,6 +168,8 @@
     <Content Include="Views\Checkout\Success.cshtml" />
     <Content Include="Views\Checkout\Index.cshtml" />
     <Content Include="Views\Checkout\Completed.cshtml" />
+    <Content Include="Views\Error\StandardErrorView.cshtml" />
+    <Content Include="Views\Checkout\CancelBookingPayPal.cshtml" />
     <None Include="Web References\EcrServiceRef\Api.wsdl" />
     <None Include="Web References\EcrServiceRef\Api.xsd">
       <SubType>Designer</SubType>
@@ -255,6 +257,7 @@
       <DependentUpon>booking_process_success.aspx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\CheckoutController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>

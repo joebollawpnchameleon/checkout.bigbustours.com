@@ -1,6 +1,7 @@
 ﻿using System;
 using bigbus.checkout.data.Model;
 using Common.Model;
+using Common.Model.PayPal;
 
 namespace Services.Infrastructure
 {
@@ -19,5 +20,9 @@ namespace Services.Infrastructure
         bool ConnectUserToBasket(Guid userId, Guid basketId);
 
         Common.Model.Pci.Basket GetPciBasket(Customer customer, Basket basket);
+
+        PayPalOrder BuildPayPalOrder(Basket basket);
+
+        Basket GetLatestBasket();
     }
 }

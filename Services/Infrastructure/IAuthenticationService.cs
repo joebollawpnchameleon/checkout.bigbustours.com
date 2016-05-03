@@ -29,5 +29,6 @@ namespace Services.Infrastructure
         bool ExpireCookie(string cookieName);
 
         bool SetCookie(string cookieName, string domain, string value);
+
     }
 }

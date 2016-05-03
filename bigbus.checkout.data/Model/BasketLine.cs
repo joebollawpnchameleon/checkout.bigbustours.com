@@ -27,6 +27,8 @@ namespace bigbus.checkout.data.Model
         [StringLength(50)]
         public string TicketType { get; set; }
 
+        public Ticket Ticket { get; set; }
+
         public int? TicketQuantity { get; set; }
 
         [StringLength(20)]

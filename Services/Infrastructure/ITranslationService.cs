@@ -10,5 +10,8 @@ namespace Services.Infrastructure
         string TranslateTerm(string key, string language);
 
         List<Language> GetAllLanguages();
+
+        Language GetLanguage(string id);
+
     }
 }

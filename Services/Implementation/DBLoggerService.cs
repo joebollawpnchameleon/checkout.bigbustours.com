@@ -5,11 +5,11 @@ using System;
 
 namespace Services.Implementation
 {
-    public class DBLoggerService : ILoggerService
+    public class DbLoggerService : ILoggerService
     {
-        private IGenericDataRepository<Log> _logRepository;
+        private readonly IGenericDataRepository<Log> _logRepository;
 
-        public DBLoggerService(IGenericDataRepository<Log> logRepository)
+        public DbLoggerService(IGenericDataRepository<Log> logRepository)
         {
             _logRepository = logRepository;  
         }

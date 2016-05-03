@@ -5,6 +5,7 @@ using bigbus.checkout.data.Model;
 using Common.Model;
 using Services.Infrastructure;
 using bigbus.checkout.data.Repositories.Infrastructure;
+using Common.Model.PayPal;
 using pci = Common.Model.Pci;
 
 namespace Services.Implementation
@@ -16,14 +17,21 @@ namespace Services.Implementation
         private readonly ICurrencyService _currencyService;
         private readonly ITicketService _ticketService;
         private readonly ISiteService _siteService;
+        private readonly ITranslationService _translationService;
 
-        public BasketService(IGenericDataRepository<Basket> repository, IGenericDataRepository<BasketLine> lineRepository,ICurrencyService currencyService, ITicketService ticketService, ISiteService siteService)
+        public BasketService(IGenericDataRepository<Basket> repository, 
+            IGenericDataRepository<BasketLine> lineRepository,
+            ICurrencyService currencyService, 
+            ITicketService ticketService, 
+            ISiteService siteService,
+            ITranslationService translationService)
         {
             _repository = repository;
             _lineRepository = lineRepository;
             _currencyService = currencyService;
             _ticketService = ticketService;
             _siteService = siteService;
+            _translationService = translationService;
         }
 
         public virtual Basket GetBasket(Guid basketId)
@@ -207,6 +215,45 @@ namespace Services.Implementation
             pciBasket.User = user;
 
             return pciBasket;
+        }
+
+        public virtual PayPalOrder BuildPayPalOrder(Basket basket)
+        {
+            var basketLine = basket.BasketLines.FirstOrDefault();
+
+            if (basketLine == null)
+                return null;
+
+            var ticket = _ticketService.GetTicketById(basketLine.TicketId.ToString());
+            var currencyIsoCode = _currencyService.GetCurrencyIsoCodeById(basket.CurrencyId.ToString());
+            var language = _translationService.GetLanguage(basket.PurchaseLanguage);
+
+            var orderItem = new PayPalOrderItem(
+                    ticket.Name,
+                    basketLine.Id.ToString(),
+                    1,
+                    basket.Total,
+                    0);
+
+            var order = new PayPalOrder()
+            {
+                Items = new List<PayPalOrderItem>() { orderItem },
+                ISOCurrencyCode = currencyIsoCode,
+                OrderSubTotal = basket.Total,
+                OrderTaxTotal = 0,
+                OrderTotal = basket.Total,
+                RequestShipping = true,
+                orderLanguage = language.ShortCode
+            };
+
+            return order;
+        }
+
+        public virtual Basket GetLatestBasket()
+        {
+            var all = _repository.GetList(x => !string.IsNullOrEmpty(x.ExternalCookieValue));
+            var topBasket = all.OrderByDescending(x => x.DateCreated);
+            return topBasket.FirstOrDefault();
         }
     }
 }

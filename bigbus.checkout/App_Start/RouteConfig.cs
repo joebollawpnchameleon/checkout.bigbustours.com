@@ -14,6 +14,12 @@ namespace bigbus.checkout
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+               name: "CheckoutSuccess",
+               url: "{controller}/{action}/{sid}",
+               defaults: new { controller = "Default", action = "Index", sid = UrlParameter.Optional }
+           );
+          
+            routes.MapRoute(
                name: "Checkout",
                url: "{microSiteID}/{controller}/{action}",
                defaults: new { microSiteID = "london", controller = "Default", action = "Index" }

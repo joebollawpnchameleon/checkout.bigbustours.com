@@ -57,6 +57,13 @@
     <Compile Include="Model\CustomerSession.cs" />
     <Compile Include="Model\GenericHttpCacheProvider.cs" />
     <Compile Include="Model\Interfaces\ICacheProvider.cs" />
+    <Compile Include="Model\PayPal\NvpCodec.cs" />
+    <Compile Include="Model\PayPal\PayPalAddressInfo.cs" />
+    <Compile Include="Model\PayPal\PayPalInitStructure.cs" />
+    <Compile Include="Model\PayPal\PayPalOrder.cs" />
+    <Compile Include="Model\PayPal\PayPalOrderItem.cs" />
+    <Compile Include="Model\PayPal\PayPalReturn.cs" />
+    <Compile Include="Model\PayPal\PayPalReturnUserInfo.cs" />
     <Compile Include="Model\Pci\BasketStatus.cs" />
     <Compile Include="Model\Pci\Card.cs" />
     <Compile Include="Model\Pci\Merchant.cs" />
@@ -68,6 +75,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

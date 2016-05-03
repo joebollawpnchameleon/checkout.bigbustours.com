@@ -16,6 +16,7 @@ using Common.Model.Interfaces;
 using Services.Implementation;
 using Services.Infrastructure;
 using System.Web.Mvc;
+using Common.Model.PayPal;
 
 namespace bigbus.checkout
 {
@@ -50,6 +51,16 @@ namespace bigbus.checkout
             var fullUrl = ConfigurationManager.AppSettings["BaseUrl"] + ConfigurationManager.AppSettings["BasketApiUrl"];
             var picEndPoint = ConfigurationManager.AppSettings["PciWebsite.ApiDomain"];
             var defaultLanguage = ConfigurationManager.AppSettings["Default.Language"];
+
+            var paypalInitStruct = new PayPalInitStructure
+            {
+                ApiUserName = ConfigurationManager.AppSettings["PayPal.Username"],
+                ApiPassword = ConfigurationManager.AppSettings["PayPal.Password"],
+                ApiSignature = ConfigurationManager.AppSettings["PayPal.Signature"],
+                ExpressCheckoutEndPoint = ConfigurationManager.AppSettings["PayPal.ExpressCheckoutEndPoint"],
+                InTestMode = Convert.ToBoolean(ConfigurationManager.AppSettings["PayPal.InTestMode"]),
+                RealEndPoint = ConfigurationManager.AppSettings["PayPal.RealEndPoint"]
+            };
 
             builder.RegisterType<ApiConnectorService>().As<IApiConnectorService>()
                 .WithParameter("fullUrl", fullUrl);
@@ -106,7 +117,8 @@ namespace bigbus.checkout
                     c.Resolve<IGenericDataRepository<BasketLine>>(),
                     c.Resolve<ICurrencyService>(),
                     c.Resolve<ITicketService>(),
-                    c.Resolve<ISiteService>()
+                    c.Resolve<ISiteService>(),
+                    c.Resolve<ITranslationService>()
                 )
             ).As<IBasketService>();
 
@@ -137,10 +149,9 @@ namespace bigbus.checkout
                )
            ).As<ICheckoutService>();
 
-            builder.Register(c => new DBLoggerService(
+            builder.Register(c => new DbLoggerService(
                 c.Resolve<IGenericDataRepository<Log>>()
                 )).As<ILoggerService>();
-
     
             builder.Register(c => new TranslationService(
                 c.Resolve<IGenericDataRepository<Language>>(),
@@ -148,6 +159,10 @@ namespace bigbus.checkout
                 c.Resolve<IGenericDataRepository<PhraseLanguage>>(),
                 defaultLanguage
                 )).As<ITranslationService>();
+            
+            builder.Register(c => new PayPalService(paypalInitStruct,
+                   c.Resolve<ILoggerService>()
+                   )).As<IPaypalService>();
 
             // provider up with your registrations.
             _containerProvider = new ContainerProvider(builder.Build());

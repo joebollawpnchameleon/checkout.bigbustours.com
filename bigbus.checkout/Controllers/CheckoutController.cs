@@ -23,7 +23,21 @@ namespace bigbus.checkout.Controllers
 
         public ActionResult Completed(string id)
         {
-            return View("Success");
+            return View();
+        }
+
+        public ActionResult CancelBookingPayPal()
+        {
+            return View();
+        }
+
+        public ActionResult BookingSuccessPaypal()
+        {
+            var token = Request.QueryString["token"];
+            var payerId = Request.QueryString["PayerID"];
+
+            Response.Redirect("~/BookingSuccess.aspx");
+            return null;
         }
     }
 }

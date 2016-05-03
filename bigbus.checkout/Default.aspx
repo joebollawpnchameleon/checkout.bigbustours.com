@@ -4,7 +4,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div>
         This is a test page for new checkout!<br/>
-        Cookie Value:<asp:TextBox runat="server" id="txtCookieValue">123444555555500000003</asp:TextBox>
+        Cookie Value:<asp:TextBox runat="server" id="txtCookieValue"></asp:TextBox>
         Click to plant cookie <asp:Button runat="server" Text="Click" OnClick="PlantCookie"/>
         <asp:Button runat="server" Text="Go to checkout" OnClick="GoToCheckout" />
     </div>

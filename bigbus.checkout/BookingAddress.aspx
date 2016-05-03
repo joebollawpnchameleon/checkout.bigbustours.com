@@ -107,7 +107,11 @@
             <asp:ValidationSummary ID="ValidationErrorSummary" CssClass="ValidationErrorSummaryContent" runat="server" />
         </div>
     </div>
-    <div>
-        <asp:Button runat="server" text="ContinueCheckout" OnClick="ContinueToCheckout"/>
+    <div id="dvActions" runat="server">
+        <asp:Button runat="server" text="Back" OnClick="ContinueShopping" id="btnCancel"/>
+        &nbsp;
+        <asp:Button runat="server" text="Checkout With Credit Card" OnClick="CheckoutWithCreditCard" id="btnContinueCheckout"/>
+        &nbsp;
+         <asp:Button runat="server" text="Checkout With Paypal" OnClick="CheckoutWithPaypal" />
     </div>
 </asp:Content>

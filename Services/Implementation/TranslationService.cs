@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using bigbus.checkout.data.Model;
 using bigbus.checkout.data.Repositories.Infrastructure;
@@ -27,7 +28,12 @@ namespace Services.Implementation
         public List<Language> GetAllLanguages()
         {
             return (List<Language>) _languageRepository.GetAll();
-        } 
+        }
+
+        public Language GetLanguage(string id)
+        {
+            return _languageRepository.GetSingle(x => x.Id.Equals(id, StringComparison.CurrentCultureIgnoreCase));
+        }
 
         public string TranslateTerm(string key, string language)
         {

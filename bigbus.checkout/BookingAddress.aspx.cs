@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using Common.Enums;
 using System.Web.UI.WebControls;
 using bigbus.checkout.data.Model;
 using bigbus.checkout.Models;
 using Common.Model;
+using Common.Model.PayPal;
 using Services.Implementation;
 using PCI = Common.Model.Pci;
 using Services.Infrastructure;
@@ -17,31 +19,19 @@ namespace bigbus.checkout
 {
     public partial class BookingAddress : BasePage
     {
+        public IPaypalService PaypalService { get; set; }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             var test = BasketService.GetBasket(new Guid());
 
             if (!IsPostBack)
             {
+                InitControls();
                 LoadTitles();
                 LoadCountries();
-                 GetExternalBasket();
-                //make sure language is generated from base page.
+                GetExternalBasket();
             }           
-        }
-
-        private void LoadTitles()
-        {
-            TitleList.DataSource = Enum.GetNames(typeof(Titles));
-            TitleList.DataBind();
-        }
-
-        private void LoadCountries()
-        {
-            CountryList.DataSource = CountryService.GetAllCountriesWithNewOnTop("US,GB,AU,CA,FR,DE,HK,AE", "eng");
-            CountryList.DataTextField = "Value";
-            CountryList.DataValueField = "Key";
-            CountryList.DataBind();
         }
 
         protected void GetExternalBasket()
@@ -85,15 +75,56 @@ namespace bigbus.checkout
             AuthenticationService.SetCookie(BasketCookieName, SessionCookieDomain, basketGuid.ToString());
         }
 
-        private void DisplayError(string message, string logMessage)
+        protected void ContinueShopping(object sender, EventArgs e)
         {
-            ltError.Text = message;
-            Log(logMessage);
-            dvErrorSummary.Visible = true;
-            dvAddressDetails.Visible = false;
+            //***change to Born home page.
+            Response.Redirect("~/Default.aspx");
         }
-        
-        protected void ContinueToCheckout(object sender, EventArgs e)
+
+        #region UiLoadFunctions
+
+        private void LoadTitles()
+        {
+            TitleList.DataSource = Enum.GetNames(typeof(Titles));
+            TitleList.DataBind();
+        }
+
+        private void LoadCountries()
+        {
+            CountryList.DataSource = CountryService.GetAllCountriesWithNewOnTop("US,GB,AU,CA,FR,DE,HK,AE", "eng");
+            CountryList.DataTextField = "Value";
+            CountryList.DataValueField = "Key";
+            CountryList.DataBind();
+        }
+
+        private void InitControls()
+        {
+            ltError.Text = string.Empty;
+            dvErrorSummary.Visible = false;
+            dvAddressDetails.Visible = true;
+            btnContinueCheckout.Visible = true;
+        }
+
+        #endregion
+
+        #region commonfunctions
+
+        private CustomerSession UpdateCustomerSession()
+        {
+            var sessionId = AuthenticationService.GetSessionId(SessionCookieName);
+            return AuthenticationService.PutSessionInCheckoutMode(sessionId.ToString());
+        }
+
+        private Basket GetBasketByExternalSession()
+        {
+            var externalSessionId = AuthenticationService.GetExternalSessionId(ExternalBasketCookieName);
+            return BasketService.GetBasketBySessionId(externalSessionId);
+        }
+        #endregion
+
+        #region CreditCardPayment
+
+        protected void CheckoutWithCreditCard(object sender, EventArgs e)
         {
             if (!Page.IsValid || !DoubleCheckTsAndCs())
             {
@@ -101,9 +132,8 @@ namespace bigbus.checkout
             }
 
             Log("Start Payment Process: " + DateTime.Now + Environment.NewLine + "Lock session for checkout: " + DateTime.Now);
-           
-            var sessionId = AuthenticationService.GetSessionId(SessionCookieName);
-            var customerSession = AuthenticationService.PutSessionInCheckoutMode(sessionId.ToString());
+
+            var customerSession = UpdateCustomerSession();
 
             var customer = new Customer
             {
@@ -137,11 +167,11 @@ namespace bigbus.checkout
         
         private void StartCheckOut(Customer customer)
         {
-            var externalSessionId = AuthenticationService.GetExternalSessionId(ExternalBasketCookieName);
-            var basket = BasketService.GetBasketBySessionId(externalSessionId);
+            var basket = GetBasketByExternalSession();
 
             if (basket == null)//we are in trouble.
             {
+                var externalSessionId = AuthenticationService.GetExternalSessionId(ExternalBasketCookieName);
                 DisplayError(GetTranslation("NoBasketForExternalSessionId"), "No Basket was found matching sessionId: " + externalSessionId);
                 return;
             }
@@ -212,6 +242,67 @@ namespace bigbus.checkout
         {
             var subSite = SubSite.Equals("international", StringComparison.OrdinalIgnoreCase) ? "london" : SubSite;
             Response.Redirect(string.Format(PciDomain, CurrentLanguageId, subSite)  + PciLandingPagePath);
+        }
+
+        #endregion
+
+        #region paypalpayment
+
+        protected void CheckoutWithPaypal(object sender, EventArgs e)
+        {
+            if (!Page.IsValid || !DoubleCheckTsAndCs())
+            {
+                return;
+            }
+
+            Log("Start Payment Process - Paypal: " + DateTime.Now + Environment.NewLine + "Lock session for checkout: " + DateTime.Now);
+
+            var customerSession = UpdateCustomerSession();
+
+            var basket = GetBasketByExternalSession();
+
+            if (basket == null)//we are in trouble.
+            {
+                var externalSessionId = AuthenticationService.GetExternalSessionId(ExternalBasketCookieName);
+                DisplayError(GetTranslation("NoBasketForExternalSessionId"), "No Basket was found matching sessionId: " + externalSessionId);
+                return;
+            }
+            var sessionId = AuthenticationService.GetSessionId(SessionCookieName);
+            var session = AuthenticationService.GetSession(sessionId);
+            PaypalService.SetUserSessionId(sessionId.ToString());
+
+            var cancelUrl = ConfigurationManager.AppSettings["PayPal.CancelURL"];
+            var successUrl = ConfigurationManager.AppSettings["PayPal.SuccessURL"];
+
+            var paypalOrder = BasketService.BuildPayPalOrder(basket);
+
+            var paypalResult = PaypalService.ShortcutExpressCheckout(successUrl, cancelUrl, null, paypalOrder, false, "Mark");
+
+            if (paypalResult.IsError)
+            {
+                Response.Redirect("~/Error/ExternalAPiError/");
+            }
+            else
+            {
+                session.PayPalToken = paypalResult.Token;
+                session.PayPalOrderId = paypalResult.Transaction_Id;
+
+                AuthenticationService.UpdateSession(session);
+                Response.Redirect(paypalResult.RedirectURL);
+            }
+        }
+
+        #endregion
+
+        #region validation
+
+        private void DisplayError(string message, string logMessage)
+        {
+            ltError.Text = message;
+            Log(logMessage);
+            dvErrorSummary.Visible = true;
+            dvAddressDetails.Visible = false;
+            btnContinueCheckout.Visible = false;
         }
 
         public bool DoubleCheckTsAndCs()
@@ -327,5 +418,8 @@ namespace bigbus.checkout
 
             //}
         }
+
+        #endregion
+
     }
 }

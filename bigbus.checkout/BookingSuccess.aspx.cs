@@ -80,7 +80,7 @@ namespace bigbus.checkout
             //Prepare email notifications
 
             //Redirect user to order confirmation page or error
-            Response.Redirect(string.Format("~/{0}/Checkout/Completed/{1}",MicrositeId, CurrentLanguageId));
+            Response.Redirect(string.Format("~/Checkout/Completed/{0}", CurrentLanguageId));
         }
 
         private void ClearCheckoutCookies()
