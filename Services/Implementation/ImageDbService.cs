@@ -67,7 +67,7 @@ namespace Services.Implementation
             }
 
             //check image meta data
-            var imageName = string.Format("QRCODE 4 {0}", order.OrderNumber);
+            var imageName = string.Format("QRCODE For {0}", order.OrderNumber);
             
             var imageData =
                 _metaDataRepository.GetSingle(x => x.Name != null && x.Name.Equals(imageName, StringComparison.CurrentCultureIgnoreCase)

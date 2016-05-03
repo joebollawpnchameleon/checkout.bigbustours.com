@@ -62,8 +62,7 @@ namespace bigbus.checkout.Models
 
         public string GetTranslation(string keyPhrase)
         {
-
-            return keyPhrase;
+            return TranslationService.TranslateTerm(keyPhrase, CurrentLanguageId);
         }
 
         public void Log(string message)

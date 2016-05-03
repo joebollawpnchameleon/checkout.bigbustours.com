@@ -34,14 +34,18 @@ namespace Services.Implementation
             //***get from cache
 
             //check original translation in DB
-            var translation = _phraseLanguageRepository.GetSingle(x => x.PhraseId.Equals(key, System.StringComparison.CurrentCultureIgnoreCase)
-                && x.LanguageId.Equals(language, System.StringComparison.CurrentCultureIgnoreCase));
+            var translation = _phraseLanguageRepository.GetSingle(x => !string.IsNullOrEmpty(x.PhraseId) &&
+                                                                       x.PhraseId.Equals(key, System.StringComparison.CurrentCultureIgnoreCase)
+                                                                       && !string.IsNullOrEmpty(x.LanguageId) &&
+                                                                       x.LanguageId.Equals(language, System.StringComparison.CurrentCultureIgnoreCase));
 
             //if translation not found in that language, lets check default language in case they are different
             if(translation == null && !language.Equals(_defaultLanguageId, System.StringComparison.CurrentCultureIgnoreCase))
             {
-               translation = _phraseLanguageRepository.GetSingle(x => x.PhraseId.Equals(key, System.StringComparison.CurrentCultureIgnoreCase)
-                    && x.LanguageId.Equals(_defaultLanguageId, System.StringComparison.CurrentCultureIgnoreCase));
+               translation = _phraseLanguageRepository.GetSingle(x => !string.IsNullOrEmpty(x.PhraseId) &&
+                                                                      x.PhraseId.Equals(key, System.StringComparison.CurrentCultureIgnoreCase)
+                                                                      && !string.IsNullOrEmpty(x.LanguageId) &&
+                                                                      x.LanguageId.Equals(_defaultLanguageId, System.StringComparison.CurrentCultureIgnoreCase));
 
             }
 
