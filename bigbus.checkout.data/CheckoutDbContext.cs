@@ -25,6 +25,7 @@ namespace bigbus.checkout.data
 
         #region Models Declaration
 
+        public virtual DbSet<TransactionAddressPaypal> AddressPaypals { get; set; }
         public virtual DbSet<Phrase> Phrases { get; set; }
         public virtual DbSet<PhraseLanguage> PhraseLanguages { get; set; }
         public virtual DbSet<Log> Logs { get; set; }

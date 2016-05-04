@@ -36,7 +36,7 @@ namespace bigbus.checkout.Controllers
             var token = Request.QueryString["token"];
             var payerId = Request.QueryString["PayerID"];
 
-            Response.Redirect("~/BookingSuccess.aspx");
+            Response.Redirect(string.Format("~/BookingAddressPayPal.aspx?pptoken={0}&pppayerid={1}", token, payerId));
             return null;
         }
     }

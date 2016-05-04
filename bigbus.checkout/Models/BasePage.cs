@@ -24,6 +24,7 @@ namespace bigbus.checkout.Models
         public ISiteService SiteService { get; set; }
         public ILoggerService LoggerService { get; set; }
         public ITranslationService TranslationService { get; set; }
+        public IPaypalService PaypalService { get; set; }
 
         #endregion
 

@@ -16,23 +16,26 @@ namespace Services.Implementation
         private readonly IGenericDataRepository<User> _userRepository;
         private readonly IGenericDataRepository<Ticket> _ticketRepository;
         private readonly IGenericDataRepository<Currency> _currencyRepository;
+        private readonly IGenericDataRepository<TransactionAddressPaypal> _addressPpRepository;
+        private readonly ILocalizationService _localizationService;
 
         public CheckoutService(IGenericDataRepository<Order> orderRepository, IGenericDataRepository<User> userRepository, IGenericDataRepository<Ticket> ticketRepository,
-            IGenericDataRepository<Currency> currencyRepository)
+            IGenericDataRepository<Currency> currencyRepository, ILocalizationService localizationService, IGenericDataRepository<TransactionAddressPaypal> addressPPRepository)
         {
             _orderRepository = orderRepository;
             _userRepository = userRepository;
             _ticketRepository = ticketRepository;
             _currencyRepository = currencyRepository;
+            _localizationService = localizationService;
+            _addressPpRepository = addressPPRepository;
         }
 
-        public virtual Order CreateOrder(Session session, Basket basket, pci.BasketStatus basketStatus, string clientIpAddress, string languageId)
+        public virtual Order CreateOrder(Session session, Basket basket, pci.BasketStatus basketStatus, string clientIpAddress, string languageId, string micrositeId)
         {
             try
             {
                 Guid? currencyId =  new Guid(session.CurrencyId);
                 var currency = _currencyRepository.GetSingle(x => x.Id.Equals(currencyId));
-
                 var user = _userRepository.GetSingle(x => x.Id == basket.UserId);
 
                 var order = new Order
@@ -56,7 +59,7 @@ namespace Services.Implementation
                     SessionId = session.Id,
                     TotalQuantity = basket.BasketLines.Sum(x => x.TicketQuantity),
                     IsMobileAppOrder = false, //check how this is populated on old system.
-                    DateCreated = DateTime.Now
+                    DateCreated = _localizationService.GetLocalDateTime(micrositeId)
                 };
 
                 //populate order lines with existing baskets.
@@ -80,6 +83,104 @@ namespace Services.Implementation
            
         }
 
+        public Order CreateOrderPayPal(Session session, Basket basket, User user, string clientIpAddress, string languageId, string micrositeId)
+        {
+            try
+            {
+                Guid? currencyId = new Guid(session.CurrencyId);
+                var currency = _currencyRepository.GetSingle(x => x.Id.Equals(currencyId));
+               
+                var order = new Order
+                {
+                    PaymentMethod = "PayPal",
+                    NumbViewPdf = 0,
+                    OpenForPrinting = true,
+                    DatePdfLastViewed = DateTime.Now,
+                    UserId = user.Id,
+                    UserName = user.Firstname + " " + user.Lastname,
+                    EmailAddress = string.IsNullOrWhiteSpace(user.FriendlyEmail) ? user.Email : user.FriendlyEmail,
+                    CurrencyId = currencyId,
+                    LanguageId = languageId,
+                    Total = basket.Total,
+                    ClientIp = clientIpAddress,
+                    BasketId = basket.Id,
+                    SessionId = session.Id,
+                    TotalQuantity = basket.BasketLines.Sum(x => x.TicketQuantity),
+                    IsMobileAppOrder = false, //check how this is populated on old system.
+                    DateCreated = _localizationService.GetLocalDateTime(micrositeId),
+                    PayPalOrderId = session.PayPalOrderId,
+                    PayPalPayerId = session.PayPalPayerId,
+                    PayPalToken = session.PayPalToken
+                };
+
+                //populate order lines with existing baskets.
+                foreach (var basketLine in basket.BasketLines)
+                {
+                    order.OrderLines.Add(ConvertBasketLineToOrderLine(basketLine, order.Id));
+                }
+
+                _orderRepository.Add(order);
+
+                order.User = user;
+                order.Currency = currency;
+
+                return order;
+            }
+            catch (Exception ex)
+            {
+                Log(string.Format("Paypal Order Create Failed sessionid: {0} basketid:{1} {2} ", session.Id, basket.Id, ex.Message));
+                return null;
+            }  
+        }
+
+        public TransactionAddressPaypal CreateAddressPaypal(Order order, Session session, User user)
+        {
+            var payPalAddress = new TransactionAddressPaypal
+            {
+                OrderId = order.Id.ToString(),
+                OrderNumber = order.OrderNumber,
+                Email = user.Email,
+                Title = user.Title,
+                BillToFirstName = user.Firstname,
+                BillToLastName = user.Lastname,
+
+                //Address broken up and combined to make street
+                BillToAddress1 = user.AddressLine1,
+                BillToAddress2 = user.AddressLine2,
+                BillToStreet = string.Concat(user.AddressLine1, " ", user.AddressLine2),
+
+                BillToCity = user.City,
+                BillToPostCode = user.PostCode,
+                BillToState = user.StateProvince,
+                BillToCountry = user.CountryId,
+
+                //Shipping to information
+                ShipToFirstName = user.Firstname,
+                ShipToLastName = user.Lastname,
+
+                //Address broken up and combined to make street
+                ShipToAddress1 = user.AddressLine1,
+                ShipToAddress2 = user.AddressLine2,
+                ShipToStreet = string.Concat(user.AddressLine1, " ", user.AddressLine2),
+
+                ShipToCity = user.City,
+                ShipToPostCode = user.PostCode,
+                ShipToState = user.StateProvince,
+                ShipToCountry = user.CountryId,
+
+                SessionId = session.Id.ToString(),
+                UserId = session.UserId.ToString(),
+                PayPalOrderId = session.PayPalOrderId,
+                PayPalToken = session.PayPalToken,
+                PayPalPayerId = session.PayPalPayerId,
+                BasketId = session.BasketId.ToString(),
+            };
+
+            _addressPpRepository.Add(payPalAddress);
+
+            return payPalAddress;
+        }
+
         public virtual OrderLine ConvertBasketLineToOrderLine(BasketLine basketLine, Guid orderId)
         {
             Log(string.Format("Entering CheckoutService - ConvertBasketLineToOrderLine() orderid:{0} - basketlineid {1}", orderId, basketLine.Id));
@@ -101,8 +202,8 @@ namespace Services.Implementation
                 TicketTorA = basketLineTicket.TicketType,
                 MicrositeId = basketLineTicket.MicroSiteId,
                 TicketCost = basketLine.Price,
-                GrossOrderLineValue = basketLine.LineTotal,
-                NettOrderLineValue = basketLine.LineTotal - basketLine.Discount
+                GrossOrderLineValue = basketLine.LineTotal + basketLine.Discount,
+                NettOrderLineValue = basketLine.LineTotal
             };
 
             if (basketLineTicket.TicketType.Equals("attraction", StringComparison.CurrentCultureIgnoreCase))

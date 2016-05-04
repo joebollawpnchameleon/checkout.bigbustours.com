@@ -22,7 +22,7 @@ namespace Services.Implementation
             return new Guid();
         }
 
-        public void CreateCustomer(Customer newCustomer)
+        public User CreateCustomer(Customer newCustomer)
         {
             var newUser = new User
             {
@@ -45,6 +45,8 @@ namespace Services.Implementation
             _userRepository.Add(newUser);
 
             newCustomer.Id = newUser.Id;
+
+            return newUser;
         }
     }
 }

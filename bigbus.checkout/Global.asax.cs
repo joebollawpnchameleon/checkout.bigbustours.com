@@ -34,6 +34,7 @@ namespace bigbus.checkout
         public void Application_Start(object sender, EventArgs e)
         {
             ScriptManager.ScriptResourceMapping.AddDefinition("jquery",
+
             new ScriptResourceDefinition
             {
                 Path = "~/scripts/jquery-1.7.2.min.js",
@@ -85,12 +86,14 @@ namespace bigbus.checkout
             builder.RegisterType<GenericDataRepository<Log>>().As<IGenericDataRepository<Log>>();
             builder.RegisterType<GenericDataRepository<Phrase>>().As<IGenericDataRepository<Phrase>>();
             builder.RegisterType<GenericDataRepository<PhraseLanguage>>().As<IGenericDataRepository<PhraseLanguage>>();
+            builder.RegisterType<GenericDataRepository<TransactionAddressPaypal>>().As<IGenericDataRepository<TransactionAddressPaypal>>();
 
             builder.RegisterType<TranslationService>().As<ITranslationService>();
             builder.RegisterType<CheckoutService>().As<ICheckoutService>();
             builder.RegisterType<GenericHttpCacheProvider>().As<ICacheProvider>();
             builder.RegisterType<ImageService>().As<IImageService>();
             builder.RegisterType<ImageDbService>().As<IImageDbService>();
+            builder.RegisterType<LocalizationService>().As<ILocalizationService>();
 
             builder.Register(c => new
                CountryService(
@@ -145,7 +148,9 @@ namespace bigbus.checkout
                    c.Resolve<IGenericDataRepository<Order>>(), 
                    c.Resolve<IGenericDataRepository<User>>(),
                    c.Resolve<IGenericDataRepository<Ticket>>(),
-                   c.Resolve<IGenericDataRepository<Currency>>()
+                   c.Resolve<IGenericDataRepository<Currency>>(),
+                   c.Resolve<ILocalizationService>(),
+                   c.Resolve<IGenericDataRepository<TransactionAddressPaypal>>()
                )
            ).As<ICheckoutService>();
 

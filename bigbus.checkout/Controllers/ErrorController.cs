@@ -24,6 +24,11 @@ namespace bigbus.checkout.Controllers
 
         #region LocalErrors
 
+        public ActionResult PayPalProcessingError()
+        {
+            return View("StandardErrorView");    
+        }
+
         public ActionResult BasketProcessingError()
         {
             return View("StandardErrorView");

@@ -8,6 +8,6 @@ namespace Services.Infrastructure
     {
         Guid CreateUser(User user);
 
-        void CreateCustomer(Customer newCustomer);
+        User CreateCustomer(Customer newCustomer);
     }
 }

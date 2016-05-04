@@ -19,8 +19,6 @@ namespace bigbus.checkout
 {
     public partial class BookingAddress : BasePage
     {
-        public IPaypalService PaypalService { get; set; }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             var test = BasketService.GetBasket(new Guid());
@@ -28,8 +26,6 @@ namespace bigbus.checkout
             if (!IsPostBack)
             {
                 InitControls();
-                LoadTitles();
-                LoadCountries();
                 GetExternalBasket();
             }           
         }
@@ -83,20 +79,7 @@ namespace bigbus.checkout
 
         #region UiLoadFunctions
 
-        private void LoadTitles()
-        {
-            TitleList.DataSource = Enum.GetNames(typeof(Titles));
-            TitleList.DataBind();
-        }
-
-        private void LoadCountries()
-        {
-            CountryList.DataSource = CountryService.GetAllCountriesWithNewOnTop("US,GB,AU,CA,FR,DE,HK,AE", "eng");
-            CountryList.DataTextField = "Value";
-            CountryList.DataValueField = "Key";
-            CountryList.DataBind();
-        }
-
+        
         private void InitControls()
         {
             ltError.Text = string.Empty;
@@ -126,7 +109,7 @@ namespace bigbus.checkout
 
         protected void CheckoutWithCreditCard(object sender, EventArgs e)
         {
-            if (!Page.IsValid || !DoubleCheckTsAndCs())
+            if (!Page.IsValid || !ucUserDetails.IsValid)
             {
                 return;
             }
@@ -137,16 +120,16 @@ namespace bigbus.checkout
 
             var customer = new Customer
             {
-                Title = TitleList.SelectedValue,
-                Firstname = RegisterFirstNameTextbox.Text,
-                Lastname = RegisterLastnameTextbox.Text,
-                Email = RegisterEmailTextbox.Text,
-                AddressLine1 = AddressLine1Textbox.Text,
-                AddressLine2 = AddressLine2Textbox.Text,
-                City = TownTextbox.Text,
-                PostCode = PostCodeTextbox.Text,
-                CountryId = CountryList.SelectedValue,
-                StateProvince = StateTextbox.Text,
+                Title = ucUserDetails.UserTitle,
+                Firstname = ucUserDetails.FirstName,
+                Lastname = ucUserDetails.LastName,
+                Email = ucUserDetails.Email,
+                AddressLine1 = ucUserDetails.Address1,
+                AddressLine2 = ucUserDetails.Address2,
+                City = ucUserDetails.Town,
+                PostCode = ucUserDetails.PostCode,
+                CountryId = ucUserDetails.Country,
+                StateProvince = ucUserDetails.State,
                 LanguageId = CurrentLanguageId,
                 CurrencyId = customerSession.CurrencyId,
                 MicroSiteId = MicrositeId,
@@ -232,7 +215,7 @@ namespace bigbus.checkout
             else if (pciRequestSuccess &&
                      pciRequestResponse.Equals("\"" + pciBasket.ID + "\"", StringComparison.OrdinalIgnoreCase))
             {//set basket cookie
-                
+                Log("Pci Send Basket successful!");
             }
 
             return pciRequestSuccess;
@@ -250,7 +233,7 @@ namespace bigbus.checkout
 
         protected void CheckoutWithPaypal(object sender, EventArgs e)
         {
-            if (!Page.IsValid || !DoubleCheckTsAndCs())
+            if (!Page.IsValid || !ucUserDetails.IsValid)
             {
                 return;
             }
@@ -303,120 +286,6 @@ namespace bigbus.checkout
             dvErrorSummary.Visible = true;
             dvAddressDetails.Visible = false;
             btnContinueCheckout.Visible = false;
-        }
-
-        public bool DoubleCheckTsAndCs()
-        {
-            if (AgreeTermsAndConditions.Checked) return true;
-
-            TAndCValidator.ErrorMessage = GetTranslation("Pleasereadandagreetotandc");
-            TAndCValidator.Text = "*" + GetTranslation("Required");
-            TsAndCsLit.Text = "<span style=\"color:red\">" + GetTranslation("Pleasereadandagreetotandc") + "</span>";
-            TsAndCsStarLit.Text = "<span style=\"color:red\">*</span>";
-            return false;
-        }
-        
-        //*** implement differently.
-        protected void ValidateRegistration(object source, ServerValidateEventArgs value)
-        {
-            //if (ThisSession != null)
-            //{
-            //    if (ThisSession.PayPal_Token == null)
-            //    {
-                    string requiredText = GetTranslation("Required");
-
-                    FirstnameValidator.ErrorMessage = string.Empty;
-                    LastnameValidator.ErrorMessage = string.Empty;
-                    EmailValidator.ErrorMessage = string.Empty;
-
-                    FirstnameValidator.Text = string.Empty;
-                    LastnameValidator.Text = string.Empty;
-                    EmailValidator.Text = string.Empty;
-
-                    TAndCValidator.ErrorMessage = string.Empty;
-                    TAndCValidator.Text = string.Empty;
-
-                    AddressValidator.ErrorMessage = string.Empty;
-                    TownValidator.ErrorMessage = string.Empty;
-                    PostcodeValidator.ErrorMessage = string.Empty;
-                    CountryValidator.ErrorMessage = string.Empty;
-
-                    AddressValidator.Text = string.Empty;
-                    TownValidator.Text = string.Empty;
-                    PostcodeValidator.Text = string.Empty;
-                    CountryValidator.Text = string.Empty;
-
-                    ValidationErrorSummary.HeaderText = GetTranslation("PleaseFixTheFollowingErrors");
-
-                    //if (string.IsNullOrEmpty(customer.FirstName))
-                    //{
-                    //    FirstnameValidator.ErrorMessage = GetTranslation("Pleaseenteryourfirstname");
-                    //    FirstnameValidator.Text = "*" + requiredText;
-                    //    value.IsValid = false;
-                    //}
-
-                    //if (string.IsNullOrEmpty(customer.LastName))
-                    //{
-                    //    LastnameValidator.ErrorMessage = GetTranslation("Pleaseenteryourlastname");
-                    //    LastnameValidator.Text = "*" + requiredText;
-                    //    value.IsValid = false;
-                    //}
-
-                    //if (string.IsNullOrEmpty(customer.Email))
-                    //{
-                    //    EmailValidator.ErrorMessage = GetTranslation("Pleaseenteryouremailaddress");
-                    //    EmailValidator.Text = "*" + requiredText;
-                    //    value.IsValid = false;
-                    //}
-
-                    //if (!CheckValidEmail(customer.Email))
-                    //{
-                    //    EmailValidator.ErrorMessage = GetTranslation("Pleaseenteravalidemailaddress");
-                    //    EmailValidator.Text = "*" + requiredText;
-                    //    value.IsValid = false;
-                    //}
-
-                    //if (string.IsNullOrEmpty(customer.Address1))
-                    //{
-                    //    AddressValidator.ErrorMessage = GetTranslation("Pleaseenteryouraddress");
-                    //    AddressValidator.Text = "*" + requiredText;
-                    //    value.IsValid = false;
-                    //}
-
-                    //if (string.IsNullOrEmpty(customer.City))
-                    //{
-                    //    TownValidator.ErrorMessage = GetTranslation("Pleasenteryourtowncity");
-                    //    TownValidator.Text = "*" + requiredText;
-                    //    value.IsValid = false;
-                    //}
-
-                    //if (customer.Country == "-" || customer.Country == "--")
-                    //{
-                    //    CountryValidator.ErrorMessage = GetTranslation("Booking_SelectCountryError");
-                    //    CountryValidator.Text = "*" + requiredText;
-                    //    value.IsValid = false;
-                    //}
-                    //else if (customer.Country == "GB" || customer.Country == "US")
-                    //{
-                    //    if (string.IsNullOrEmpty(customer.PostCode))
-                    //    {
-                    //        PostcodeValidator.ErrorMessage = GetTranslation("Pleaseenteryourpostzipcode");
-                    //        PostcodeValidator.Text = "*" + requiredText;
-                    //        value.IsValid = false;
-                    //    }
-                    //}
-
-
-                    if (!AgreeTermsAndConditions.Checked)
-                    {
-                        TAndCValidator.ErrorMessage = GetTranslation("Pleasereadandagreetotandc");
-                        TAndCValidator.Text = "*" + requiredText;
-                        value.IsValid = false;
-                    }
-
-            //    }
-
-            //}
         }
 
         #endregion
