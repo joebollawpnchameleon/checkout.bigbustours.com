@@ -11,8 +11,7 @@ namespace bigbus.checkout
 {
     public partial class Default : BasePage
     {
-        public IImageDbService ImageDbService { get; set; }
-
+      
         protected void Page_Load(object sender, EventArgs e)
         {
         //    var basket = BasketService.GetBasket(new Guid("B2E65DBA-925E-4407-9F1E-A004314A7021"));

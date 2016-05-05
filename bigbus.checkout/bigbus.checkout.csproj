@@ -153,6 +153,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="SiteMaster.Master" />
     <Content Include="packages.config" />
+    <Content Include="ViewVoucher.aspx" />
     <Content Include="WebForm1.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
@@ -319,6 +320,13 @@
     </Compile>
     <Compile Include="SiteMaster.Master.designer.cs">
       <DependentUpon>SiteMaster.Master</DependentUpon>
+    </Compile>
+    <Compile Include="ViewVoucher.aspx.cs">
+      <DependentUpon>ViewVoucher.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ViewVoucher.aspx.designer.cs">
+      <DependentUpon>ViewVoucher.aspx</DependentUpon>
     </Compile>
     <Compile Include="Web References\EcrServiceRef\Reference.cs">
       <AutoGen>True</AutoGen>
