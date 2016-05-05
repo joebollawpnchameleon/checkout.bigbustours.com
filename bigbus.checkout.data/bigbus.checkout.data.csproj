@@ -63,6 +63,7 @@
     <Compile Include="Model\MicroSiteLanguage.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\OrderLine.cs" />
+    <Compile Include="Model\OrderLineGeneratedBarcode.cs" />
     <Compile Include="Model\Phrase.cs" />
     <Compile Include="Model\PhraseLanguage.cs" />
     <Compile Include="Model\Session.cs" />

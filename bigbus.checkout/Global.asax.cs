@@ -86,7 +86,8 @@ namespace bigbus.checkout
             builder.RegisterType<GenericDataRepository<Log>>().As<IGenericDataRepository<Log>>();
             builder.RegisterType<GenericDataRepository<Phrase>>().As<IGenericDataRepository<Phrase>>();
             builder.RegisterType<GenericDataRepository<PhraseLanguage>>().As<IGenericDataRepository<PhraseLanguage>>();
-            builder.RegisterType<GenericDataRepository<TransactionAddressPaypal>>().As<IGenericDataRepository<TransactionAddressPaypal>>();
+            builder.RegisterType<GenericDataRepository<TransactionAddressPaypal>>().As<IGenericDataRepository<TransactionAddressPaypal>>(); 
+            builder.RegisterType<GenericDataRepository<OrderLineGeneratedBarcode>>().As<IGenericDataRepository<OrderLineGeneratedBarcode>>();
 
             builder.RegisterType<TranslationService>().As<ITranslationService>();
             builder.RegisterType<CheckoutService>().As<ICheckoutService>();
@@ -150,7 +151,8 @@ namespace bigbus.checkout
                    c.Resolve<IGenericDataRepository<Ticket>>(),
                    c.Resolve<IGenericDataRepository<Currency>>(),
                    c.Resolve<ILocalizationService>(),
-                   c.Resolve<IGenericDataRepository<TransactionAddressPaypal>>()
+                   c.Resolve<IGenericDataRepository<TransactionAddressPaypal>>(),
+                   c.Resolve<IGenericDataRepository<OrderLineGeneratedBarcode>>()
                )
            ).As<ICheckoutService>();
 

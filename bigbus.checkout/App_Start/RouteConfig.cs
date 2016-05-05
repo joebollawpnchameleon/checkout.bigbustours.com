@@ -18,17 +18,11 @@ namespace bigbus.checkout
                url: "{controller}/{action}/{sid}",
                defaults: new { controller = "Default", action = "Index", sid = UrlParameter.Optional }
            );
-          
-            routes.MapRoute(
-               name: "Checkout",
-               url: "{microSiteID}/{controller}/{action}",
-               defaults: new { microSiteID = "london", controller = "Default", action = "Index" }
-           );
 
             routes.MapRoute(
                 name: "Default",
-                url: "{microSiteID}/{controller}/{action}/{id}",
-                defaults: new { microSiteID = "london", controller = "Checkout", action = "Index", id = UrlParameter.Optional }
+                url: "{controller}/{action}/{id}",
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
         }
     }

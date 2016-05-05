@@ -172,6 +172,7 @@
     <Content Include="Views\Checkout\Completed.cshtml" />
     <Content Include="Views\Error\StandardErrorView.cshtml" />
     <Content Include="Views\Checkout\CancelBookingPayPal.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
     <None Include="Web References\EcrServiceRef\Api.wsdl" />
     <None Include="Web References\EcrServiceRef\Api.xsd">
       <SubType>Designer</SubType>
@@ -268,6 +269,7 @@
     <Compile Include="Controllers\CheckoutController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MagentoTestController.cs" />
     <Compile Include="Controls\UserDetails.ascx.cs">
       <DependentUpon>UserDetails.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

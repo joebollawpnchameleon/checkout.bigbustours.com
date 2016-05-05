@@ -6,6 +6,11 @@ using Services.Infrastructure;
 using Autofac.Integration.Web;
 using System.Web;
 using Autofac;
+using bigbus.checkout.Helpers;
+using bigbus.checkout.data.Model;
+using Common.Model.Ecr;
+using System.Collections.Generic;
+using Common.Enums;
 
 namespace bigbus.checkout.Models
 {
@@ -25,6 +30,8 @@ namespace bigbus.checkout.Models
         public ILoggerService LoggerService { get; set; }
         public ITranslationService TranslationService { get; set; }
         public IPaypalService PaypalService { get; set; }
+        public IImageDbService ImageDbService { get; set; }
+        public IImageService ImageService { get; set; }
 
         #endregion
 
@@ -110,6 +117,95 @@ namespace bigbus.checkout.Models
                 clientIpAddress = clientIpAddress.Split(',').FirstOrDefault();
             }
             return clientIpAddress;
+        }
+
+        protected BookingResult SendBookingToEcr(Order order)
+        {
+            EcrServiceHelper ecrHelper;
+
+            switch (EnvironmentId)
+            {
+                case (int)Common.Enums.Environment.Live:
+                    ecrHelper = new EcrServiceHelper(EcrApiKey, LiveEcrEndPoint, TicketService, SiteService);
+                    break;
+                case (int)Common.Enums.Environment.Local:
+                case (int)Common.Enums.Environment.Staging:
+                    ecrHelper = new EcrServiceHelper(EcrApiKey, TicketService, SiteService);
+                    break;
+                default:
+                    Log("Invalid environment specified for ECR Api 2. EnvironmentId: " + EnvironmentId);
+                    throw new Exception("Invalid environment specified for ECR Api 2");
+            }
+
+            var response = ecrHelper.SubmitBooking(order);
+
+            /*** For testing I comment this as ECR API is not working correctly - uncomment before going live.
+            if (response == null || response.TransactionStatus.Status != 0)
+            {
+                Log("Send to Ecr Failed with error " + (response == null ? "Booking process failed " : response.TransactionStatus.Description));
+                EcrBookingStatus = EcrResponseCodes.BookingFailure;
+                return false;
+            }
+
+            order.EcrBookingBarCode = response.BookingBarcode;
+            order.EcrBookingShortReference = response.BookingShortReference;
+            order.EcrSupplierConfirmationNumber = response.SupplierConfirmationNumber;
+            */
+
+            return new BookingResult
+            {
+                SupplierConfirmation = "66666666-e06d-4309-845a-daae9a106666",
+                BookingShortReference = "6666666666",
+                Barcodes = new List<Barcode>
+                {
+                    new Barcode {TicketId = "14D9F26C-2062-4654-9B79-01EBA0EC3930", Code = "6666666636307002005800201511191175" },
+                    new Barcode {TicketId = "14D9F26C-2062-4654-9B79-01EBA0EC3930", Code = "CH1009950010026001175AD100994001006666" }
+                }
+            };
+
+            //order.EcrBookingBarCode = "6666666636307002005800201511191175CH1009950010026001175AD100994001006666";
+           // order.EcrBookingShortReference = "6666666666";
+           // order.EcrSupplierConfirmationNumber = "66666666-e06d-4309-845a-daae9a106666";
+
+            //CheckoutService.SaveOrder(order);
+
+        }
+
+        protected void ClearCheckoutCookies()
+        {
+            AuthenticationService.ExpireCookie(SessionCookieName);
+            AuthenticationService.ExpireCookie(BasketCookieName);
+            //put session in complete mode
+        }
+
+        protected void CreateQrImages(BookingResult result, Order order)
+        {
+            //make the QR code Image
+            foreach (var code in result.Barcodes)
+            {
+                var chartUrl = string.Format(GoogleChartUrl, code.Code);
+
+                //get image from google
+                Log("Downloading QR Image from google basketid: " + order.BasketId);
+                var imageBytes = ImageService.DownloadImageFromUrl(chartUrl);
+
+                //store image to basket
+                Log("Create image QR Code in DB details basketid: " + order.BasketId);
+                var status = ImageDbService.GenerateQrImage(order, imageBytes, MicrositeId);
+
+                //check if image has been stored successfully
+                if (status == QrImageSaveStatus.Success)
+                {
+                    Log("QR Image Created successfully created orderid:" + order.Id);
+                }
+                else
+                {
+                    Log("QR Image Failed to create orderid:" + order.Id + " code " + code.Code);
+                    //GoToErrorPage(GetTranslation("Basket_BadPci_Status"), "Basket status object casting crashed. basketid:" + _basketId);
+                }
+
+            }
+
         }
     }
 }

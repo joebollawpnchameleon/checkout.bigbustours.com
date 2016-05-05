@@ -8,6 +8,7 @@ using Services.Implementation;
 using pci = Common.Model.Pci;
 using Services.Infrastructure;
 using Basket = bigbus.checkout.data.Model.Basket;
+using Common.Model.Ecr;
 
 namespace bigbus.checkout
 {
@@ -20,8 +21,7 @@ namespace bigbus.checkout
         public EcrResponseCodes EcrBookingStatus;       
         public IPciApiServiceNoASync PciApiServices { get; set; }
         public ICheckoutService CheckoutService { get; set; }
-        public IImageDbService ImageDbService { get; set; }
-        public IImageService ImageService { get; set; }
+       
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -47,32 +47,22 @@ namespace bigbus.checkout
             //send booking to ECR.
             Log("Sending booking to ECR basketid: " + _basketId);
             var result = SendBookingToEcr(newOrder);
+
             //order must be there.
-            if (!result)
+            if (result == null || result.Barcodes.Count < 1)
             {
                 JumpToOrderCreationError("Booking failed", "Booking failed for ECR basketId: " + _basketId);
             }
 
-            //make the QR code Image
-            var chartUrl = string.Format(GoogleChartUrl, newOrder.EcrBookingBarCode);
-            
-            //get image from google
-            Log("Downloading QR Image from google basketid: " + _basketId);
-            var imageBytes = ImageService.DownloadImageFromUrl(chartUrl);
+            newOrder.EcrBookingBarCode = result.CombinedBarcode;
+            newOrder.EcrBookingShortReference = result.BookingShortReference;
+            newOrder.EcrSupplierConfirmationNumber = result.SupplierConfirmation;
 
-            //store image to basket
-            Log("Create image QR Code in DB details basketid: " + _basketId);
-            var status = ImageDbService.GenerateQrImage(newOrder, imageBytes, MicrositeId);
+            CheckoutService.SaveOrder(newOrder);
 
-            //check if image has been stored successfully
-            if (status == QrImageSaveStatus.Success)
-            {
-                Log("QR Image Created successfully basketid:" + _basketId);
-            }
-            else
-            {
-                GoToErrorPage(GetTranslation("Basket_BadPci_Status"), "Basket status object casting crashed. basketid:" + _basketId);
-            }
+            CheckoutService.SaveOrderLineBarCodes(result, newOrder);
+
+            CreateQrImages(result, newOrder);
 
             //clear cookie sessions and remove session from checkout mode
             ClearCheckoutCookies();
@@ -80,15 +70,11 @@ namespace bigbus.checkout
             //Prepare email notifications
 
             //Redirect user to order confirmation page or error
-            Response.Redirect(string.Format("~/Checkout/Completed/{0}", CurrentLanguageId));
-        }
+            Response.Redirect(string.Format("~/Checkout/Completed/{0}", newOrder.Id));
+        }        
 
-        private void ClearCheckoutCookies()
-        {
-            AuthenticationService.ExpireCookie(SessionCookieName);
-            AuthenticationService.ExpireCookie(BasketCookieName);
-            //put session in complete mode
-        }
+        
+        
 
         private void LoadSession()
         {
@@ -143,47 +129,7 @@ namespace bigbus.checkout
             return null;
         }
 
-        private bool SendBookingToEcr(Order order)
-        {
-            EcrServiceHelper ecrHelper;
-            
-            switch (EnvironmentId)
-            {
-                case (int) Common.Enums.Environment.Live:
-                    ecrHelper = new EcrServiceHelper(EcrApiKey, LiveEcrEndPoint,TicketService, SiteService);
-                    break;
-                case (int) Common.Enums.Environment.Local:
-                case (int) Common.Enums.Environment.Staging:
-                    ecrHelper = new EcrServiceHelper(EcrApiKey, TicketService, SiteService);
-                    break;
-                default:
-                    Log("Invalid environment specified for ECR Api 2. EnvironmentId: " + EnvironmentId);
-                    throw new Exception("Invalid environment specified for ECR Api 2");
-            }
-
-            var response = ecrHelper.SubmitBooking(order);
-
-            /*** For testing I comment this as ECR API is not working correctly - uncomment before going live.
-            if (response == null || response.TransactionStatus.Status != 0)
-            {
-                Log("Send to Ecr Failed with error " + (response == null ? "Booking process failed " : response.TransactionStatus.Description));
-                EcrBookingStatus = EcrResponseCodes.BookingFailure;
-                return false;
-            }
-
-            order.EcrBookingBarCode = response.BookingBarcode;
-            order.EcrBookingShortReference = response.BookingShortReference;
-            order.EcrSupplierConfirmationNumber = response.SupplierConfirmationNumber;
-            */
-
-            order.EcrBookingBarCode = "6666666636307002005800201511191175CH1009950010026001175AD100994001006666";
-            order.EcrBookingShortReference = "6666666666";
-            order.EcrSupplierConfirmationNumber = "66666666-e06d-4309-845a-daae9a106666";
-
-            CheckoutService.SaveOrder(order);
-
-            return true;
-        }
+       
 
         private void JumpToOrderCreationError(string message, string logMessage)
         {

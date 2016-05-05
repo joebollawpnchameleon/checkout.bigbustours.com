@@ -1,6 +1,7 @@
 ﻿using bigbus.checkout.data.Model;
 using pci = Common.Model.Pci;
 using Basket = bigbus.checkout.data.Model.Basket;
+using Common.Model.Ecr;
 
 namespace Services.Infrastructure
 {
@@ -15,5 +16,7 @@ namespace Services.Infrastructure
         void SaveOrder(Order order);
 
         TransactionAddressPaypal CreateAddressPaypal(Order order, Session session, User user);
+
+        void SaveOrderLineBarCodes(BookingResult result, Order order);
     }
 }

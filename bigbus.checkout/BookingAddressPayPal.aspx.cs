@@ -12,6 +12,7 @@ using Common.Model;
 using Common.Model.PayPal;
 using Services.Implementation;
 using Services.Infrastructure;
+using Common.Enums;
 
 namespace bigbus.checkout
 {
@@ -64,7 +65,6 @@ namespace bigbus.checkout
 
                 if (payPalReturn.IsError)
                 {
-
                     throw new Exception(payPalReturn.ErrorMessage);
                 }
                 
@@ -72,7 +72,34 @@ namespace bigbus.checkout
                     MicrositeId);
 
                 CheckoutService.CreateAddressPaypal(order, session, newUser);
-                
+
+                //send booking to ECR.
+                Log("Sending booking to ECR basketid: " + basket.Id);
+                var result = SendBookingToEcr(order);
+
+                //order must be there.
+                if (result == null || result.Barcodes.Count < 1)
+                {
+                    //***JumpToOrderCreationError("Booking failed", "Booking failed for ECR basketId: " + basket.Id);
+                }
+
+                order.EcrBookingBarCode = result.CombinedBarcode;
+                order.EcrBookingShortReference = result.BookingShortReference;
+                order.EcrSupplierConfirmationNumber = result.SupplierConfirmation;
+
+                CheckoutService.SaveOrder(order);
+
+                CheckoutService.SaveOrderLineBarCodes(result, order);
+
+                CreateQrImages(result, order);
+
+                //clear cookie sessions and remove session from checkout mode
+                ClearCheckoutCookies();
+
+                //Prepare email notifications
+
+               
+
             }
             catch (Exception ex)
             {
@@ -87,7 +114,26 @@ namespace bigbus.checkout
 
             Response.Redirect(@"~/Checkout/Completed/" + orderId);
         }
-        
+
+        //private void JumpToOrderCreationError(string message, string logMessage)
+        //{
+        //    _session.BasketId = null;
+        //    _session.InOrderCreationProcess = false;
+        //    _session.AgentUseCustomersAddress = false;
+        //    _session.AgentFakeUserId = null;
+        //    _session.AgentIsTradeTicketSale = true;
+        //    _session.AgentNameToPrintOnTicket = null;
+
+        //    AuthenticationService.UpdateSession(_session);
+
+        //    if (Response.Cookies[BasketCookieName] != null)
+        //    {
+        //        Response.Cookies[BasketCookieName].Expires = DateTime.Now.AddDays(-1);
+        //    }
+
+        //    GoToErrorPage(message, logMessage);
+        //}
+
         private void UnlockSessionFromOrderCreationLock(Session session)
         {
             session.BasketId = null;
@@ -206,6 +252,11 @@ namespace bigbus.checkout
                 ucUserDetails.Country = paypalDetails.PayPalReturnUserInfo.AddressInfo.CountryCode;
         }
 
-
+       
+        private void GoToErrorPage(string message, string logMessage)
+        {
+            Log(logMessage);
+            Response.Redirect("BookingOrderCreationError.aspx?msg=" + Server.UrlEncode(message));
+        }
     }
 }

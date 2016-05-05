@@ -69,11 +69,11 @@ namespace Services.Implementation
             //check image meta data
             var imageName = string.Format("QRCODE For {0}", order.OrderNumber);
             
-            var imageData =
-                _metaDataRepository.GetSingle(x => x.Name != null && x.Name.Equals(imageName, StringComparison.CurrentCultureIgnoreCase)
-                    && x.ImageFolderId != null && x.ImageFolderId.Value.Equals(qrFolder.Id));
+            //var imageData =
+            //    _metaDataRepository.GetSingle(x => x.Name != null && x.Name.Equals(imageName, StringComparison.CurrentCultureIgnoreCase)
+            //        && x.ImageFolderId != null && x.ImageFolderId.Value.Equals(qrFolder.Id));
 
-            if (imageData != null) return QrImageSaveStatus.ImageDataExist;
+            //if (imageData != null) return QrImageSaveStatus.ImageDataExist;
 
             //create image first
             var newImageMetaData = SaveImage(imageChartBytes);

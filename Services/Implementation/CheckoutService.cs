@@ -7,6 +7,8 @@ using Common.Model;
 using pci = Common.Model.Pci;
 using Services.Infrastructure;
 using Basket = bigbus.checkout.data.Model.Basket;
+using Common.Model.Ecr;
+using System.Collections.Generic;
 
 namespace Services.Implementation
 {
@@ -18,9 +20,11 @@ namespace Services.Implementation
         private readonly IGenericDataRepository<Currency> _currencyRepository;
         private readonly IGenericDataRepository<TransactionAddressPaypal> _addressPpRepository;
         private readonly ILocalizationService _localizationService;
+        private readonly IGenericDataRepository<OrderLineGeneratedBarcode> _barcodeRepository;
 
         public CheckoutService(IGenericDataRepository<Order> orderRepository, IGenericDataRepository<User> userRepository, IGenericDataRepository<Ticket> ticketRepository,
-            IGenericDataRepository<Currency> currencyRepository, ILocalizationService localizationService, IGenericDataRepository<TransactionAddressPaypal> addressPPRepository)
+            IGenericDataRepository<Currency> currencyRepository, ILocalizationService localizationService, IGenericDataRepository<TransactionAddressPaypal> addressPPRepository,
+            IGenericDataRepository<OrderLineGeneratedBarcode> barcodeRepos)
         {
             _orderRepository = orderRepository;
             _userRepository = userRepository;
@@ -28,6 +32,7 @@ namespace Services.Implementation
             _currencyRepository = currencyRepository;
             _localizationService = localizationService;
             _addressPpRepository = addressPPRepository;
+            _barcodeRepository = barcodeRepos;
         }
 
         public virtual Order CreateOrder(Session session, Basket basket, pci.BasketStatus basketStatus, string clientIpAddress, string languageId, string micrositeId)
@@ -83,7 +88,7 @@ namespace Services.Implementation
            
         }
 
-        public Order CreateOrderPayPal(Session session, Basket basket, User user, string clientIpAddress, string languageId, string micrositeId)
+        public virtual Order CreateOrderPayPal(Session session, Basket basket, User user, string clientIpAddress, string languageId, string micrositeId)
         {
             try
             {
@@ -133,7 +138,7 @@ namespace Services.Implementation
             }  
         }
 
-        public TransactionAddressPaypal CreateAddressPaypal(Order order, Session session, User user)
+        public virtual TransactionAddressPaypal CreateAddressPaypal(Order order, Session session, User user)
         {
             var payPalAddress = new TransactionAddressPaypal
             {
@@ -217,6 +222,25 @@ namespace Services.Implementation
         public virtual void SaveOrder(Order order)
         {
             _orderRepository.Update(order);
+        }
+
+        public virtual void SaveOrderLineBarCodes(BookingResult result, Order order)
+        {
+            var lines = order.OrderLines;
+            var selectedLines = new List<string>();
+
+            foreach (var code in result.Barcodes)
+            {
+                var orderline = lines.FirstOrDefault(x => x.TicketId.Value.ToString().Equals(code.TicketId, StringComparison.CurrentCultureIgnoreCase));
+                selectedLines.Add(orderline.Id.ToString());
+
+                _barcodeRepository.Add(new OrderLineGeneratedBarcode
+                {
+                     DateCreated = DateTime.Now,
+                     OrderLineId = orderline.Id,
+                     GeneratedBarcode = code.Code
+                });
+            }
         }
     }
 }
