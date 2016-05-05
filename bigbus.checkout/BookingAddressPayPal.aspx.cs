@@ -17,7 +17,6 @@ namespace bigbus.checkout
 {
     public partial class BookingAddressPayPal : BasePage
     {
-
         public ICheckoutService CheckoutService { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -64,7 +63,6 @@ namespace bigbus.checkout
 
                 if (payPalReturn.IsError)
                 {
-
                     throw new Exception(payPalReturn.ErrorMessage);
                 }
                 

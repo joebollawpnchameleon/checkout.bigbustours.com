@@ -5,18 +5,18 @@ using System.Web.Routing;
 using System.Web.UI;
 using Autofac;
 using Autofac.Integration.Web;
+using Autofac.Integration.Mvc;
 using bigbus.checkout.App_Start;
 using bigbus.checkout.data.Model;
 using bigbus.checkout.data.Repositories.Implementation;
 using bigbus.checkout.data.Repositories.Infrastructure;
-using bigbus.checkout.Helpers;
-using bigbus.checkout.Models;
 using Common.Model;
 using Common.Model.Interfaces;
 using Services.Implementation;
 using Services.Infrastructure;
-using System.Web.Mvc;
 using Common.Model.PayPal;
+using System.Web.Mvc;
+using System.Reflection;
 
 namespace bigbus.checkout
 {
@@ -47,8 +47,7 @@ namespace bigbus.checkout
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
             var builder = new ContainerBuilder();
-            
-
+           
             var fullUrl = ConfigurationManager.AppSettings["BaseUrl"] + ConfigurationManager.AppSettings["BasketApiUrl"];
             var picEndPoint = ConfigurationManager.AppSettings["PciWebsite.ApiDomain"];
             var defaultLanguage = ConfigurationManager.AppSettings["Default.Language"];
@@ -168,6 +167,8 @@ namespace bigbus.checkout
             builder.Register(c => new PayPalService(paypalInitStruct,
                    c.Resolve<ILoggerService>()
                    )).As<IPaypalService>();
+
+
 
             // provider up with your registrations.
             _containerProvider = new ContainerProvider(builder.Build());

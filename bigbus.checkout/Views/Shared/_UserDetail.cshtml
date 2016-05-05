@@ -1,0 +1,117 @@
+﻿@using bigbus.checkout.ViewModels;
+@using Common.Enums;
+
+@model UserDetailVM
+
+@{ 
+    var list = Enum.GetNames(typeof(Titles)).Select((r, index) => new SelectListItem { Text = r, Value = index.ToString() });
+}
+
+@using (Html.BeginForm("CheckoutWithCreditCard", "Checkout", FormMethod.Post, new { @id = "formTemplate", @class = "form-horizontal" }))
+{
+    @Html.ValidationSummary()
+
+    <div class="control-group">
+        <label class="control-label">@Html.LabelFor(x=> x.Title)</label>
+        <div class="controls">
+            <div class="input-append">
+                @Html.DropDownListFor(x => x.Title, list)
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">@Html.LabelFor(x => x.FirstName)</label>
+        <div class="controls">
+            <div class="input-append">
+                @Html.TextBoxFor(x => x.FirstName)
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">@Html.LabelFor(x => x.LastName)</label>
+        <div class="controls">
+            <div class="input-append">
+                @Html.TextBoxFor(x => x.LastName)
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">@Html.LabelFor(x => x.Email)</label>
+        <div class="controls">
+            <div class="input-append">
+                @Html.TextBoxFor(x => x.Email)
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">@Html.LabelFor(x => x.Address1)</label>
+        <div class="controls">
+            <div class="input-append">
+                @Html.TextBoxFor(x => x.Address1)
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">@Html.LabelFor(x => x.Address2)</label>
+        <div class="controls">
+            <div class="input-append">
+                @Html.TextBoxFor(x => x.Address2)
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">@Html.LabelFor(x => x.Town)</label>
+        <div class="controls">
+            <div class="input-append">
+                @Html.TextBoxFor(x => x.Town)
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">@Html.LabelFor(x => x.PostCode)</label>
+        <div class="controls">
+            <div class="input-append">
+                @Html.TextBoxFor(x => x.PostCode)
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">@Html.LabelFor(x => x.State)</label>
+        <div class="controls">
+            <div class="input-append">
+                @Html.TextBoxFor(x => x.State)
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">@Html.LabelFor(x => x.Country)</label>
+        <div class="controls">
+            <div class="input-append">
+                @Html.TextBoxFor(x => x.Country)
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">@Html.LabelFor(x => x.IsTermsAndConditionsAccepted)</label>
+        <div class="controls">
+            <div class="input-append">
+                @Html.CheckBoxFor(x => x.IsTermsAndConditionsAccepted)
+            </div>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="button" class="btn btn-success" onclick="$('#formTemplate').submit();"><i class="icon-ok icon-white"></i> Submit</button>
+    </div>
+}
+

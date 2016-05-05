@@ -47,6 +47,10 @@
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Autofac.Integration.Mvc, Version=3.3.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Mvc5.3.3.4\lib\net45\Autofac.Integration.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Autofac.Integration.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.Web.4.0.0\lib\net45\Autofac.Integration.Web.dll</HintPath>
       <Private>True</Private>
@@ -172,6 +176,9 @@
     <Content Include="Views\Checkout\Completed.cshtml" />
     <Content Include="Views\Error\StandardErrorView.cshtml" />
     <Content Include="Views\Checkout\CancelBookingPayPal.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Checkout\UserDetails.cshtml" />
+    <Content Include="Views\Shared\_UserDetail.cshtml" />
     <None Include="Web References\EcrServiceRef\Api.wsdl" />
     <None Include="Web References\EcrServiceRef\Api.xsd">
       <SubType>Designer</SubType>
@@ -268,6 +275,7 @@
     <Compile Include="Controllers\CheckoutController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MagentoTestController.cs" />
     <Compile Include="Controls\UserDetails.ascx.cs">
       <DependentUpon>UserDetails.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -318,6 +326,7 @@
     <Compile Include="SiteMaster.Master.designer.cs">
       <DependentUpon>SiteMaster.Master</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\UserDetailVM.cs" />
     <Compile Include="Web References\EcrServiceRef\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
