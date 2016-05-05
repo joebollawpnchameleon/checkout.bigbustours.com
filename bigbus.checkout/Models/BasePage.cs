@@ -51,9 +51,7 @@ namespace bigbus.checkout.Models
         public int EnvironmentId { get { return (ConfigurationManager.AppSettings["Environment"] != null)? Convert.ToInt32(ConfigurationManager.AppSettings["Environment"]) : (int)Common.Enums.Environment.Local; } }
 
         protected string CurrentLanguageId { get { return "eng"; } } //***replace with function
-
         protected string MicrositeId { get { return "london"; } } //*** get from url as in function
-
         protected string SubSite { get { return "london"; } }  //*** work out from old code
 
         protected bool SiteIsUs(ISiteService siteService)

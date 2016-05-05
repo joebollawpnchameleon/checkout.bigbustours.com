@@ -22,6 +22,11 @@ namespace Services.Implementation
         private readonly ILocalizationService _localizationService;
         private readonly IGenericDataRepository<OrderLineGeneratedBarcode> _barcodeRepository;
 
+        public CheckoutService(): base()
+        {
+
+        }
+
         public CheckoutService(IGenericDataRepository<Order> orderRepository, IGenericDataRepository<User> userRepository, IGenericDataRepository<Ticket> ticketRepository,
             IGenericDataRepository<Currency> currencyRepository, ILocalizationService localizationService, IGenericDataRepository<TransactionAddressPaypal> addressPPRepository,
             IGenericDataRepository<OrderLineGeneratedBarcode> barcodeRepos)
@@ -33,6 +38,7 @@ namespace Services.Implementation
             _localizationService = localizationService;
             _addressPpRepository = addressPPRepository;
             _barcodeRepository = barcodeRepos;
+            
         }
 
         public virtual Order CreateOrder(Session session, Basket basket, pci.BasketStatus basketStatus, string clientIpAddress, string languageId, string micrositeId)
@@ -242,5 +248,15 @@ namespace Services.Implementation
                 });
             }
         }
+
+        public virtual Order GetFullOrder(string orderId)
+        {
+            var order = OrderRepository.GetSingle(x => x.Id.ToString().Equals(orderId, StringComparison.CurrentCultureIgnoreCase));
+
+            order.OrderLines = OrderLineRepository.GetList(x => x.OrderId.ToString().Equals(orderId, StringComparison.CurrentCultureIgnoreCase));
+
+            return order;
+        }
+
     }
 }

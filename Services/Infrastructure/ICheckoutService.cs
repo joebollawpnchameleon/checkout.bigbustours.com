@@ -7,6 +7,8 @@ namespace Services.Infrastructure
 {
     public interface ICheckoutService
     {
+        Order GetFullOrder(string orderId);
+
         Order CreateOrder(Session session, Basket basket, pci.BasketStatus basketStatus, string clientIpAddress,
             string languageId, string microSiteId);
 

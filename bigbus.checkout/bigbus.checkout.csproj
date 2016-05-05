@@ -154,6 +154,7 @@
     <Content Include="SiteMaster.Master" />
     <Content Include="packages.config" />
     <Content Include="ViewVoucher.aspx" />
+    <Content Include="Voucher.aspx" />
     <Content Include="WebForm1.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
@@ -327,6 +328,13 @@
     </Compile>
     <Compile Include="ViewVoucher.aspx.designer.cs">
       <DependentUpon>ViewVoucher.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Voucher.aspx.cs">
+      <DependentUpon>Voucher.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Voucher.aspx.designer.cs">
+      <DependentUpon>Voucher.aspx</DependentUpon>
     </Compile>
     <Compile Include="Web References\EcrServiceRef\Reference.cs">
       <AutoGen>True</AutoGen>

@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using bigbus.checkout.Models;
 using Services.Infrastructure;
+using Services.Implementation;
 
 namespace bigbus.checkout
 {
@@ -18,6 +19,9 @@ namespace bigbus.checkout
         //    var lines = basket.BasketLines;
             if(!IsPostBack)
                 PlantCookie(sender, e);
+
+            var checkoutService = new CheckoutService();
+            var order = checkoutService.GetFullOrder("");
         }
 
         protected void PlantCookie(object sender, EventArgs e)
