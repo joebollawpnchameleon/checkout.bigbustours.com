@@ -14,40 +14,17 @@ namespace Services.Implementation
 {
     public class CheckoutService : BaseService, ICheckoutService
     {
-        private readonly IGenericDataRepository<Order> _orderRepository;
-        private readonly IGenericDataRepository<User> _userRepository;
-        private readonly IGenericDataRepository<Ticket> _ticketRepository;
-        private readonly IGenericDataRepository<Currency> _currencyRepository;
-        private readonly IGenericDataRepository<TransactionAddressPaypal> _addressPpRepository;
-        private readonly ILocalizationService _localizationService;
-        private readonly IGenericDataRepository<OrderLineGeneratedBarcode> _barcodeRepository;
-
         public CheckoutService(): base()
         {
-
         }
-
-        public CheckoutService(IGenericDataRepository<Order> orderRepository, IGenericDataRepository<User> userRepository, IGenericDataRepository<Ticket> ticketRepository,
-            IGenericDataRepository<Currency> currencyRepository, ILocalizationService localizationService, IGenericDataRepository<TransactionAddressPaypal> addressPPRepository,
-            IGenericDataRepository<OrderLineGeneratedBarcode> barcodeRepos)
-        {
-            _orderRepository = orderRepository;
-            _userRepository = userRepository;
-            _ticketRepository = ticketRepository;
-            _currencyRepository = currencyRepository;
-            _localizationService = localizationService;
-            _addressPpRepository = addressPPRepository;
-            _barcodeRepository = barcodeRepos;
-            
-        }
-
+        
         public virtual Order CreateOrder(Session session, Basket basket, pci.BasketStatus basketStatus, string clientIpAddress, string languageId, string micrositeId)
         {
             try
             {
                 Guid? currencyId =  new Guid(session.CurrencyId);
-                var currency = _currencyRepository.GetSingle(x => x.Id.Equals(currencyId));
-                var user = _userRepository.GetSingle(x => x.Id == basket.UserId);
+                var currency = CurrencyRepository.GetSingle(x => x.Id.Equals(currencyId));
+                var user = UserRepository.GetSingle(x => x.Id == basket.UserId);
 
                 var order = new Order
                 {
@@ -70,7 +47,7 @@ namespace Services.Implementation
                     SessionId = session.Id,
                     TotalQuantity = basket.BasketLines.Sum(x => x.TicketQuantity),
                     IsMobileAppOrder = false, //check how this is populated on old system.
-                    DateCreated = _localizationService.GetLocalDateTime(micrositeId)
+                    DateCreated = LocalizationService.GetLocalDateTime(micrositeId)
                 };
 
                 //populate order lines with existing baskets.
@@ -79,7 +56,7 @@ namespace Services.Implementation
                     order.OrderLines.Add(ConvertBasketLineToOrderLine(basketLine, order.Id));
                 }
 
-                _orderRepository.Add(order);
+                OrderRepository.Add(order);
 
                 order.User = user;
                 order.Currency = currency;
@@ -99,7 +76,7 @@ namespace Services.Implementation
             try
             {
                 Guid? currencyId = new Guid(session.CurrencyId);
-                var currency = _currencyRepository.GetSingle(x => x.Id.Equals(currencyId));
+                var currency = CurrencyRepository.GetSingle(x => x.Id.Equals(currencyId));
                
                 var order = new Order
                 {
@@ -118,7 +95,7 @@ namespace Services.Implementation
                     SessionId = session.Id,
                     TotalQuantity = basket.BasketLines.Sum(x => x.TicketQuantity),
                     IsMobileAppOrder = false, //check how this is populated on old system.
-                    DateCreated = _localizationService.GetLocalDateTime(micrositeId),
+                    DateCreated = LocalizationService.GetLocalDateTime(micrositeId),
                     PayPalOrderId = session.PayPalOrderId,
                     PayPalPayerId = session.PayPalPayerId,
                     PayPalToken = session.PayPalToken
@@ -130,7 +107,7 @@ namespace Services.Implementation
                     order.OrderLines.Add(ConvertBasketLineToOrderLine(basketLine, order.Id));
                 }
 
-                _orderRepository.Add(order);
+                OrderRepository.Add(order);
 
                 order.User = user;
                 order.Currency = currency;
@@ -187,7 +164,7 @@ namespace Services.Implementation
                 BasketId = session.BasketId.ToString(),
             };
 
-            _addressPpRepository.Add(payPalAddress);
+            AddressPpRepository.Add(payPalAddress);
 
             return payPalAddress;
         }
@@ -196,7 +173,7 @@ namespace Services.Implementation
         {
             Log(string.Format("Entering CheckoutService - ConvertBasketLineToOrderLine() orderid:{0} - basketlineid {1}", orderId, basketLine.Id));
 
-            var basketLineTicket = _ticketRepository.GetSingle(x => x.Id == basketLine.TicketId);
+            var basketLineTicket =TicketRepository.GetSingle(x => x.Id == basketLine.TicketId);
 
             var orderLine = new OrderLine
             {
@@ -227,7 +204,7 @@ namespace Services.Implementation
 
         public virtual void SaveOrder(Order order)
         {
-            _orderRepository.Update(order);
+            OrderRepository.Update(order);
         }
 
         public virtual void SaveOrderLineBarCodes(BookingResult result, Order order)
@@ -237,10 +214,18 @@ namespace Services.Implementation
 
             foreach (var code in result.Barcodes)
             {
-                var orderline = lines.FirstOrDefault(x => x.TicketId.Value.ToString().Equals(code.TicketId, StringComparison.CurrentCultureIgnoreCase));
+                var orderline = lines.FirstOrDefault(x =>
+                    x.TicketId != null && 
+                    x.TicketId.Value.ToString().Equals(code.TicketId, StringComparison.CurrentCultureIgnoreCase)
+                    && !selectedLines.Contains(x.Id.ToString())
+                    );
+                 
+                if(orderline == null)
+                    continue;
+
                 selectedLines.Add(orderline.Id.ToString());
 
-                _barcodeRepository.Add(new OrderLineGeneratedBarcode
+                BarcodeRepository.Add(new OrderLineGeneratedBarcode
                 {
                      DateCreated = DateTime.Now,
                      OrderLineId = orderline.Id,
@@ -251,11 +236,21 @@ namespace Services.Implementation
 
         public virtual Order GetFullOrder(string orderId)
         {
-            var order = OrderRepository.GetSingle(x => x.Id.ToString().Equals(orderId, StringComparison.CurrentCultureIgnoreCase));
-
-            order.OrderLines = OrderLineRepository.GetList(x => x.OrderId.ToString().Equals(orderId, StringComparison.CurrentCultureIgnoreCase));
-
-            return order;
+            try
+            {
+                var order =
+                    OrderRepository.GetSingle(
+                        x => x.Id.ToString().Equals(orderId, StringComparison.CurrentCultureIgnoreCase));
+                order.OrderLines =
+                    OrderLineRepository.GetList(
+                        x => x.OrderId.ToString().Equals(orderId, StringComparison.CurrentCultureIgnoreCase));
+                return order;
+            }
+            catch (Exception ex)
+            {
+                Log("Error getting full order: GetFullOrder() Id:" + orderId + Environment.NewLine + ex.Message);
+            }
+            return null;
         }
 
     }

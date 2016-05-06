@@ -8,6 +8,6 @@ namespace Services.Infrastructure
 {
     public interface ILoggerService
     {
-        void Log(string message, string loggerId);
+        void LogItem(string message);
     }
 }

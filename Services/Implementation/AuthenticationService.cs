@@ -10,7 +10,7 @@ using Services.Infrastructure;
 
 namespace Services.Implementation
 {
-    public class AuthenticationService : IAuthenticationService
+    public class AuthenticationService : BaseService, IAuthenticationService
     {
         private readonly IGenericDataRepository<Session> _sessionRepository;
 
@@ -56,6 +56,20 @@ namespace Services.Implementation
         {
             var sessCookie = HttpContext.Current.Request.Cookies[sessionCookieName];
             return sessCookie == null ? new Guid() : new Guid(sessCookie.Value);
+        }
+
+        public static string GetCookieValue(string cookieName)
+        {
+            try
+            {
+                var cookie = HttpContext.Current.Request.Cookies[cookieName];
+                if (cookie != null) return cookie.Value;
+            }
+            catch 
+            {
+                //ignore
+            }
+            return string.Empty;
         }
 
         public virtual Session GetSession(Guid sessionId)

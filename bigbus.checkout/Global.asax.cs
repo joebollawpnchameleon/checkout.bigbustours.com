@@ -52,6 +52,8 @@ namespace bigbus.checkout
             var fullUrl = ConfigurationManager.AppSettings["BaseUrl"] + ConfigurationManager.AppSettings["BasketApiUrl"];
             var picEndPoint = ConfigurationManager.AppSettings["PciWebsite.ApiDomain"];
             var defaultLanguage = ConfigurationManager.AppSettings["Default.Language"];
+            var sessionCookieName = ConfigurationManager.AppSettings["Session.CookieName"];
+            var sessionId = AuthenticationService.GetCookieValue(sessionCookieName);
 
             var paypalInitStruct = new PayPalInitStructure
             {
@@ -146,21 +148,12 @@ namespace bigbus.checkout
           ).As<IAuthenticationService>();
             
            builder.Register(c => new
-               CheckoutService(
-                   c.Resolve<IGenericDataRepository<Order>>(), 
-                   c.Resolve<IGenericDataRepository<User>>(),
-                   c.Resolve<IGenericDataRepository<Ticket>>(),
-                   c.Resolve<IGenericDataRepository<Currency>>(),
-                   c.Resolve<ILocalizationService>(),
-                   c.Resolve<IGenericDataRepository<TransactionAddressPaypal>>(),
-                   c.Resolve<IGenericDataRepository<OrderLineGeneratedBarcode>>()
-               )
+               CheckoutService()
            ).As<ICheckoutService>();
+           
+           builder.Register(c => new DbLoggerService(sessionId, c.Resolve<IGenericDataRepository<Log>>()))
+              .As<ILoggerService>();
 
-            builder.Register(c => new DbLoggerService(
-                c.Resolve<IGenericDataRepository<Log>>()
-                )).As<ILoggerService>();
-    
             builder.Register(c => new TranslationService(
                 c.Resolve<IGenericDataRepository<Language>>(),
                 c.Resolve<IGenericDataRepository<Phrase>>(),

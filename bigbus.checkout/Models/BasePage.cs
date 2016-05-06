@@ -73,8 +73,7 @@ namespace bigbus.checkout.Models
 
         public void Log(string message)
         {
-            var sessionId = AuthenticationService.GetSessionId(SessionCookieName);
-            LoggerService.Log(message, sessionId.ToString());
+            LoggerService.LogItem(message);
         }
 
         public string GetClientIpAddress()

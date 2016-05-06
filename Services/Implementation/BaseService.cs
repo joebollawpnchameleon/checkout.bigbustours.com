@@ -17,7 +17,9 @@ namespace Services.Implementation
         public IGenericDataRepository<TransactionAddressPaypal> AddressPpRepository { get; set; }
         public IGenericDataRepository<OrderLineGeneratedBarcode> BarcodeRepository { get; set; }
 
-        public readonly ILocalizationService LocalizationService;
+        public ILocalizationService LocalizationService { get; set; }
+        public ILoggerService LoggerService { get; set; }
+        public AuthenticationService AuthenticationService { get; set; }
 
         public BaseService()
         {
@@ -28,7 +30,7 @@ namespace Services.Implementation
 
         public void Log(string message)
         {
-            
+            //LoggerService.Log(message);
         }
     }
 }

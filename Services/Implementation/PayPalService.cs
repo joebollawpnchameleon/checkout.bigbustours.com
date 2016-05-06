@@ -9,7 +9,7 @@ using Common.Model.PayPal;
 
 namespace Services.Implementation
 {
-    public class PayPalService : IPaypalService
+    public class PayPalService : BaseService, IPaypalService
     {
         private readonly ILoggerService _loggerService;
         private readonly bool _inTestMode;
@@ -126,7 +126,7 @@ namespace Services.Implementation
                 res.IsError = true;
                 res.ErrorMessage = decoder["L_LONGMESSAGE0"]; //decoder["L_SHORTMESSAGE0"]
                 res.ErrorCode = decoder["L_ERRORCODE0"];
-                _loggerService.Log(res.ErrorCode +  Environment.NewLine + res.ErrorMessage, _sessionId);
+                LoggerService.LogItem(res.ErrorCode + Environment.NewLine + res.ErrorMessage);
             }
 
             return res;
@@ -256,7 +256,7 @@ namespace Services.Implementation
             }
             catch (Exception e)
             {
-                _loggerService.Log(e.Message, _sessionId);
+                LoggerService.LogItem(e.Message);
             }
 
             //Retrieve the Response returned from the NVP API call to PayPal

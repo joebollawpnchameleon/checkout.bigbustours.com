@@ -21,7 +21,7 @@ namespace bigbus.checkout
                 PlantCookie(sender, e);
 
             var checkoutService = new CheckoutService();
-            var order = checkoutService.GetFullOrder("");
+            var order = checkoutService.GetFullOrder("5A9A8646-E714-4DB5-9978-C70AA57D65C2");
         }
 
         protected void PlantCookie(object sender, EventArgs e)

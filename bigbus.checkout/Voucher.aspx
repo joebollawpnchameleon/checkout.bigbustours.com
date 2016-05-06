@@ -1,6 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Voucher.aspx.cs" Inherits="bigbus.checkout.Voucher" %>
-<%--<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Voucher.aspx.cs" Inherits="bigbus.checkout.Voucher" %>
 
+<%@ Import Namespace="BigBus.Helpers" %>
 <html>
 <head runat="server">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -370,4 +370,4 @@ body{
     }
 %>
 </body>
-</html>--%>
+</html>
