@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DiscoveryClientResultsFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Results>
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://bbcapi.ecr.io/3/Api.svc?xsd=xsd1" filename="Api.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://bbcapi.ecr.io/3/Api.svc?wsdl" filename="Api.wsdl" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://bbcapi.ecr.io/3/Api.svc?xsd=xsd2" filename="Api0.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://bbcapi.ecr.io/3/Api.svc?xsd=xsd0" filename="Api1.xsd" />
+  </Results>
+</DiscoveryClientResultsFile>

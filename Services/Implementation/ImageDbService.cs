@@ -72,7 +72,6 @@ namespace Services.Implementation
             //var imageData =
             //    _metaDataRepository.GetSingle(x => x.Name != null && x.Name.Equals(imageName, StringComparison.CurrentCultureIgnoreCase)
             //        && x.ImageFolderId != null && x.ImageFolderId.Value.Equals(qrFolder.Id));
-
             //if (imageData != null) return QrImageSaveStatus.ImageDataExist;
 
             //create image first
@@ -117,5 +116,7 @@ namespace Services.Implementation
 
             return imageData;
         }
+
+
     }
 }

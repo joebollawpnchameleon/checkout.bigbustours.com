@@ -11,6 +11,7 @@ using bigbus.checkout.data.Model;
 using Common.Model.Ecr;
 using System.Collections.Generic;
 using Common.Enums;
+using bigbus.checkout.EcrWServiceRefV3;
 
 namespace bigbus.checkout.Models
 {
@@ -32,6 +33,8 @@ namespace bigbus.checkout.Models
         public IPaypalService PaypalService { get; set; }
         public IImageDbService ImageDbService { get; set; }
         public IImageService ImageService { get; set; }
+        public IEcrService EcrService { get; set; }
+        public ICheckoutService CheckoutService { get; set; }
 
         #endregion
 
@@ -116,56 +119,41 @@ namespace bigbus.checkout.Models
             return clientIpAddress;
         }
 
-        protected BookingResult SendBookingToEcr(Order order)
+        protected Barcode[] SendBookingToEcr(Order order)
         {
-            EcrServiceHelper ecrHelper;
+            var orderLines = order.OrderLines.ToList();
 
-            switch (EnvironmentId)
+            var availability = EcrServiceHelper.GetAvailabilityFromOrderLines(orderLines);
+
+            var availabilityResponse = EcrService.GetAvailability(availability);
+
+            if(availabilityResponse == null) 
             {
-                case (int)Common.Enums.Environment.Live:
-                    ecrHelper = new EcrServiceHelper(EcrApiKey, LiveEcrEndPoint, TicketService, SiteService);
-                    break;
-                case (int)Common.Enums.Environment.Local:
-                case (int)Common.Enums.Environment.Staging:
-                    ecrHelper = new EcrServiceHelper(EcrApiKey, TicketService, SiteService);
-                    break;
-                default:
-                    Log("Invalid environment specified for ECR Api 2. EnvironmentId: " + EnvironmentId);
-                    throw new Exception("Invalid environment specified for ECR Api 2");
+                Log("Availability failed for OrderId: " + order.Id);
+                return null;
             }
 
-            var response = ecrHelper.SubmitBooking(order);
-
-            /*** For testing I comment this as ECR API is not working correctly - uncomment before going live.
-            if (response == null || response.TransactionStatus.Status != 0)
+            if (string.IsNullOrEmpty(availabilityResponse.TransactionReference))
             {
-                Log("Send to Ecr Failed with error " + (response == null ? "Booking process failed " : response.TransactionStatus.Description));
-                EcrBookingStatus = EcrResponseCodes.BookingFailure;
-                return false;
+                Log("Availability response returned no transaction ref OrderId: " + order.Id + 
+                    System.Environment.NewLine + " error: " + availabilityResponse.ErrorDescription);
+                return null;
             }
 
-            order.EcrBookingBarCode = response.BookingBarcode;
-            order.EcrBookingShortReference = response.BookingShortReference;
-            order.EcrSupplierConfirmationNumber = response.SupplierConfirmationNumber;
-            */
+            var bookingTransactions = EcrServiceHelper.GetBookingTransactionDetails(orderLines);
 
-            return new BookingResult
+            var response = EcrService.SubmitBooking(order.OrderNumber, availabilityResponse, bookingTransactions);
+                
+            if (response == null || response.Status != (int)EcrResponseStatus.Success)
             {
-                SupplierConfirmation = "66666666-e06d-4309-845a-daae9a106666",
-                BookingShortReference = "6666666666",
-                Barcodes = new List<Barcode>
-                {
-                    new Barcode {TicketId = "14D9F26C-2062-4654-9B79-01EBA0EC3930", Code = "6666666636307002005800201511191175" },
-                    new Barcode {TicketId = "14D9F26C-2062-4654-9B79-01EBA0EC3930", Code = "CH1009950010026001175AD100994001006666" }
-                }
-            };
+                Log("Send to Ecr Failed with error " + (response == null ? "Booking process failed " : response.ErrorDescription));
+                return null;
+            }
 
-            //order.EcrBookingBarCode = "6666666636307002005800201511191175CH1009950010026001175AD100994001006666";
-           // order.EcrBookingShortReference = "6666666666";
-           // order.EcrSupplierConfirmationNumber = "66666666-e06d-4309-845a-daae9a106666";
+            order.EcrBookingShortReference = response.TransactionReference;
+            CheckoutService.SaveOrder(order);
 
-            //CheckoutService.SaveOrder(order);
-
+            return response.Barcodes;
         }
 
         protected void ClearCheckoutCookies()
@@ -175,18 +163,18 @@ namespace bigbus.checkout.Models
             //put session in complete mode
         }
 
-        protected void CreateQrImages(BookingResult result, Order order)
+        protected void CreateQrImages(Barcode[] barcodes, Order order)
         {
             //make the QR code Image
-            foreach (var code in result.Barcodes)
+            foreach (var code in barcodes)
             {
-                var chartUrl = string.Format(GoogleChartUrl, code.Code);
+                var chartUrl = string.Format(GoogleChartUrl, code.BarcodeAsText);
 
                 //get image from google
                 Log("Downloading QR Image from google basketid: " + order.BasketId);
                 var imageBytes = ImageService.DownloadImageFromUrl(chartUrl);
 
-                //store image to basket
+                //store image to basket  **** change this to go to another table
                 Log("Create image QR Code in DB details basketid: " + order.BasketId);
                 var status = ImageDbService.GenerateQrImage(order, imageBytes, MicrositeId);
 
@@ -197,7 +185,7 @@ namespace bigbus.checkout.Models
                 }
                 else
                 {
-                    Log("QR Image Failed to create orderid:" + order.Id + " code " + code.Code);
+                    Log("QR Image Failed to create orderid:" + order.Id + " code " + code.BarcodeAsText);
                     //GoToErrorPage(GetTranslation("Basket_BadPci_Status"), "Basket status object casting crashed. basketid:" + _basketId);
                 }
 

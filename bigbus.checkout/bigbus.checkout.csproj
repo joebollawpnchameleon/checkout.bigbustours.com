@@ -201,6 +201,35 @@
     <Content Include="Web References\EcrServiceRef\TourListResponse.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </Content>
+    <None Include="Web References\EcrWServiceRefV3\Api.wsdl" />
+    <None Include="Web References\EcrWServiceRefV3\Api.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\EcrWServiceRefV3\Api0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\EcrWServiceRefV3\Api1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Web References\EcrWServiceRefV3\AvailabilityResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\EcrWServiceRefV3\BookingCancellationResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\EcrWServiceRefV3\BookingResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\EcrWServiceRefV3\BookingStatusResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\EcrWServiceRefV3\ProductListResponse.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\EcrWServiceRefV3\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -304,7 +333,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DateUtil.cs" />
+    <Compile Include="Helpers\EcrService.cs" />
     <Compile Include="Helpers\EcrServiceHelper.cs" />
+    <Compile Include="Helpers\IEcrService.cs" />
     <Compile Include="Helpers\LanguageHelper.cs" />
     <Compile Include="Models\BaseHttpApplication.cs" />
     <Compile Include="Models\BasePage.cs">
@@ -338,6 +369,11 @@
       <DependentUpon>Voucher.aspx</DependentUpon>
     </Compile>
     <Compile Include="Web References\EcrServiceRef\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\EcrWServiceRefV3\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -384,6 +420,17 @@
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>bigbus_checkout_EcrServiceRef_Api</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://bbcapi.ecr.io/3/Api.svc%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\EcrWServiceRefV3\</RelPath>
+      <UpdateFromURL>http://bbcapi.ecr.io/3/Api.svc%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>bigbus_checkout_EcrWServiceRefV3_Api</CachedSettingsPropName>
     </WebReferenceUrl>
   </ItemGroup>
   <PropertyGroup>

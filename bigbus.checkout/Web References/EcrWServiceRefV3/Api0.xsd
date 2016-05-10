@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/BBC3" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/BBC3" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ProductListRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseRequest">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ProductListRequest" nillable="true" type="tns:ProductListRequest" />
+  <xs:complexType name="BaseRequest">
+    <xs:sequence>
+      <xs:element name="AgentCode" nillable="true" type="xs:string" />
+      <xs:element name="AgentUID" nillable="true" type="xs:string" />
+      <xs:element name="ApiKey" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BaseRequest" nillable="true" type="tns:BaseRequest" />
+  <xs:complexType name="ProductListResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseResponse">
+        <xs:sequence>
+          <xs:element name="Lists" nillable="true" type="tns:Lists" />
+          <xs:element name="Products" nillable="true" type="tns:ArrayOfProduct" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ProductListResponse" nillable="true" type="tns:ProductListResponse" />
+  <xs:complexType name="BaseResponse">
+    <xs:sequence>
+      <xs:element name="ErrorDescription" nillable="true" type="xs:string" />
+      <xs:element name="Status" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BaseResponse" nillable="true" type="tns:BaseResponse" />
+  <xs:complexType name="Lists">
+    <xs:sequence>
+      <xs:element name="Branches" nillable="true" type="tns:ArrayOfBranch" />
+      <xs:element name="PriceLevels" nillable="true" type="tns:ArrayOfPriceLevel" />
+      <xs:element name="ProductGroups" nillable="true" type="tns:ArrayOfProductGroup" />
+      <xs:element name="ProductTypes" nillable="true" type="tns:ArrayOfProductType" />
+      <xs:element name="TaxGroups" nillable="true" type="tns:ArrayOfTaxGroup" />
+      <xs:element name="TicketTypes" nillable="true" type="tns:ArrayOfTicketType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Lists" nillable="true" type="tns:Lists" />
+  <xs:complexType name="ArrayOfBranch">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Branch" nillable="true" type="tns:Branch" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfBranch" nillable="true" type="tns:ArrayOfBranch" />
+  <xs:complexType name="Branch">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:ListID">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Branch" nillable="true" type="tns:Branch" />
+  <xs:complexType name="ListID">
+    <xs:sequence>
+      <xs:element name="ID" nillable="true" type="xs:string" />
+      <xs:element name="Name" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ListID" nillable="true" type="tns:ListID" />
+  <xs:complexType name="ArrayOfPriceLevel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PriceLevel" nillable="true" type="tns:PriceLevel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPriceLevel" nillable="true" type="tns:ArrayOfPriceLevel" />
+  <xs:complexType name="PriceLevel">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:ListUID">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="PriceLevel" nillable="true" type="tns:PriceLevel" />
+  <xs:complexType name="ListUID">
+    <xs:sequence>
+      <xs:element name="Name" nillable="true" type="xs:string" />
+      <xs:element name="UID" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ListUID" nillable="true" type="tns:ListUID" />
+  <xs:complexType name="ArrayOfProductGroup">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ProductGroup" nillable="true" type="tns:ProductGroup" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfProductGroup" nillable="true" type="tns:ArrayOfProductGroup" />
+  <xs:complexType name="ProductGroup">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:ListUID">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ProductGroup" nillable="true" type="tns:ProductGroup" />
+  <xs:complexType name="ArrayOfProductType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ProductType" nillable="true" type="tns:ProductType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfProductType" nillable="true" type="tns:ArrayOfProductType" />
+  <xs:complexType name="ProductType">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:ListID">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ProductType" nillable="true" type="tns:ProductType" />
+  <xs:complexType name="ArrayOfTaxGroup">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="TaxGroup" nillable="true" type="tns:TaxGroup" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTaxGroup" nillable="true" type="tns:ArrayOfTaxGroup" />
+  <xs:complexType name="TaxGroup">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:ListUID">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TaxGroup" nillable="true" type="tns:TaxGroup" />
+  <xs:complexType name="ArrayOfTicketType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="TicketType" nillable="true" type="tns:TicketType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTicketType" nillable="true" type="tns:ArrayOfTicketType" />
+  <xs:complexType name="TicketType">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:ListUID">
+        <xs:sequence />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TicketType" nillable="true" type="tns:TicketType" />
+  <xs:complexType name="ArrayOfProduct">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Product" nillable="true" type="tns:Product" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfProduct" nillable="true" type="tns:ArrayOfProduct" />
+  <xs:complexType name="Product">
+    <xs:sequence>
+      <xs:element name="Active" type="xs:boolean" />
+      <xs:element name="BranchID" type="xs:int" />
+      <xs:element name="Monitorable" type="xs:boolean" />
+      <xs:element name="Name" nillable="true" type="xs:string" />
+      <xs:element name="Picture" nillable="true" type="xs:string" />
+      <xs:element name="PrintName" nillable="true" type="xs:string" />
+      <xs:element name="PrintText" nillable="true" type="xs:string" />
+      <xs:element name="ProductDimensions" nillable="true" type="tns:ArrayOfProductDimension" />
+      <xs:element name="ProductGroupUID" nillable="true" type="xs:string" />
+      <xs:element name="ProductTypeID" type="xs:int" />
+      <xs:element name="SortOrder" type="xs:int" />
+      <xs:element name="SysID" nillable="true" type="xs:string" />
+      <xs:element name="TaxGroupUID" nillable="true" type="xs:string" />
+      <xs:element name="UID" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Product" nillable="true" type="tns:Product" />
+  <xs:complexType name="ArrayOfProductDimension">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ProductDimension" nillable="true" type="tns:ProductDimension" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfProductDimension" nillable="true" type="tns:ArrayOfProductDimension" />
+  <xs:complexType name="ProductDimension">
+    <xs:sequence>
+      <xs:element name="Active" type="xs:boolean" />
+      <xs:element name="IsAll" type="xs:boolean" />
+      <xs:element name="Name" nillable="true" type="xs:string" />
+      <xs:element name="Prices" nillable="true" type="tns:ArrayOfPrice" />
+      <xs:element name="ProductUID" nillable="true" type="xs:string" />
+      <xs:element name="SortOrder" type="xs:int" />
+      <xs:element name="SysID" nillable="true" type="xs:string" />
+      <xs:element name="TicketTypeUID" nillable="true" type="xs:string" />
+      <xs:element name="UID" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ProductDimension" nillable="true" type="tns:ProductDimension" />
+  <xs:complexType name="ArrayOfPrice">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Price" nillable="true" type="tns:Price" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPrice" nillable="true" type="tns:ArrayOfPrice" />
+  <xs:complexType name="Price">
+    <xs:sequence>
+      <xs:element name="Active" type="xs:boolean" />
+      <xs:element name="Amount" type="xs:decimal" />
+      <xs:element name="CurrencyCode" nillable="true" type="xs:string" />
+      <xs:element name="CurrencyUID" nillable="true" type="xs:string" />
+      <xs:element name="PriceLevelUID" nillable="true" type="xs:string" />
+      <xs:element name="ProductDimensionUID" nillable="true" type="xs:string" />
+      <xs:element name="SalePrice" type="xs:decimal" />
+      <xs:element name="SortOrder" type="xs:int" />
+      <xs:element name="TaxGroupUID" nillable="true" type="xs:string" />
+      <xs:element name="UID" nillable="true" type="xs:string" />
+      <xs:element name="ValidFrom" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Price" nillable="true" type="tns:Price" />
+  <xs:complexType name="AvailabilityRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseRequest">
+        <xs:sequence>
+          <xs:element name="TransactionDetails" nillable="true" type="tns:ArrayOfAvailabilityTransactionDetail" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="AvailabilityRequest" nillable="true" type="tns:AvailabilityRequest" />
+  <xs:complexType name="ArrayOfAvailabilityTransactionDetail">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="AvailabilityTransactionDetail" nillable="true" type="tns:AvailabilityTransactionDetail" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfAvailabilityTransactionDetail" nillable="true" type="tns:ArrayOfAvailabilityTransactionDetail" />
+  <xs:complexType name="AvailabilityTransactionDetail">
+    <xs:sequence>
+      <xs:element name="ProductDimensionUID" nillable="true" type="xs:string" />
+      <xs:element name="QTY" type="xs:int" />
+      <xs:element name="ValidFrom" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="AvailabilityTransactionDetail" nillable="true" type="tns:AvailabilityTransactionDetail" />
+  <xs:complexType name="AvailabilityResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseResponse">
+        <xs:sequence>
+          <xs:element name="TransactionDetails" nillable="true" type="tns:ArrayOfAvailabilityTransactionDetail" />
+          <xs:element name="TransactionReference" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="AvailabilityResponse" nillable="true" type="tns:AvailabilityResponse" />
+  <xs:complexType name="BookingRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseRequest">
+        <xs:sequence>
+          <xs:element name="SupplierTranReference" nillable="true" type="xs:string" />
+          <xs:element name="TransactionDetails" nillable="true" type="tns:ArrayOfBookingTransactionDetail" />
+          <xs:element name="TransactionReference" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="BookingRequest" nillable="true" type="tns:BookingRequest" />
+  <xs:complexType name="ArrayOfBookingTransactionDetail">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="BookingTransactionDetail" nillable="true" type="tns:BookingTransactionDetail" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfBookingTransactionDetail" nillable="true" type="tns:ArrayOfBookingTransactionDetail" />
+  <xs:complexType name="BookingTransactionDetail">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Account" nillable="true" type="tns:Account" />
+      <xs:element name="CurrencyCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DiscountAmount" type="xs:decimal" />
+      <xs:element minOccurs="0" name="DiscountCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Notes" nillable="true" type="xs:string" />
+      <xs:element name="Price" type="xs:decimal" />
+      <xs:element name="ProductDimensionUID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PromoCode" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BookingTransactionDetail" nillable="true" type="tns:BookingTransactionDetail" />
+  <xs:complexType name="Account">
+    <xs:sequence />
+  </xs:complexType>
+  <xs:element name="Account" nillable="true" type="tns:Account" />
+  <xs:complexType name="BookingResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseResponse">
+        <xs:sequence>
+          <xs:element name="Barcodes" nillable="true" type="tns:ArrayOfBarcode" />
+          <xs:element name="TransactionDetails" nillable="true" type="tns:ArrayOfBookingTransactionDetail" />
+          <xs:element name="TransactionReference" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="BookingResponse" nillable="true" type="tns:BookingResponse" />
+  <xs:complexType name="ArrayOfBarcode">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Barcode" nillable="true" type="tns:Barcode" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfBarcode" nillable="true" type="tns:ArrayOfBarcode" />
+  <xs:complexType name="Barcode">
+    <xs:sequence>
+      <xs:element name="BarcodeAsText" nillable="true" type="xs:string" />
+      <xs:element name="BarcodeDetails" nillable="true" type="tns:ArrayOfBarcodeDetail" />
+      <xs:element name="TransactionReference" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Barcode" nillable="true" type="tns:Barcode" />
+  <xs:complexType name="ArrayOfBarcodeDetail">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="BarcodeDetail" nillable="true" type="tns:BarcodeDetail" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfBarcodeDetail" nillable="true" type="tns:ArrayOfBarcodeDetail" />
+  <xs:complexType name="BarcodeDetail">
+    <xs:sequence>
+      <xs:element name="BranchID" type="xs:int" />
+      <xs:element name="Price" type="xs:decimal" />
+      <xs:element name="ProductDimensionUID" nillable="true" type="xs:string" />
+      <xs:element name="QTY" type="xs:int" />
+      <xs:element name="SysID" nillable="true" type="xs:string" />
+      <xs:element name="ValidFrom" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BarcodeDetail" nillable="true" type="tns:BarcodeDetail" />
+  <xs:complexType name="BookingCancellationRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseRequest">
+        <xs:sequence>
+          <xs:element name="TransactionReference" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="BookingCancellationRequest" nillable="true" type="tns:BookingCancellationRequest" />
+  <xs:complexType name="BookingCancellationResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseResponse">
+        <xs:sequence>
+          <xs:element name="TransactionReference" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="BookingCancellationResponse" nillable="true" type="tns:BookingCancellationResponse" />
+  <xs:complexType name="BookingStatusRequest">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseRequest">
+        <xs:sequence>
+          <xs:element name="TransactionReference" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="BookingStatusRequest" nillable="true" type="tns:BookingStatusRequest" />
+  <xs:complexType name="BookingStatusResponse">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:BaseResponse">
+        <xs:sequence>
+          <xs:element name="BookingStatus" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="BookingStatusResponse" nillable="true" type="tns:BookingStatusResponse" />
+</xs:schema>

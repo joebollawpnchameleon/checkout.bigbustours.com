@@ -5,5 +5,8 @@
     <Setting Name="bigbus_checkout_EcrServiceRef_Api" Type="(Web Service URL)" Scope="Application">
       <Value Profile="(Default)">http://bbcagents.ecr.bg/Api.svc</Value>
     </Setting>
+    <Setting Name="bigbus_checkout_EcrWServiceRefV3_Api" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://bbcapi.ecr.io/3/Api.svc</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

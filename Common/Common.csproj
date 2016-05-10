@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\EcrResponseCodes.cs" />
+    <Compile Include="Enums\EcrResponseStatusCode.cs" />
     <Compile Include="Enums\Environment.cs" />
     <Compile Include="Enums\PciBasketStatus.cs" />
     <Compile Include="Enums\QrImageSaveStatus.cs" />

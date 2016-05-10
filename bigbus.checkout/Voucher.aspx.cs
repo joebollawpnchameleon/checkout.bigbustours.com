@@ -103,7 +103,8 @@ namespace bigbus.checkout
 
             //We need to group/filter by site, ticket and date
             var uniqueMicroSitesInTourOrderLineList =
-                tourOrderLines.GroupBy(a => new { a.MicrositeId, a.TicketDate }).Select(x => new { x.Key.MicrositeId, x.Key.TicketDate }).ToList();
+                tourOrderLines.GroupBy(a => new { a.MicrositeId, a.TicketDate })
+                .Select(x => new { x.Key.MicrositeId, x.Key.TicketDate }).ToList();
 
            
                 if (tourOrderLines.Any())
@@ -195,7 +196,10 @@ namespace bigbus.checkout
                                     first.Ticket.TicketTextLine3.Trim();
                         }
 
-                       // var imageMetaData = GetObjectFactory().GetObjectByOQL("*ImageMetaData(Name=$p0$)", "QRCODE 4 " + _thisOrder.OrderNumber) as IImageMetaData;
+                    // var imageMetaData = GetObjectFactory().GetObjectByOQL("*ImageMetaData(Name=$p0$)", "QRCODE 4 " + _thisOrder.OrderNumber) as IImageMetaData;
+
+                    //get all image metadata associated to this order
+                    var imageMetaData = ImageDbService.GetOrderImageMetaData()
 
                         var newVoucherTicket = new VoucherTicket();
 
