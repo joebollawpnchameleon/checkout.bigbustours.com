@@ -1,14 +1,11 @@
 ﻿using System;
 using bigbus.checkout.data.Model;
-using bigbus.checkout.Helpers;
 using bigbus.checkout.Models;
 using Common.Enums;
-using Common.Model;
-using Services.Implementation;
 using pci = Common.Model.Pci;
 using Services.Infrastructure;
 using Basket = bigbus.checkout.data.Model.Basket;
-using Common.Model.Ecr;
+using bigbus.checkout.EcrWServiceRefV3;
 
 namespace bigbus.checkout
 {
@@ -19,9 +16,7 @@ namespace bigbus.checkout
         private string _basketId;
 
         public EcrResponseCodes EcrBookingStatus;       
-        public IPciApiServiceNoASync PciApiServices { get; set; }
-        public ICheckoutService CheckoutService { get; set; }
-       
+        public IPciApiServiceNoASync PciApiServices { get; set; }       
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -48,21 +43,26 @@ namespace bigbus.checkout
             Log("Sending booking to ECR basketid: " + _basketId);
             var result = SendBookingToEcr(newOrder);
 
-            //order must be there.
-            if (result == null || result.Barcodes.Count < 1)
+            //result from booking must be there.
+            if (result == null)
             {
-                JumpToOrderCreationError("Booking failed", "Booking failed for ECR basketId: " + _basketId);
+                JumpToOrderCreationError("Booking_failed", "Booking failed for ECR basketId: " + _basketId);
             }
 
-            newOrder.EcrBookingBarCode = result.CombinedBarcode;
-            newOrder.EcrBookingShortReference = result.BookingShortReference;
-            newOrder.EcrSupplierConfirmationNumber = result.SupplierConfirmation;
+            //make sure we have barcode returned
+            if (result.Barcodes.Length < 1)
+            {
+                JumpToOrderCreationError("Booking_failed", "Booking failed (no barcode returned for ECR basketId: " + _basketId 
+                    + System.Environment.NewLine + " message: " + result.ErrorDescription);
+            }
 
+            newOrder.EcrBookingShortReference = result.TransactionReference;
             CheckoutService.SaveOrder(newOrder);
 
-            CheckoutService.SaveOrderLineBarCodes(result, newOrder);
+            Log("Saving external barcodes");
+            SaveBarcodes(result, newOrder.OrderNumber);
 
-            CreateQrImages(result, newOrder);
+            //CreateQrImages(result, newOrder);
 
             //clear cookie sessions and remove session from checkout mode
             ClearCheckoutCookies();
@@ -71,10 +71,7 @@ namespace bigbus.checkout
 
             //Redirect user to order confirmation page or error
             Response.Redirect(string.Format("~/Checkout/Completed/{0}", newOrder.Id));
-        }        
-
-        
-        
+        }    
 
         private void LoadSession()
         {

@@ -21,17 +21,14 @@ namespace bigbus.checkout
     {
         private Order _thisOrder;
         private new List<OrderLine> _allOrderLines;
-        //private Session _thisSession;
-
+      
         private bool _isCashSale;
         private bool _isRemittanceSale;
 
         public bool IsTradeTicketSale;
 
-        public List<VoucherTicket> MainList = new List<VoucherTicket>();
-
-        public ICheckoutService CheckoutService { get; set; }
-
+        public List<VoucherTicket> MainList = new List<VoucherTicket>();               
+        
         protected void Page_Load(object sender, EventArgs e)
         {
             //EnsureSessionCorrectlyEstablished(); // uses virtual function so logic can be overridden
@@ -49,451 +46,432 @@ namespace bigbus.checkout
             _allOrderLines = _thisOrder.OrderLines.ToList();
 
             var isPayPalTransaction = _thisOrder.PaymentMethod.Equals("PAYPAL", StringComparison.OrdinalIgnoreCase);
-
-            //if (!string.IsNullOrWhiteSpace(Request["sid"]))
-            //{
-            //    _thisSession = GetObjectFactory().GetByOQL<Session>("*(1)Session(Id = $p0$)", Request["sid"]);
-            //}
-
-            //var thisAgentOrder = GetObjectFactory().GetByOQL<AgentOrder>("?(*)AgentOrder(Order_Id = $p0$)", thisOrderId);
-
-            //if (thisAgentOrder != null)
-            //{
-            //    _isCashSale = thisAgentOrder.IsCashSale;
-            //    _isRemittanceSale = thisAgentOrder.IsRemittanceSale;
-            //    IsTradeTicketSale = thisAgentOrder.IsTradeTicketSale;
-            //}
-
-           // bool agentPurchase = false;
-
-            //if (!string.IsNullOrEmpty(Request["ap"]))
-            //{
-            //    agentPurchase = Request["ap"].Trim() == "1" || Request["ap"].Trim() == "true";
-            //}
-
             
-
-            //if (agentPurchase)
-            //{
-            //    var printAgentTicket = false;
-
-            //    if (Request["pat"] != null)
-            //    {
-            //        try
-            //        {
-            //            printAgentTicket = Convert.ToBoolean(Request["pat"]);
-            //        }
-            //        catch
-            //        {
-            //            printAgentTicket = false;
-            //        }
-            //    }
-
-            //    if (printAgentTicket)
-            //    {
-            //        WriteMerchantReceiptDetails();
-            //    }
-
-            //    WriteCustomerReceiptDetails();
-            //}
-
             var tourOrderLines = _allOrderLines.Where(a => a.TicketTorA == "Tour").ToList();
 
             var attractionOrderLines = _allOrderLines.Where(a => a.TicketTorA == "Attraction").ToList();
 
-            //We need to group/filter by site, ticket and date
-            var uniqueMicroSitesInTourOrderLineList =
-                tourOrderLines.GroupBy(a => new { a.MicrositeId, a.TicketDate })
-                .Select(x => new { x.Key.MicrositeId, x.Key.TicketDate }).ToList();
+            //get all Ecr barcodes
+            var barcodes = ImageDbService.GetOrderEcrBarcodes(_thisOrder.OrderNumber);
 
-           
-                if (tourOrderLines.Any())
+            //make sure we have some barcodes
+            if(barcodes == null || barcodes.Count < 1)
+            {
+                Log("Barcodes failed to retrieve for ordernumber: " + _thisOrder.OrderNumber);
+                return;
+            }
+
+            //group orderlines by barcode images
+            foreach(var barcode in barcodes)
+            {
+                var imageId = barcode.ImageId; //retrieve img metadata from this
+
+                //get corresponding orderlines  *** when u save ticket id in barcodes, get our ticketid from ecr productuid
+                var tempOrderLines = _allOrderLines.Where(x => x.TicketId.Equals(barcode.TicketId));
+
+                var ticket = TicketService.GetTicketById(barcode.TicketId);
+
+                MainList.Add(
+                        new VoucherTicket
+                        {
+                             OrderLines = tempOrderLines.ToList(),
+                             Ticket = ticket
+                        }
+                    );
+            }
+
+        }
+
+        public void RenderVoucherDetails()
+        {
+            if (tourOrderLines.Any())
+            {
+                if (uniqueMicroSitesInTourOrderLineList.Count == 1)
                 {
-                    if (uniqueMicroSitesInTourOrderLineList.Count == 1)
+                    //*** just check that QR Images exist UseOrderQrCode(_thisOrder);
+
+                    var validDate = DateUtil.NullDate;
+                    var ticketsitename = tourOrderLines[0].MicroSite.Name;
+
+                    var validTicketname =
+                        tourOrderLines[0].Ticket.Name.ToLower().Contains(ticketsitename.ToLower()) ?
+                            tourOrderLines[0].Ticket.Name :
+                            ticketsitename + " " + tourOrderLines[0].Ticket.Name;
+
+                    var ticketline1 =
+                        ((string.IsNullOrWhiteSpace(tourOrderLines[0].Ticket.TicketTextTopLine) ?
+                            string.Empty :
+                            tourOrderLines[0].Ticket.TicketTextTopLine.Trim() + " ") +
+                         (string.IsNullOrWhiteSpace(tourOrderLines[0].Ticket.TicketTextMiddleLine) ?
+                             string.Empty :
+                             tourOrderLines[0].Ticket.TicketTextMiddleLine.Trim() + " ") +
+                         (string.IsNullOrWhiteSpace(tourOrderLines[0].Ticket.TicketTextBottomLine) ?
+                             string.Empty :
+                             tourOrderLines[0].Ticket.TicketTextBottomLine.Trim() + " "))
+                            .Trim();
+
+                    var ticketline2 =
+                        string.IsNullOrWhiteSpace(tourOrderLines[0].Ticket.TicketTextLine2) ?
+                            string.Empty :
+                            tourOrderLines[0].Ticket.TicketTextLine2.Trim();
+
+                    var ticketline3 =
+                        string.IsNullOrWhiteSpace(tourOrderLines[0].Ticket.TicketTextLine3) ?
+                            string.Empty :
+                            tourOrderLines[0].Ticket.TicketTextLine3.Trim();
+
+                    var gdeparturet = string.Empty;
+                    var gdeparturep = string.Empty;
+
+                    var olist =
+                        tourOrderLines.Where(
+                            a =>
+                                a.TicketTorA == "Tour" &&
+                                a.TicketDate != DateUtil.NullDate &&
+                                a.TicketDate != new DateTime())
+                            .ToList();
+
+                    if (olist.Any())
                     {
-                        //*** just check that QR Images exist UseOrderQrCode(_thisOrder);
+                        var first = olist.OrderBy(a => a.TicketDate).FirstOrDefault();
 
-                        var validDate = DateUtil.NullDate;
-                        var ticketsitename = tourOrderLines[0].MicroSite.Name;
+                        validDate = first.TicketDate ?? DateUtil.NullDate;
 
-                        var validTicketname =
-                            tourOrderLines[0].Ticket.Name.ToLower().Contains(ticketsitename.ToLower()) ?
-                                tourOrderLines[0].Ticket.Name :
-                                ticketsitename + " " + tourOrderLines[0].Ticket.Name;
+                        if (first.TicketType.ToLower().IndexOf("group") >= 0)
+                        {
+                            gdeparturet = first.DepartureTimeHour.PadLeft(2, '0') + ":" +
+                                          first.DepartureTimeMinute.PadLeft(2, '0');
+                            gdeparturep = first.DeparturePoint;
+                        }
+
+                        ticketsitename = first.MicroSite.Name;
+
+                        validTicketname =
+                            first.Ticket.Name.ToLower().Contains(ticketsitename.ToLower()) ?
+                                first.Ticket.Name :
+                                ticketsitename + " " + first.Ticket.Name;
+
+                        ticketline1 =
+                            ((string.IsNullOrWhiteSpace(first.Ticket.TicketTextTopLine) ?
+                                string.Empty :
+                                first.Ticket.TicketTextTopLine.Trim() + " ") +
+                             (string.IsNullOrWhiteSpace(first.Ticket.TicketTextMiddleLine) ?
+                                 string.Empty :
+                                 first.Ticket.TicketTextMiddleLine.Trim() + " ") +
+                             (string.IsNullOrWhiteSpace(first.Ticket.TicketTextBottomLine) ?
+                                 string.Empty :
+                                 first.Ticket.TicketTextBottomLine.Trim() + " ")).Trim();
+
+                        ticketline2 =
+                            string.IsNullOrWhiteSpace(first.Ticket.TicketTextLine2) ?
+                                string.Empty :
+                                first.Ticket.TicketTextLine2.Trim();
+
+                        ticketline3 =
+                            string.IsNullOrWhiteSpace(first.Ticket.TicketTextLine3) ?
+                                string.Empty :
+                                first.Ticket.TicketTextLine3.Trim();
+                    }
+
+                    //get all image metadata associated to this order
+                    //***var imageMetaData = ImageDbService.GetOrderImageMetaData();
+
+                    var newVoucherTicket = new VoucherTicket();
+
+                    newVoucherTicket.MainDate =
+                        validDate == DateUtil.NullDate ?
+                            "Open day ticket" :
+                            FormatDate(validDate);
+
+                    if (isPayPalTransaction)
+                    {
+                        newVoucherTicket.PaymentType = "PayPal";
+                        newVoucherTicket.CcNumber = string.Empty;
+                    }
+                    else
+                    {
+                        newVoucherTicket.PaymentType = "CC number:";
+                        newVoucherTicket.CcNumber =
+                            !string.IsNullOrEmpty(_thisOrder.CcLast4Digits)
+                                ? "****" + _thisOrder.CcLast4Digits
+                                : string.Empty;
+                    }
+
+                    if (_isCashSale)
+                    {
+                        newVoucherTicket.PaymentType = _isRemittanceSale ? "REMIT" : "Cash Sale";
+                        newVoucherTicket.CcNumber = string.Empty;
+
+                        ticketline1 =
+                            string.IsNullOrWhiteSpace(tourOrderLines[0].Ticket.TicketTextTopLine) ?
+                                string.Empty :
+                                tourOrderLines[0].Ticket.TicketTextTopLine.Trim() + " " +
+                                "Please bring proof of ID";
+                    }
+
+                    //newVoucherTicket.CodeImageUrl =
+                    //    imageMetaData != null ?
+                    //        "/UploadedImages/" + imageMetaData.Image_Id + "." + imageMetaData.ImageType + "?w=200" :
+                    //        string.Empty;
+
+                    newVoucherTicket.TicketName = validTicketname;
+
+                    if (IsTradeTicketSale && !string.IsNullOrWhiteSpace(_thisOrder.GiftTravelerName))
+                    {
+                        newVoucherTicket.LeadName = _thisOrder.GiftTravelerName;
+                    }
+                    else
+                    {
+                        if (isPayPalTransaction || string.IsNullOrWhiteSpace(_thisOrder.NameOnCard))
+                        {
+                            newVoucherTicket.LeadName = _thisOrder.UserName;
+                        }
+                        else
+                        {
+                            newVoucherTicket.LeadName = _thisOrder.NameOnCard;
+                        }
+                    }
+
+                    newVoucherTicket.AgentRef =
+                        string.IsNullOrWhiteSpace(_thisOrder.AgentRef) ?
+                            string.Empty :
+                            _thisOrder.AgentRef;
+
+                    newVoucherTicket.OrderNumber = _thisOrder.OrderNumber.ToString();
+
+                    var total = 0.0;
+
+                    var adultQtylist = tourOrderLines.Where(x => x.TicketType.Equals("Adult")).ToList();
+                    var childQtylist = tourOrderLines.Where(x => x.TicketType.Equals("Child")).ToList();
+                    var familyQtylist = tourOrderLines.Where(x => x.TicketType.Equals("Family")).ToList();
+                    var groupQtylist = tourOrderLines.Where(x => x.TicketType.Contains("Group")).ToList();
+
+                    var aQuantity = adultQtylist.Sum(a => a.TicketQuantity);
+                    var alineTotal = adultQtylist.Sum(a => a.GrossOrderLineValue);
+
+                    newVoucherTicket.AdultQty = (aQuantity != null && adultQtylist.Any()) ? aQuantity.Value : 0;
+                    total = (alineTotal != null && adultQtylist.Any()) ? alineTotal.Value : 0.0f;
+
+
+
+                    newVoucherTicket.ChildQty = childQtylist.Count() > 0 ? childQtylist.Sum(a => a.TicketQuantity) : 0;
+                    total += childQtylist.Count() > 0 ? childQtylist.Sum(a => a.GrossOrderLineValue) : 0;
+
+
+                    newVoucherTicket.FamilyQty = familyQtylist.Count() > 0 ? familyQtylist.Sum(a => a.TicketQuantity) : 0;
+                    total += familyQtylist.Count() > 0 ? familyQtylist.Sum(a => a.GrossOrderLineValue) : 0;
+
+
+                    newVoucherTicket.GroupQty = groupQtylist.Count() > 0 ? groupQtylist.Sum(a => a.TicketQuantity) : 0;
+                    total += groupQtylist.Count() > 0 ? groupQtylist.Sum(a => a.GrossOrderLineValue) : 0;
+
+                    newVoucherTicket.Price =
+                        (_thisOrder.Currency != null ? _thisOrder.Currency.Symbol : string.Empty) +
+                        total.ToString("0,0.00");
+
+                    newVoucherTicket.OrderTotal =
+                        (attractionOrderLines.Count() > 0 ?
+                            ((_thisOrder.Currency != null ?
+                                _thisOrder.Currency.Symbol :
+                                string.Empty) +
+                             _thisOrder.Total.ToString("0,0.00")) :
+                            string.Empty);
+
+                    newVoucherTicket.TicketLine1 = ticketline1;
+                    newVoucherTicket.TicketLine2 = ticketline2;
+                    newVoucherTicket.TicketLine3 = ticketline3;
+                    newVoucherTicket.GroupCQty = 0;
+                    newVoucherTicket.GroupAQty = 0;
+                    newVoucherTicket.ConcessionQty = 0;
+
+                    MainList.Add(newVoucherTicket);
+                }
+                else
+                {
+                    CreateBarcodeTickets(tourOrderLines, isPayPalTransaction);
+                }
+            }
+        }
+
+        public void RenderAttractionEVoucher()
+        {
+            if (attractionOrderLines.Any())
+            {
+                var templist =
+                    attractionOrderLines
+                        .GroupBy(a => new { a.Ticket_Id, a.TicketDate, })
+                        .Select(x => new { x.Key.Ticket_Id, x.Key.TicketDate })
+                        .ToList();
+
+                foreach (var ticket in templist)
+                {
+                    var ticket1 = ticket;
+                    var innerlist = attractionOrderLines.Where(a => a.Ticket_Id == ticket1.Ticket_Id && a.TicketDate == ticket1.TicketDate).ToList();
+
+                    if (innerlist.Any())
+                    {
+                        UseAttractionQrCode(_thisOrder, ticket1.Ticket_Id, ticket1.TicketDate);
+
+                        var ticketsitename = innerlist[0].MicroSite.Name;
+
+                        var validTicketname = innerlist[0].Ticket.Name.ToLower().Contains(ticketsitename.ToLower())
+                            ? innerlist[0].Ticket.Name
+                            : ticketsitename + " " + innerlist[0].Ticket.Name;
 
                         var ticketline1 =
-                            ((string.IsNullOrWhiteSpace(tourOrderLines[0].Ticket.TicketTextTopLine) ?
+                            ((string.IsNullOrWhiteSpace(innerlist[0].Ticket.TicketTextTopLine) ?
                                 string.Empty :
-                                tourOrderLines[0].Ticket.TicketTextTopLine.Trim() + " ") +
-                             (string.IsNullOrWhiteSpace(tourOrderLines[0].Ticket.TicketTextMiddleLine) ?
+                                innerlist[0].Ticket.TicketTextTopLine.Trim() + " ") +
+                             (string.IsNullOrWhiteSpace(innerlist[0].Ticket.TicketTextMiddleLine) ?
                                  string.Empty :
-                                 tourOrderLines[0].Ticket.TicketTextMiddleLine.Trim() + " ") +
-                             (string.IsNullOrWhiteSpace(tourOrderLines[0].Ticket.TicketTextBottomLine) ?
+                                 innerlist[0].Ticket.TicketTextMiddleLine.Trim() + " ") +
+                             (string.IsNullOrWhiteSpace(innerlist[0].Ticket.TicketTextBottomLine) ?
                                  string.Empty :
-                                 tourOrderLines[0].Ticket.TicketTextBottomLine.Trim() + " "))
+                                 innerlist[0].Ticket.TicketTextBottomLine.Trim() + " "))
                                 .Trim();
 
                         var ticketline2 =
-                            string.IsNullOrWhiteSpace(tourOrderLines[0].Ticket.TicketTextLine2) ?
+                            string.IsNullOrWhiteSpace(innerlist[0].Ticket.TicketTextLine2) ?
                                 string.Empty :
-                                tourOrderLines[0].Ticket.TicketTextLine2.Trim();
+                                innerlist[0].Ticket.TicketTextLine2.Trim();
 
                         var ticketline3 =
-                            string.IsNullOrWhiteSpace(tourOrderLines[0].Ticket.TicketTextLine3) ?
+                            string.IsNullOrWhiteSpace(innerlist[0].Ticket.TicketTextLine3) ?
                                 string.Empty :
-                                tourOrderLines[0].Ticket.TicketTextLine3.Trim();
+                                innerlist[0].Ticket.TicketTextLine3.Trim();
 
                         var gdeparturet = string.Empty;
                         var gdeparturep = string.Empty;
 
-                        var olist =
-                            tourOrderLines.Where(
-                                a =>
-                                    a.TicketTorA == "Tour" &&
-                                    a.TicketDate != DateUtil.NullDate &&
-                                    a.TicketDate != new DateTime())
-                                .ToList();
-
-                        if (olist.Any())
-                        {
-                            var first = olist.OrderBy(a => a.TicketDate).FirstOrDefault();
-                            
-                            validDate = first.TicketDate ?? DateUtil.NullDate;
-
-                            if (first.TicketType.ToLower().IndexOf("group") >= 0)
+                        var vt =
+                            new VoucherTicket
                             {
-                                gdeparturet = first.DepartureTimeHour.PadLeft(2, '0') + ":" +
-                                              first.DepartureTimeMinute.PadLeft(2, '0');
-                                gdeparturep = first.DeparturePoint;
-                            }
-
-                            ticketsitename = first.MicroSite.Name;
-
-                            validTicketname =
-                                first.Ticket.Name.ToLower().Contains(ticketsitename.ToLower()) ?
-                                    first.Ticket.Name :
-                                    ticketsitename + " " + first.Ticket.Name;
-
-                            ticketline1 =
-                                ((string.IsNullOrWhiteSpace(first.Ticket.TicketTextTopLine) ?
-                                    string.Empty :
-                                    first.Ticket.TicketTextTopLine.Trim() + " ") +
-                                 (string.IsNullOrWhiteSpace(first.Ticket.TicketTextMiddleLine) ?
-                                     string.Empty :
-                                     first.Ticket.TicketTextMiddleLine.Trim() + " ") +
-                                 (string.IsNullOrWhiteSpace(first.Ticket.TicketTextBottomLine) ?
-                                     string.Empty :
-                                     first.Ticket.TicketTextBottomLine.Trim() + " ")).Trim();
-
-                            ticketline2 =
-                                string.IsNullOrWhiteSpace(first.Ticket.TicketTextLine2) ?
-                                    string.Empty :
-                                    first.Ticket.TicketTextLine2.Trim();
-
-                            ticketline3 =
-                                string.IsNullOrWhiteSpace(first.Ticket.TicketTextLine3) ?
-                                    string.Empty :
-                                    first.Ticket.TicketTextLine3.Trim();
-                        }
-
-                    // var imageMetaData = GetObjectFactory().GetObjectByOQL("*ImageMetaData(Name=$p0$)", "QRCODE 4 " + _thisOrder.OrderNumber) as IImageMetaData;
-
-                    //get all image metadata associated to this order
-                    var imageMetaData = ImageDbService.GetOrderImageMetaData()
-
-                        var newVoucherTicket = new VoucherTicket();
-
-                        newVoucherTicket.MainDate =
-                            validDate == DateUtil.NullDate ?
-                                "Open day ticket" :
-                                FormatDate(validDate);
-
-                        newVoucherTicket.GroupDeparturePoint = gdeparturep;
-                        newVoucherTicket.GroupDepartureTime = gdeparturet;
+                                MainDate = FormatDate(ticket.TicketDate),
+                                CodeImageUrl =
+                                    "/QRBARCodes/QRCodes/" +
+                                    _thisOrder.OrderNumber +
+                                    ticket1.Ticket_Id +
+                                    ticket1.TicketDate.ToString("ddMMyyyy") +
+                                    ".png",
+                                TicketName = validTicketname,
+                                LeadName = _thisOrder.NameOnCard,
+                                AttractionImageUrl = GetMetaDataImageUrl(innerlist[0].Ticket),
+                                OrderNumber = _thisOrder.OrderNumber.ToString(),
+                                TicketLine1 = ticketline1,
+                                TicketLine2 = ticketline2,
+                                TicketLine3 = ticketline3,
+                                IsAttraction = true
+                            };
 
                         if (isPayPalTransaction)
                         {
-                            newVoucherTicket.PaymentType = "PayPal";
-                            newVoucherTicket.CcNumber = string.Empty;
+                            vt.PaymentType = "PayPal";
+                            vt.CcNumber = string.Empty;
                         }
                         else
                         {
-                            newVoucherTicket.PaymentType = "CC number:";
-                            newVoucherTicket.CcNumber =
-                                !string.IsNullOrEmpty(_thisOrder.CcLast4Digits)
-                                    ? "****" + _thisOrder.CcLast4Digits
+                            vt.PaymentType = "CC number:";
+                            vt.CcNumber =
+                                !string.IsNullOrEmpty(_thisOrder.CCLast4Digits)
+                                    ? "****" + _thisOrder.CCLast4Digits
                                     : string.Empty;
                         }
 
                         if (_isCashSale)
                         {
-                            newVoucherTicket.PaymentType = _isRemittanceSale ? "REMIT" : "Cash Sale";
-                            newVoucherTicket.CcNumber = string.Empty;
-
-                            ticketline1 =
-                                string.IsNullOrWhiteSpace(tourOrderLines[0].Ticket.TicketTextTopLine) ?
-                                    string.Empty :
-                                    tourOrderLines[0].Ticket.TicketTextTopLine.Trim() + " " +
-                                    "Please bring proof of ID";
+                            vt.PaymentType = _isRemittanceSale ? "REMIT" : "Cash Sale";
+                            vt.CcNumber = string.Empty;
                         }
 
-                        newVoucherTicket.CodeImageUrl =
-                            imageMetaData != null ?
-                                "/UploadedImages/" + imageMetaData.Image_Id + "." + imageMetaData.ImageType + "?w=200" :
-                                string.Empty;
+                        var total = new decimal(0);
 
-                        newVoucherTicket.TicketName = validTicketname;
+                        var adultQtylist = innerlist.Where(x => x.TicketType.Equals("Adult")).ToList();
 
-                        if (IsTradeTicketSale && !string.IsNullOrWhiteSpace(_thisOrder.GiftTravelerName))
-                        {
-                            newVoucherTicket.LeadName = _thisOrder.GiftTravelerName;
-                        }
-                        else
-                        {
-                            if (isPayPalTransaction || string.IsNullOrWhiteSpace(_thisOrder.NameOnCard))
-                            {
-                                newVoucherTicket.LeadName = _thisOrder.UserName;
-                            }
-                            else
-                            {
-                                newVoucherTicket.LeadName = _thisOrder.NameOnCard;
-                            }
-                        }
+                        vt.AdultQty = adultQtylist.Count() > 0 ? adultQtylist.Sum(a => a.TicketQuantity) : 0;
+                        total += adultQtylist.Count() > 0 ? adultQtylist.Sum(a => a.GrossOrderLineValue) : 0;
 
-                        newVoucherTicket.AgentRef =
-                            string.IsNullOrWhiteSpace(_thisOrder.AgentRef) ?
-                                string.Empty :
-                                _thisOrder.AgentRef;
+                        var childQtylist = innerlist.Where(x => x.TicketType.Equals("Child")).ToList();
 
-                        newVoucherTicket.OrderNumber = _thisOrder.OrderNumber.ToString();
-
-                        var total = 0.0;
-
-                        var adultQtylist = tourOrderLines.Where(x => x.TicketType.Equals("Adult")).ToList();
-                        var childQtylist = tourOrderLines.Where(x => x.TicketType.Equals("Child")).ToList();
-                        var familyQtylist = tourOrderLines.Where(x => x.TicketType.Equals("Family")).ToList();
-                        var groupQtylist = tourOrderLines.Where(x => x.TicketType.Contains("Group")).ToList();
-
-                        var aQuantity = adultQtylist.Sum(a => a.TicketQuantity);
-                        var alineTotal = adultQtylist.Sum(a => a.GrossOrderLineValue);
-
-                        newVoucherTicket.AdultQty = (aQuantity != null && adultQtylist.Any()) ? aQuantity.Value : 0;
-                        total = (alineTotal != null && adultQtylist.Any()) ? alineTotal.Value : 0.0f;
-
-                       
-
-                        newVoucherTicket.ChildQty = childQtylist.Count() > 0 ? childQtylist.Sum(a => a.TicketQuantity) : 0;
+                        vt.ChildQty = childQtylist.Count() > 0 ? childQtylist.Sum(a => a.TicketQuantity) : 0;
                         total += childQtylist.Count() > 0 ? childQtylist.Sum(a => a.GrossOrderLineValue) : 0;
 
-                       
-                        newVoucherTicket.FamilyQty = familyQtylist.Count() > 0 ? familyQtylist.Sum(a => a.TicketQuantity) : 0;
+                        var familyQtylist = innerlist.Where(x => x.TicketType.Equals("Family")).ToList();
+
+                        vt.FamilyQty = familyQtylist.Count() > 0 ? familyQtylist.Sum(a => a.TicketQuantity) : 0;
                         total += familyQtylist.Count() > 0 ? familyQtylist.Sum(a => a.GrossOrderLineValue) : 0;
 
-                       
-                        newVoucherTicket.GroupQty = groupQtylist.Count() > 0 ? groupQtylist.Sum(a => a.TicketQuantity) : 0;
-                        total += groupQtylist.Count() > 0 ? groupQtylist.Sum(a => a.GrossOrderLineValue) : 0;
+                        var concQtylist = innerlist.Where(x => x.TicketType.Equals("Concession")).ToList();
 
-                        newVoucherTicket.Price =
-                            (_thisOrder.Currency != null ? _thisOrder.Currency.Symbol : string.Empty) +
-                            total.ToString("0,0.00");
+                        vt.ConcessionQty = concQtylist.Count() > 0 ? concQtylist.Sum(a => a.TicketQuantity) : 0;
+                        total += concQtylist.Count() > 0 ? concQtylist.Sum(a => a.GrossOrderLineValue) : 0;
 
-                        newVoucherTicket.OrderTotal =
-                            (attractionOrderLines.Count() > 0 ?
-                                ((_thisOrder.Currency != null ?
-                                    _thisOrder.Currency.Symbol :
-                                    string.Empty) +
-                                 _thisOrder.Total.ToString("0,0.00")) :
-                                string.Empty);
+                        vt.Price = (_thisOrder.Currency != null ? _thisOrder.Currency.Symbol : string.Empty) + total.ToString("0,0.00");
 
-                        newVoucherTicket.TicketLine1 = ticketline1;
-                        newVoucherTicket.TicketLine2 = ticketline2;
-                        newVoucherTicket.TicketLine3 = ticketline3;
-                        newVoucherTicket.GroupCQty = 0;
-                        newVoucherTicket.GroupAQty = 0;
-                        newVoucherTicket.ConcessionQty = 0;
+                        vt.GroupCQty = 0;
+                        vt.GroupAQty = 0;
+                        vt.GroupQty = 0;
 
-                        MainList.Add(newVoucherTicket);
-                    }
-                    else
-                    {
-                        CreateBarcodeTickets(tourOrderLines, isPayPalTransaction);
+                        MainList.Add(vt);
                     }
                 }
-
-                if (attractionOrderLines.Any())
-                {
-                    var templist =
-                        attractionOrderLines
-                            .GroupBy(a => new { a.Ticket_Id, a.TicketDate, })
-                            .Select(x => new { x.Key.Ticket_Id, x.Key.TicketDate })
-                            .ToList();
-
-                    foreach (var ticket in templist)
-                    {
-                        var ticket1 = ticket;
-                        var innerlist = attractionOrderLines.Where(a => a.Ticket_Id == ticket1.Ticket_Id && a.TicketDate == ticket1.TicketDate).ToList();
-
-                        if (innerlist.Any())
-                        {
-                            UseAttractionQrCode(_thisOrder, ticket1.Ticket_Id, ticket1.TicketDate);
-
-                            var ticketsitename = innerlist[0].MicroSite.Name;
-
-                            var validTicketname = innerlist[0].Ticket.Name.ToLower().Contains(ticketsitename.ToLower())
-                                ? innerlist[0].Ticket.Name
-                                : ticketsitename + " " + innerlist[0].Ticket.Name;
-
-                            var ticketline1 =
-                                ((string.IsNullOrWhiteSpace(innerlist[0].Ticket.TicketTextTopLine) ?
-                                    string.Empty :
-                                    innerlist[0].Ticket.TicketTextTopLine.Trim() + " ") +
-                                 (string.IsNullOrWhiteSpace(innerlist[0].Ticket.TicketTextMiddleLine) ?
-                                     string.Empty :
-                                     innerlist[0].Ticket.TicketTextMiddleLine.Trim() + " ") +
-                                 (string.IsNullOrWhiteSpace(innerlist[0].Ticket.TicketTextBottomLine) ?
-                                     string.Empty :
-                                     innerlist[0].Ticket.TicketTextBottomLine.Trim() + " "))
-                                    .Trim();
-
-                            var ticketline2 =
-                                string.IsNullOrWhiteSpace(innerlist[0].Ticket.TicketTextLine2) ?
-                                    string.Empty :
-                                    innerlist[0].Ticket.TicketTextLine2.Trim();
-
-                            var ticketline3 =
-                                string.IsNullOrWhiteSpace(innerlist[0].Ticket.TicketTextLine3) ?
-                                    string.Empty :
-                                    innerlist[0].Ticket.TicketTextLine3.Trim();
-
-                            var gdeparturet = string.Empty;
-                            var gdeparturep = string.Empty;
-
-                            var vt =
-                                new VoucherTicket
-                                {
-                                    MainDate = FormatDate(ticket.TicketDate),
-                                    CodeImageUrl =
-                                        "/QRBARCodes/QRCodes/" +
-                                        _thisOrder.OrderNumber +
-                                        ticket1.Ticket_Id +
-                                        ticket1.TicketDate.ToString("ddMMyyyy") +
-                                        ".png",
-                                    TicketName = validTicketname,
-                                    LeadName = _thisOrder.NameOnCard,
-                                    AttractionImageUrl = GetMetaDataImageUrl(innerlist[0].Ticket),
-                                    OrderNumber = _thisOrder.OrderNumber.ToString(),
-                                    TicketLine1 = ticketline1,
-                                    TicketLine2 = ticketline2,
-                                    TicketLine3 = ticketline3,
-                                    IsAttraction = true
-                                };
-
-                            if (isPayPalTransaction)
-                            {
-                                vt.PaymentType = "PayPal";
-                                vt.CcNumber = string.Empty;
-                            }
-                            else
-                            {
-                                vt.PaymentType = "CC number:";
-                                vt.CcNumber =
-                                    !string.IsNullOrEmpty(_thisOrder.CCLast4Digits)
-                                        ? "****" + _thisOrder.CCLast4Digits
-                                        : string.Empty;
-                            }
-
-                            if (_isCashSale)
-                            {
-                                vt.PaymentType = _isRemittanceSale ? "REMIT" : "Cash Sale";
-                                vt.CcNumber = string.Empty;
-                            }
-
-                            var total = new decimal(0);
-
-                            var adultQtylist = innerlist.Where(x => x.TicketType.Equals("Adult")).ToList();
-
-                            vt.AdultQty = adultQtylist.Count() > 0 ? adultQtylist.Sum(a => a.TicketQuantity) : 0;
-                            total += adultQtylist.Count() > 0 ? adultQtylist.Sum(a => a.GrossOrderLineValue) : 0;
-
-                            var childQtylist = innerlist.Where(x => x.TicketType.Equals("Child")).ToList();
-
-                            vt.ChildQty = childQtylist.Count() > 0 ? childQtylist.Sum(a => a.TicketQuantity) : 0;
-                            total += childQtylist.Count() > 0 ? childQtylist.Sum(a => a.GrossOrderLineValue) : 0;
-
-                            var familyQtylist = innerlist.Where(x => x.TicketType.Equals("Family")).ToList();
-
-                            vt.FamilyQty = familyQtylist.Count() > 0 ? familyQtylist.Sum(a => a.TicketQuantity) : 0;
-                            total += familyQtylist.Count() > 0 ? familyQtylist.Sum(a => a.GrossOrderLineValue) : 0;
-
-                            var concQtylist = innerlist.Where(x => x.TicketType.Equals("Concession")).ToList();
-
-                            vt.ConcessionQty = concQtylist.Count() > 0 ? concQtylist.Sum(a => a.TicketQuantity) : 0;
-                            total += concQtylist.Count() > 0 ? concQtylist.Sum(a => a.GrossOrderLineValue) : 0;
-
-                            vt.Price = (_thisOrder.Currency != null ? _thisOrder.Currency.Symbol : string.Empty) + total.ToString("0,0.00");
-
-                            vt.GroupCQty = 0;
-                            vt.GroupAQty = 0;
-                            vt.GroupQty = 0;
-
-                            MainList.Add(vt);
-                        }
-                    }
-                }
-           
+            }
         }
 
-        public struct VoucherTicket
+        public class VoucherTicket
         {
-            public string TicketName { get; set; }
+            public Ticket Ticket { get; set; }
 
-            public string MainDate { get; set; }
+            public List<OrderLine> OrderLines { get; set; }
 
-            public int AdultQty { get; set; }
+            //public string TicketName { get; set; }
 
-            public int ChildQty { get; set; }
+            //public string MainDate { get; set; }
 
-            public int FamilyQty { get; set; }
+            //public int AdultQty { get; set; }
 
-            public int ConcessionQty { get; set; }
+            //public int ChildQty { get; set; }
 
-            public int GroupQty { get; set; }
+            //public int FamilyQty { get; set; }
 
-            public string Barcode { get; set; }
+            //public int ConcessionQty { get; set; }
 
-            public string LeadName { get; set; }
+            //public int GroupQty { get; set; }
 
-            public string PaymentType { get; set; }
+            //public string Barcode { get; set; }
 
-            public string CcNumber { get; set; }
+            //public string LeadName { get; set; }
+
+            //public string PaymentType { get; set; }
+
+            //public string CcNumber { get; set; }
 
             public string AttractionImageUrl { get; set; }
 
-            public string CodeImageUrl { get; set; }
+            //public string CodeImageUrl { get; set; }
 
-            public string GroupDepartureTime { get; set; }
+            //public string GroupDepartureTime { get; set; }
 
-            public string GroupDeparturePoint { get; set; }
+            //public string GroupDeparturePoint { get; set; }
 
-            public int GroupAQty { get; set; }
+            //public int GroupAQty { get; set; }
 
-            public int GroupCQty { get; set; }
+            //public int GroupCQty { get; set; }
 
-            public string OrderNumber { get; set; }
+            //public string OrderNumber { get; set; }
 
-            public string AgentRef { get; set; }
+            //public string AgentRef { get; set; }
 
-            public string Price { get; set; }
+            //public string Price { get; set; }
 
-            public string OrderTotal { get; set; }
+            //public string OrderTotal { get; set; }
 
-            public string TicketLine1 { get; set; }
+            //public string TicketLine1 { get; set; }
 
-            public string TicketLine2 { get; set; }
+            //public string TicketLine2 { get; set; }
 
-            public string TicketLine3 { get; set; }
+            //public string TicketLine3 { get; set; }
 
-            public bool IsAttraction { get; set; }
+            //public bool IsAttraction { get; set; }
         }
 
         private static string FormatDate(DateTime dt)

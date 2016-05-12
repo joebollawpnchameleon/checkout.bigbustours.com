@@ -54,6 +54,7 @@
     <Compile Include="Model\BasketLine.cs" />
     <Compile Include="Model\Country.cs" />
     <Compile Include="Model\Currency.cs" />
+    <Compile Include="Model\EcrOrderLineBarcode.cs" />
     <Compile Include="Model\Image.cs" />
     <Compile Include="Model\ImageFolder.cs" />
     <Compile Include="Model\ImageMetaData.cs" />

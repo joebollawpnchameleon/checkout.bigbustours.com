@@ -96,6 +96,7 @@ namespace bigbus.checkout
             builder.RegisterType<GenericDataRepository<TransactionAddressPaypal>>().As<IGenericDataRepository<TransactionAddressPaypal>>();
             builder.RegisterType<GenericDataRepository<OrderLine>>().As<IGenericDataRepository<OrderLine>>();
             builder.RegisterType<GenericDataRepository<OrderLineGeneratedBarcode>>().As<IGenericDataRepository<OrderLineGeneratedBarcode>>();
+            builder.RegisterType<GenericDataRepository<EcrOrderLineBarcode>>().As<IGenericDataRepository<EcrOrderLineBarcode>>();
 
             builder.RegisterType<TranslationService>().As<ITranslationService>();
             builder.RegisterType<CheckoutService>().As<ICheckoutService>();

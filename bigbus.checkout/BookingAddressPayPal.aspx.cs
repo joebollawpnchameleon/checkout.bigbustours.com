@@ -18,11 +18,11 @@ namespace bigbus.checkout
 {
     public partial class BookingAddressPayPal : BasePage
     {
-
-        public ICheckoutService CheckoutService { get; set; }
+        private Session _session;
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            _session = GetSession();
             GetPayerDetails();
         }
 
@@ -31,75 +31,78 @@ namespace bigbus.checkout
             if (!Page.IsValid) return;
 
             var orderId = string.Empty;
-            var session = GetSession();
-
+            
             try
             {
                 // end create new user
                 var newUser = CreateUser();
-               
-                session.InCheckoutProccess = false;
-                session.InOrderCreationProcess = true;
 
-                AuthenticationService.UpdateSession(session);
+                _session.InCheckoutProccess = false;
+                _session.InOrderCreationProcess = true;
 
-                if (session.BasketId == null)
+                AuthenticationService.UpdateSession(_session);
+
+                if (_session.BasketId == null)
                 {
-                    Log("Invalid or missing basket in session. Id:" + session.Id);
+                    Log("Invalid or missing basket in session. Id:" + _session.Id);
                     return;
                 }
 
-                var basket = BasketService.GetBasket(session.BasketId.Value);
+                var basket = BasketService.GetBasket(_session.BasketId.Value);
                 
-                var isoCurrencyCode = CurrencyService.GetCurrencyIsoCodeById(session.CurrencyId);
+                var isoCurrencyCode = CurrencyService.GetCurrencyIsoCodeById(_session.CurrencyId);
 
                 Log("Paypal log- payment to take next, next is order");
 
-                var payPalReturn = PaypalService.ConfirmPayment((basket.Total.ToString(CultureInfo.InvariantCulture)), isoCurrencyCode, session.PayPalToken, session.PayPalPayerId);
+                var payPalReturn = PaypalService.ConfirmPayment((basket.Total.ToString(CultureInfo.InvariantCulture)), isoCurrencyCode, _session.PayPalToken, _session.PayPalPayerId);
 
                 Log("Paypal log- payment taken, next is order, paypal return status: " + payPalReturn.ErrorMessage);
 
-                session.PayPalOrderId = payPalReturn.Transaction_Id;
+                _session.PayPalOrderId = payPalReturn.Transaction_Id;
                  
-                AuthenticationService.UpdateSession(session);
+                AuthenticationService.UpdateSession(_session);
 
                 if (payPalReturn.IsError)
                 {
                     throw new Exception(payPalReturn.ErrorMessage);
                 }
                 
-                var order = CheckoutService.CreateOrderPayPal(session, basket, newUser, GetClientIpAddress(), CurrentLanguageId,
+                var order = CheckoutService.CreateOrderPayPal(_session, basket, newUser, GetClientIpAddress(), CurrentLanguageId,
                     MicrositeId);
 
-                CheckoutService.CreateAddressPaypal(order, session, newUser);
+                CheckoutService.CreateAddressPaypal(order, _session, newUser);
 
                 //send booking to ECR.
                 Log("Sending booking to ECR basketid: " + basket.Id);
                 var result = SendBookingToEcr(order);
 
-                //order must be there.
-                if (result == null || result.Barcodes.Count < 1)
+                //result from booking must be there.
+                if (result == null)
                 {
-                    //***JumpToOrderCreationError("Booking failed", "Booking failed for ECR basketId: " + basket.Id);
+                    JumpToOrderCreationError("Booking_failed", "Booking failed for ECR basketId: " + basket.Id);
                 }
 
-                order.EcrBookingBarCode = result.CombinedBarcode;
-                order.EcrBookingShortReference = result.BookingShortReference;
-                order.EcrSupplierConfirmationNumber = result.SupplierConfirmation;
+                //make sure we have barcode returned
+                if (result.Barcodes.Length < 1)
+                {
+                    JumpToOrderCreationError("Booking_failed", "Booking failed (no barcode returned for ECR basketId: " + basket.Id
+                        + System.Environment.NewLine + " message: " + result.ErrorDescription);
+                }
 
+                order.EcrBookingShortReference = result.TransactionReference;
                 CheckoutService.SaveOrder(order);
 
-                CheckoutService.SaveOrderLineBarCodes(result, order);
+                Log("Saving external barcodes");
 
-                CreateQrImages(result, order);
+                SaveBarcodes(result, order.OrderNumber);
 
                 //clear cookie sessions and remove session from checkout mode
                 ClearCheckoutCookies();
 
                 //Prepare email notifications
 
-               
-
+                //Redirect user to order confirmation page or error
+                Response.Redirect(string.Format("~/Checkout/Completed/{0}", order.Id));
             }
             catch (Exception ex)
             {
@@ -108,7 +111,7 @@ namespace bigbus.checkout
             }
             finally
             {
-                UnlockSessionFromOrderCreationLock(session);
+                UnlockSessionFromOrderCreationLock(_session);
                 Log("PayPal Payment - Session unlocked");
             }
 
@@ -252,7 +255,26 @@ namespace bigbus.checkout
                 ucUserDetails.Country = paypalDetails.PayPalReturnUserInfo.AddressInfo.CountryCode;
         }
 
-       
+        private void JumpToOrderCreationError(string message, string logMessage)
+        {
+            _session.BasketId = null;
+            _session.InOrderCreationProcess = false;
+            _session.AgentUseCustomersAddress = false;
+            _session.AgentFakeUserId = null;
+            _session.AgentIsTradeTicketSale = true;
+            _session.AgentNameToPrintOnTicket = null;
+
+            AuthenticationService.UpdateSession(_session);
+
+            if (Response.Cookies[BasketCookieName] != null)
+            {
+                Response.Cookies[BasketCookieName].Expires = DateTime.Now.AddDays(-1);
+            }
+
+            GoToErrorPage(message, logMessage);
+        }
+
+        
         private void GoToErrorPage(string message, string logMessage)
         {
             Log(logMessage);

@@ -10,6 +10,8 @@ namespace bigbus.checkout.data.Model
     [Table("tb_OrderLine_GeneratedBarcode")]
     public class OrderLineGeneratedBarcode
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
         [Column(TypeName = "datetime2")]

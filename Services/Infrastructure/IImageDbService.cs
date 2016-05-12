@@ -1,5 +1,7 @@
 ﻿using bigbus.checkout.data.Model;
 using Common.Enums;
+using System;
+using System.Collections.Generic;
 
 namespace Services.Infrastructure
 {
@@ -7,6 +9,8 @@ namespace Services.Infrastructure
     {
         ImageFolder GetImageFolder(string folderName);
 
-        QrImageSaveStatus GenerateQrImage(Order order, byte[] imageChartBytes, string micrositeId);
+        QrImageSaveStatus GenerateQrImage(int orderNumber, string ticketId, byte[] imageChartBytes, string micrositeId);
+
+        IList<EcrOrderLineBarcode> GetOrderEcrBarcodes(int orderNumber);
     }
 }

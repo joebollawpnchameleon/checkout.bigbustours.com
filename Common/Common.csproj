@@ -56,7 +56,6 @@
     <Compile Include="Model\BornBasketItem.cs" />
     <Compile Include="Model\Customer.cs" />
     <Compile Include="Model\CustomerSession.cs" />
-    <Compile Include="Model\Ecr\BookingResult.cs" />
     <Compile Include="Model\GenericHttpCacheProvider.cs" />
     <Compile Include="Model\Interfaces\ICacheProvider.cs" />
     <Compile Include="Model\PayPal\NvpCodec.cs" />

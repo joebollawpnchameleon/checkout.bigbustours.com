@@ -2,12 +2,9 @@
 using System;
 using System.Linq;
 using bigbus.checkout.data.Model;
-using bigbus.checkout.data.Repositories.Infrastructure;
-using Common.Model;
 using pci = Common.Model.Pci;
 using Services.Infrastructure;
 using Basket = bigbus.checkout.data.Model.Basket;
-using Common.Model.Ecr;
 using System.Collections.Generic;
 
 namespace Services.Implementation
@@ -207,32 +204,32 @@ namespace Services.Implementation
             OrderRepository.Update(order);
         }
 
-        public virtual void SaveOrderLineBarCodes(BookingResult result, Order order)
-        {
-            var lines = order.OrderLines;
-            var selectedLines = new List<string>();
+        //public virtual void SaveOrderLineBarCodes(BookingResult result, Order order)
+        //{
+        //    var lines = order.OrderLines;
+        //    var selectedLines = new List<string>();
 
-            foreach (var code in result.Barcodes)
-            {
-                var orderline = lines.FirstOrDefault(x =>
-                    x.TicketId != null && 
-                    x.TicketId.Value.ToString().Equals(code.TicketId, StringComparison.CurrentCultureIgnoreCase)
-                    && !selectedLines.Contains(x.Id.ToString())
-                    );
+        //    foreach (var code in result.Barcodes)
+        //    {
+        //        var orderline = lines.FirstOrDefault(x =>
+        //            x.TicketId != null && 
+        //            x.TicketId.Value.ToString().Equals(code.TicketId, StringComparison.CurrentCultureIgnoreCase)
+        //            && !selectedLines.Contains(x.Id.ToString())
+        //            );
                  
-                if(orderline == null)
-                    continue;
+        //        if(orderline == null)
+        //            continue;
 
-                selectedLines.Add(orderline.Id.ToString());
+        //        selectedLines.Add(orderline.Id.ToString());
 
-                BarcodeRepository.Add(new OrderLineGeneratedBarcode
-                {
-                     DateCreated = DateTime.Now,
-                     OrderLineId = orderline.Id,
-                     GeneratedBarcode = code.Code
-                });
-            }
-        }
+        //        BarcodeRepository.Add(new OrderLineGeneratedBarcode
+        //        {
+        //             DateCreated = DateTime.Now,
+        //             OrderLineId = orderline.Id,
+        //             GeneratedBarcode = code.Code
+        //        });
+        //    }
+        //}
 
         public virtual Order GetFullOrder(string orderId)
         {
