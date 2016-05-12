@@ -36,12 +36,12 @@
                     <p><%=VoucherPrice%></p>
                 </div>
 <%
-            if (!string.IsNullOrWhiteSpace(line.OrderTotal))
+            if (!string.IsNullOrWhiteSpace(OrderTotal))
             {
 %>
                 <div>
                     <p>Order total:</p>
-                    <p><%=line.OrderTotal%></p>
+                    <p><%=OrderTotal%></p>
                 </div>
 <%
             }
@@ -49,97 +49,60 @@
 %>
             </div>
             <div class="small-print">
-                <p><%=line.TicketLine1%></p>
+                <p><%=TicketLine1%></p>
                 <p>
-                    <%=line.TicketLine2%><br/>
-                    <%=line.TicketLine3%>
+                    <%=TicketLine2%><br/>
+                    <%=TicketLine3%>
                 </p>
             </div>
         </div>
         <div class="rhs">
             <div class="summary">
 <%
-        if (line.AdultQty > 0)
+    if (AdultQuantity > 0)
         {
 %>
                 <div>
                     <p>Adult</p>
-                    <p><%=line.AdultQty%></p>
+                    <p><%=AdultQuantity%></p>
                 </div>
 <%
         }
 
-        if (line.ChildQty > 0)
+    if (ChildQuantity > 0)
         {
 %>
                 <div>
                     <p>Child</p>
-                    <p><%=line.ChildQty%></p>
+                    <p><%=ChildQuantity%></p>
                 </div>
 <%
         }
 
-        if (line.FamilyQty > 0)
+    if (FamilyQuantity > 0)
         {
 %>
                 <div>
                     <p>Family</p>
-                    <p><%=line.FamilyQty%></p>
+                    <p><%=FamilyQuantity%></p>
                 </div>
 <%
         }
+       
+%>
 
-        if (line.ConcessionQty > 0)
-        {
-%>
-                <div>
-                    <p>Concession</p>
-                    <p><%=line.ConcessionQty%></p>
-                </div>
-<%
-        }
-
-        if (line.GroupQty > 0)
-        {
-%>
-                <div>
-                    <p>Group</p>
-                    <p><%=line.GroupQty%></p>
-                </div>
-<%
-        }
-
-        if (line.GroupAQty > 0)
-        {
-%>
-                <div>
-                    <p>Adult(Group)</p>
-                    <p><%=line.GroupAQty%></p>
-                </div>
-<%
-        }
-
-        if (line.GroupCQty > 0)
-        {
-%>
-                <div>
-                    <p>Child(Group)</p>
-                    <p><%=line.GroupCQty%></p>
-                </div>
-<%
-        }
-%>
-            </div>
-            <div class="b-code">
-                <img alt="codeimage" src="<%=line.CodeImageUrl%>"/>
-<%
+         </div>
+          <div class="b-code">
+              <asp:Image runat="server" id="imgQR"/>
+              
+<%--<%
         if (!string.IsNullOrWhiteSpace(line.Barcode))
         {
 %>
                 <div><%=line.Barcode%></div>
 <%
         }
-%>
+%>--%>
             </div>
         </div>
     </div>
