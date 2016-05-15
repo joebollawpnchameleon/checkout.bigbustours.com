@@ -9,23 +9,26 @@
             <div class="specs">
                 <div>
                     <p>Ticket Type:</p>
-                    <p><%= TicketName %></p>
+                    <p><%= ValidTicketName %></p>
                 </div>
                 <div>
                     <p>Date:</p>
-                    <p><%= "Open Date"%></p>
+                    <p><%= "Open Date Ticket"%></p>
                 </div>
 
                 <div>
                     <p>Lead name:</p>
                     <p><%=LeadName%></p>
                 </div>
-
+                 <div>
+                    <p><%= PaymentType %></p>
+                    <p><%= CcNumber %></p>
+                </div>
                 <div>
                     <p>Order number:</p>
                     <p><%=OrderNumber%></p>
                 </div>
-
+               
 <%      
 
         if (!IsTradeTicketSale)
@@ -94,15 +97,6 @@
          </div>
           <div class="b-code">
               <asp:Image runat="server" id="imgQR"/>
-              
-<%--<%
-        if (!string.IsNullOrWhiteSpace(line.Barcode))
-        {
-%>
-                <div><%=line.Barcode%></div>
-<%
-        }
-%>--%>
             </div>
         </div>
     </div>

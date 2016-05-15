@@ -150,5 +150,27 @@ namespace Services.Implementation
            return _ecrBarcodeRepository.GetList(x => x.OrderNumber == orderNumber);
         }
 
+        public virtual ImageMetaData GetImageMetaData(Guid imageGuid)
+        {
+            return _metaDataRepository.GetSingle(x => x.ImageId != null && x.ImageId.Equals(imageGuid));
+        }
+
+        public virtual ImageMetaData GetImageMetaData(string imageId)
+        {
+            return _metaDataRepository.GetSingle(x => x.ImageId != null && x.ImageId.ToString().Equals(imageId));
+        }
+
+        public virtual string GetTicketImageUrl(string ticketImageId)
+        {
+            if (string.IsNullOrEmpty(ticketImageId))
+                return string.Empty;
+
+            var imageMetaData = GetImageMetaData(ticketImageId);
+            
+            return
+                imageMetaData != null ?
+                    "/UploadedImages/" + imageMetaData.ImageId + "." + imageMetaData.Type + "?h=102&w=124" :
+                    string.Empty;
+        }
     }
 }

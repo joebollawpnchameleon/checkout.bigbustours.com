@@ -13,21 +13,12 @@ namespace bigbus.checkout {
     public partial class Voucher {
         
         /// <summary>
-        /// LiMerchantReceipt control.
+        /// plcAllVouchersContent control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal LiMerchantReceipt;
-        
-        /// <summary>
-        /// LiCustomerReceipt control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal LiCustomerReceipt;
+        protected global::System.Web.UI.WebControls.PlaceHolder plcAllVouchersContent;
     }
 }

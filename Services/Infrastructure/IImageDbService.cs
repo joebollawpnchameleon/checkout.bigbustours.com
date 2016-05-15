@@ -12,5 +12,9 @@ namespace Services.Infrastructure
         QrImageSaveStatus GenerateQrImage(int orderNumber, string ticketId, byte[] imageChartBytes, string micrositeId);
 
         IList<EcrOrderLineBarcode> GetOrderEcrBarcodes(int orderNumber);
+
+        ImageMetaData GetImageMetaData(Guid guid);
+
+        string GetTicketImageUrl(string ticketImageId);
     }
 }

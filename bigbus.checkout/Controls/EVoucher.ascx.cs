@@ -6,13 +6,15 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using bigbus.checkout;
+using bigbus.checkout.Models;
 
 namespace bigbus.checkout.Controls
 {
     public partial class EVoucher : System.Web.UI.UserControl
     {
-        public Voucher.VoucherTicket VoucherTicket { get; set; }
+        public VoucherTicket VoucherTicket { get; set; }
         public Order Order { get; set; }
+        public string ValidTicketName { get; set; }
 
         protected string TicketName { get; set; }
         protected string LeadName { get; set; }
@@ -26,6 +28,8 @@ namespace bigbus.checkout.Controls
         protected int AdultQuantity { get; set; }
         protected int ChildQuantity { get; set; }
         protected int FamilyQuantity { get; set; }
+        protected string PaymentType { get; set; }
+        protected string CcNumber { get; set; }
 
         private Ticket _ticket;
 
@@ -58,17 +62,27 @@ namespace bigbus.checkout.Controls
             AdultQuantity = GetQuantityByUserType("Adult");
             ChildQuantity = GetQuantityByUserType("Child");
             FamilyQuantity = GetQuantityByUserType("Family");
-
-            //*** get image metadata here
-
+            
             if (!string.IsNullOrEmpty(VoucherTicket.AttractionImageUrl))
             {
                 imgAttractionImage.AlternateText = TicketName;
                 imgAttractionImage.ImageUrl = VoucherTicket.AttractionImageUrl;
             }
 
-            imgQR.AlternateText = "CodeImage";
-            imgQR.ImageUrl = ""; //**Generate this.
+            imgQR.AlternateText = "QR-Image";
+            imgQR.ImageUrl = GetImageUrl();
+
+            if (Order.PaymentMethod.Equals("paypal", StringComparison.CurrentCultureIgnoreCase))
+            {
+                PaymentType =  "PayPal";
+            }
+            else
+            {
+                PaymentType = "CC Number:";
+                CcNumber = !string.IsNullOrEmpty(Order.CcLast4Digits) ? Order.CcLast4Digits : "****";
+            }
+            
+
         }
 
         private string GetTicketLine1()
@@ -97,6 +111,16 @@ namespace bigbus.checkout.Controls
             var sum = orderLines.Sum(x => x.TicketQuantity);
 
             return sum ?? 0;
+        }
+
+        private string GetImageUrl()
+        {
+            var imageMetaData = VoucherTicket.ImageData;
+
+            if (imageMetaData == null)
+                return string.Empty;
+
+            return "/UploadedImages/" + imageMetaData.ImageId + "." + imageMetaData.Type + "?w=200";
         }
        
     }
