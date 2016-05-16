@@ -7,5 +7,7 @@ namespace Services.Infrastructure
         Ticket GetTicketBySku(string sku);
 
         Ticket GetTicketById(string id);
+
+        Ticket GetTicketByProductDimensionUid(string prodDimentionUid);
     }
 }

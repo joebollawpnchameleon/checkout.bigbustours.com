@@ -7,7 +7,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-
-
-public partial class viewevoucher {
+namespace bigbus.checkout {
+    
+    
+    public partial class ViewVoucher {
+    }
 }

@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using Services.Infrastructure;
 using Autofac.Integration.Web;
@@ -163,43 +164,44 @@ namespace bigbus.checkout.Models
 
         public void SaveBarcodes(BookingResponse response, int orderNumber)
         {
-            var barcodes = response.Barcodes;
-
-            foreach (var barcode in barcodes)
+            try
             {
-                var chartUrl = string.Format(GoogleChartUrl, barcode.BarcodeAsText);
+                var barcodes = response.Barcodes;
 
-                var imageBytes = ImageService.DownloadImageFromUrl(chartUrl);
+                foreach (var barcode in barcodes)
+                {
+                    var chartUrl = string.Format(GoogleChartUrl, barcode.BarcodeAsText);
 
-                var ticket = TicketService.GetTicketBySku(barcode.BarcodeDetails[0].ProductDimensionUID);
+                    var imageBytes = ImageService.DownloadImageFromUrl(chartUrl);
 
-                var imageSaveStatus = ImageDbService.GenerateQrImage(orderNumber, ticket.Id.ToString(),
-                    imageBytes, MicrositeId);
+                    var ticket =
+                        TicketService.GetTicketByProductDimensionUid(barcode.BarcodeDetails[0].ProductDimensionUID);
+
+                    var imageSaveStatus = ImageDbService.GenerateQrImage(orderNumber, ticket.Id.ToString(),
+                        imageBytes, MicrositeId);
+
+                    //*** record each status was successful.
+                }
+            }
+            catch (Exception ex)
+            {
+                Log("SaveBarcodes() Failed Ordernumber: " + orderNumber + System.Environment.NewLine + ex.Message);
             }
         }
 
-        //protected void CreateQrImages(Barcode barcode, Order order)
-        //{
-        //    var chartUrl = string.Format(GoogleChartUrl, barcode.BarcodeAsText);
-
-        //    get image from google
-        //    Log("Downloading QR Image from google basketid: " + order.BasketId);
-        //    var imageBytes = ImageService.DownloadImageFromUrl(chartUrl);
-
-        //    store image to basket  ****change this to go to another table
-        //    Log("Create image QR Code in DB details basketid: " + order.BasketId);
-        //    var status = ImageDbService.GenerateQrImage(order, imageBytes, MicrositeId);
-
-        //    check if image has been stored successfully
-        //    if (status == QrImageSaveStatus.Success)
-        //    {
-        //        Log("QR Image Created successfully created orderid:" + order.Id);
-        //    }
-        //    else
-        //    {
-        //        Log("QR Image Failed to create orderid:" + order.Id + " code " + barcode.BarcodeAsText);
-        //    }
-
-        //}
+        public void AddMetas(string metasHtml)
+        {
+            //add no follow meta
+            try
+            {
+                var master = (SiteMaster)Master;
+                if (master != null) master.AddMetas(metasHtml);
+            }
+            catch
+            {
+                //ignore
+            }
+        }
+       
     }
 }

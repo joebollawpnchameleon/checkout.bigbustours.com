@@ -36,10 +36,9 @@ namespace bigbus.checkout
             //EnsureSessionCorrectlyEstablished(); // uses virtual function so logic can be overridden
 
             //EstablishURL();
+            var orderId = Request.QueryString["oid"];
 
-            if (string.IsNullOrEmpty(Request.QueryString["Id"])) return;
-
-            var orderId = Request.QueryString["Id"];
+            if (string.IsNullOrEmpty(orderId)) return;
 
             _order = CheckoutService.GetFullOrder(orderId);
 
@@ -69,7 +68,7 @@ namespace bigbus.checkout
                 var imageId = barcode.ImageId; //retrieve img metadata from this
 
                 //get corresponding orderlines  *** when u save ticket id in barcodes, get our ticketid from ecr productuid
-                var tempOrderLines = _allOrderLines.Where(x => x.TicketId.Equals(barcode.TicketId));
+                var tempOrderLines = _allOrderLines.Where(x => x.TicketId != null && x.TicketId.Value.ToString().Equals(barcode.TicketId, StringComparison.CurrentCultureIgnoreCase));
                 
                 if(!tempOrderLines.Any())
                     continue;

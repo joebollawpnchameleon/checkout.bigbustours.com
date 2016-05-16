@@ -3,7 +3,7 @@
     <div class="wrapper">
         <div class="lhs">
             <div class="branding">
-                <img src="/images/watermark/logo-bigbus.png"/>
+                <img src="/Content/images/design/logo-bigbus.png"/>
                 <asp:Image ID="imgAttractionImage" runat="server" />                
             </div>
             <div class="specs">
@@ -97,6 +97,7 @@
          </div>
           <div class="b-code">
               <asp:Image runat="server" id="imgQR"/>
+              <img alt="Testing" src="~/GenericImageHandler.ashx" runat="server"/>
             </div>
         </div>
     </div>

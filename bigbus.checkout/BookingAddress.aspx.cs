@@ -181,7 +181,7 @@ namespace bigbus.checkout
             {
                 var sessionId = AuthenticationService.GetSessionId(SessionCookieName);
                 AuthenticationService.MoveSessionOutOfCheckoutMode(sessionId.ToString());
-                Response.Redirect("BookingError.aspx");
+                Response.Redirect("~/Error/BookingError/");
             }
         }
 

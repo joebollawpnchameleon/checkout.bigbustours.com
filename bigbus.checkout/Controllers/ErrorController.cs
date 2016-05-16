@@ -9,13 +9,13 @@ namespace bigbus.checkout.Controllers
     public class ErrorController : Controller
     {
         #region PCIErrors
-        
-        public ActionResult BookingError()
+
+        public ActionResult PaymentError()
         {
             return View("StandardErrorView");
         }
 
-        public ActionResult BookingFailed()
+        public ActionResult PaymentFailure()
         {
             return View("StandardErrorView");
         }
@@ -40,6 +40,16 @@ namespace bigbus.checkout.Controllers
         }
 
         public ActionResult ExternalAPiError()
+        {
+            return View("StandardErrorView");
+        }
+
+        public ActionResult BookingError()
+        {
+            return View("StandardErrorView");
+        }
+
+        public ActionResult EvoucherError()
         {
             return View("StandardErrorView");
         }

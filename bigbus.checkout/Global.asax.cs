@@ -54,9 +54,9 @@ namespace bigbus.checkout
             var defaultLanguage = ConfigurationManager.AppSettings["Default.Language"];
             var sessionCookieName = ConfigurationManager.AppSettings["Session.CookieName"];
             var sessionId = AuthenticationService.GetCookieValue(sessionCookieName);
-            var ecrApiKey = ConfigurationManager.AppSettings["1q-psWDffplAr1fgJAX_HVfH36eCs3z9MqXeM-hWHao"];
-            var ecrAgentCode = ConfigurationManager.AppSettings["Chameleon"];
-            var ecrAgentUiId = ConfigurationManager.AppSettings["164F2D63-F0B8-450F-8C86-CB5229B3268C"];
+            var ecrApiKey = ConfigurationManager.AppSettings["EcrApiKey"];
+            var ecrAgentCode = ConfigurationManager.AppSettings["EcrAgentCode"];
+            var ecrAgentUiId = ConfigurationManager.AppSettings["EcrAgentUiId"];
             var environmentId = ConfigurationManager.AppSettings["Environment"];
             var liveEcrPoint = ConfigurationManager.AppSettings["LiveEcrEndPoint"];
 
@@ -104,6 +104,7 @@ namespace bigbus.checkout
             builder.RegisterType<ImageService>().As<IImageService>();
             builder.RegisterType<ImageDbService>().As<IImageDbService>();
             builder.RegisterType<LocalizationService>().As<ILocalizationService>();
+            builder.RegisterType<PdfClientRenderer>().As<IClientRenderService>();
 
             if (environmentId.Equals(Common.Enums.Environment.Live))
             {

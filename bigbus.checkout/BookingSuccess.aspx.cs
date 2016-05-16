@@ -150,7 +150,7 @@ namespace bigbus.checkout
         private void GoToErrorPage(string message, string logMessage)
         {
             Log(logMessage);
-            Response.Redirect("BookingOrderCreationError.aspx?msg=" + Server.UrlEncode(message));
+            Response.Redirect("~/Error/ExternalAPiError/" + Server.UrlEncode(message));
         }
     }
 }

@@ -20,7 +20,7 @@ namespace bigbus.checkout.Helpers
                 {
                      ProductDimensionUID = "c4bf36f4-acf4-4da8-b8ca-f4f9ce9345a0",
                      QTY = 2,
-                     ValidFrom = DateTime.Now
+                     ValidFrom = DateTime.Now,
                 },
                 new AvailabilityTransactionDetail
                 {

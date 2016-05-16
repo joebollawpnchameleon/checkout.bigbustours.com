@@ -114,6 +114,9 @@ namespace bigbus.checkout.data.Model
         [StringLength(30)]
         public string EcrProductDuration { get; set; }
 
+        [StringLength(100)]
+        public string EcrProductDimensionId { get; set; }
+
         public bool IsTour
         {
             get { return TicketType.Equals("Tour", StringComparison.InvariantCultureIgnoreCase); }

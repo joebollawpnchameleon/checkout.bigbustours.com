@@ -89,6 +89,14 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="TuesPechkin, Version=2.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TuesPechkin.2.1.1\lib\net20\TuesPechkin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TuesPechkin.Wkhtmltox.Win64, Version=0.12.2.1, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\TuesPechkin.Wkhtmltox.Win64.0.12.2.1\lib\net20\TuesPechkin.Wkhtmltox.Win64.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Implementation\ApiConnectorService.cs" />
@@ -105,6 +113,7 @@
     <Compile Include="Implementation\PayPalService.cs" />
     <Compile Include="Implementation\PciApiService.cs" />
     <Compile Include="Implementation\PciApiServiceNoASync.cs" />
+    <Compile Include="Implementation\PdfClientRenderer.cs" />
     <Compile Include="Implementation\SiteService.cs" />
     <Compile Include="Implementation\TicketService.cs" />
     <Compile Include="Implementation\TranslationService.cs" />
@@ -113,6 +122,7 @@
     <Compile Include="Infrastructure\IAuthenticationService.cs" />
     <Compile Include="Infrastructure\IBasketService.cs" />
     <Compile Include="Infrastructure\ICheckoutService.cs" />
+    <Compile Include="Infrastructure\IClientRenderService.cs" />
     <Compile Include="Infrastructure\ICommonPciService.cs" />
     <Compile Include="Infrastructure\ICountryService.cs" />
     <Compile Include="Infrastructure\ICurrencyService.cs" />

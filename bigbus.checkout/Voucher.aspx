@@ -1,6 +1,5 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Voucher.aspx.cs" Inherits="bigbus.checkout.Voucher" %>
 
-<%@ Import Namespace="BigBus.Helpers" %>
 <html>
 <head runat="server">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -27,7 +26,7 @@ body{
         background-size: cover;
         width: 21.6em;
         height: 9.6em;
-        background: url(images/watermark/watermark.jpg) no-repeat;
+        background: url('/Content/Images/design/watermark.jpg') no-repeat;
         background-origin: border-box;
         margin-bottom: 20px;
         position: relative;
@@ -152,36 +151,5 @@ body{
 
 <asp:PlaceHolder runat="server" id="plcAllVouchersContent"/>
 
-<%
-    var counter = 0;
-
-    var lineisbroke = false;
-
-    foreach (var line in MainList)
-    {
-        counter++;
-
-        if (counter > 1 && line.IsAttraction && !lineisbroke)
-        {
-%>
-    <div class="page-breaker">&nbsp;</div>
-<%
-        }
-%>
-    <!-- EVoucher Control here -->
-<%
-        if ((line.IsAttraction || counter % 3 == 0 ) && MainList.Count() > counter)
-        {
-            lineisbroke = true;
-%>
-<div class="page-breaker">&nbsp;</div>
-<%
-        }
-        else
-        {
-            lineisbroke = false;
-        }
-    }
-%>
 </body>
 </html>

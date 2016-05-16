@@ -1,4 +1,5 @@
-﻿
+﻿@model bigbus.checkout.Models.OrderConfirmationVm
+
 @{
     ViewBag.Title = "Completed";
 }
@@ -8,5 +9,9 @@
 <p>
     Dear user,<br/>
     Thank you for buying from us.
+    <em style="border: 1px solid red; padding: 5px;">
+        <a href="~/ViewVoucher.aspx?oid=@Model.OrderId">View your voucher</a>
+    </em>
 </p>
+
 

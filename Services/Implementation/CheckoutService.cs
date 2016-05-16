@@ -238,15 +238,20 @@ namespace Services.Implementation
                 var order =
                     OrderRepository.GetSingle(
                         x => x.Id.ToString().Equals(orderId, StringComparison.CurrentCultureIgnoreCase));
+
                 order.OrderLines =
                     OrderLineRepository.GetList(
                         x => x.OrderId.ToString().Equals(orderId, StringComparison.CurrentCultureIgnoreCase));
+
+                order.Currency = CurrencyRepository.GetSingle(x => x.Id.Equals(order.CurrencyId));
+
                 return order;
             }
             catch (Exception ex)
             {
                 Log("Error getting full order: GetFullOrder() Id:" + orderId + Environment.NewLine + ex.Message);
             }
+
             return null;
         }
 

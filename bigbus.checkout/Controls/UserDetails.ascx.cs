@@ -43,8 +43,11 @@ namespace bigbus.checkout.Controls
         
         protected void Page_Load(object sender, EventArgs e)
         {
-            LoadTitles();
-            LoadCountries();
+            if (!IsPostBack)
+            {
+                LoadTitles();
+                LoadCountries();
+            }
         }
 
         private void LoadTitles()

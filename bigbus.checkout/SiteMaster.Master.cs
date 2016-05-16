@@ -9,6 +9,11 @@ namespace bigbus.checkout
 {
     public partial class SiteMaster : System.Web.UI.MasterPage
     {
+        public void AddMetas(string metas)
+        {
+            ltAdditionalMetas.Text += metas;
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
 

@@ -120,6 +120,9 @@ namespace bigbus.checkout.Controls
             if (imageMetaData == null)
                 return string.Empty;
 
+
+            //check that file with this image id exist if it does display image file if not use httphandler to create file and then display it.
+
             return "/UploadedImages/" + imageMetaData.ImageId + "." + imageMetaData.Type + "?w=200";
         }
        

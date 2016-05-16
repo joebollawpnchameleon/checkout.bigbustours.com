@@ -6,6 +6,7 @@ using bigbus.checkout.data.Repositories.Infrastructure;
 using Common.Enums;
 using Services.Infrastructure;
 using System.Collections.Generic;
+using bigbus.checkout.data.Repositories.Implementation;
 
 namespace Services.Implementation
 {
@@ -47,22 +48,13 @@ namespace Services.Implementation
             //check if barcode exist.
             var barcode = _ecrBarcodeRepository.GetSingle(x => x.OrderNumber == orderNumber
                     && x.TicketId.Equals(ticketId));
-            
-            if(barcode == null)//create it
-            {
-                barcode =  new EcrOrderLineBarcode
-                    {
-                         DateCreated = DateTime.Now,
-                         OrderNumber = orderNumber,
-                         TicketId = ticketId                            
-                    };
-
-                _ecrBarcodeRepository.Add(barcode);
-
-            }
+          
           
             //create image first
             var newImageMetaData = SaveImage(imageChartBytes);
+
+            //*** persist barcode image physically
+
 
             //then create meta data
             if (newImageMetaData == null || newImageMetaData.ImageId == null)
@@ -70,8 +62,6 @@ namespace Services.Implementation
                 //***Log(string.Format("Image Create failed ordernumber {0} metadata {1}"));
                 return QrImageSaveStatus.ImageDataCreationFailed;
             }
-
-            barcode.ImageId = newImageMetaData.ImageId.Value;
 
             var imageName = string.Format(QrImageNameFormat, orderNumber, ticketId);
             newImageMetaData.AltText = imageName;
@@ -82,6 +72,19 @@ namespace Services.Implementation
             newImageMetaData.Id = new Guid();
 
             _metaDataRepository.Add(newImageMetaData);
+
+
+            if (barcode != null) return QrImageSaveStatus.Success;
+
+            barcode = new EcrOrderLineBarcode
+            {
+                DateCreated = DateTime.Now,
+                OrderNumber = orderNumber,
+                TicketId = ticketId,
+                ImageId = newImageMetaData.ImageId.Value
+            };
+
+            _ecrBarcodeRepository.Add(barcode);
 
             return QrImageSaveStatus.Success;
         }
@@ -171,6 +174,16 @@ namespace Services.Implementation
                 imageMetaData != null ?
                     "/UploadedImages/" + imageMetaData.ImageId + "." + imageMetaData.Type + "?h=102&w=124" :
                     string.Empty;
+        }
+
+        public Image GetImage(string imageId)
+        {
+            return _imageRepository.GetSingle(x => x.Id.ToString().Equals(imageId, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public static Image RetrieveImageOnThefly(string imageId)
+        {
+            return (new GenericDataRepository<Image>()).GetSingle(x => x.Id.ToString().Equals(imageId, StringComparison.CurrentCultureIgnoreCase));
         }
     }
 }

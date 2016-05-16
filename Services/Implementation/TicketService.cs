@@ -14,14 +14,21 @@ namespace Services.Implementation
             _ticketRepository = ticketRepository;
         }
 
-        public Ticket GetTicketBySku(string sku)
+        public virtual Ticket GetTicketBySku(string sku)
         {
             return
                 _ticketRepository.GetSingle(x => !string.IsNullOrEmpty(x.EcrProductCode) 
                     && x.EcrProductCode.Trim().Equals(sku.Trim(), StringComparison.CurrentCultureIgnoreCase));
         }
 
-        public Ticket GetTicketById(string id)
+        public virtual Ticket GetTicketByProductDimensionUid(string prodDimentionUid)
+        {
+            return
+                _ticketRepository.GetSingle(x => !string.IsNullOrEmpty(x.EcrProductDimensionId)
+                    && x.EcrProductDimensionId.Trim().Equals(prodDimentionUid.Trim(), StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public virtual Ticket GetTicketById(string id)
         {
             return
                 _ticketRepository.GetSingle(x => x.Id.ToString().Equals(id.Trim(), StringComparison.CurrentCultureIgnoreCase));
