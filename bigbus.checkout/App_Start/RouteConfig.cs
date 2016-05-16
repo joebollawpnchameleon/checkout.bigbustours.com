@@ -13,6 +13,7 @@ namespace bigbus.checkout
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.IgnoreRoute("Content/{*pathInfo}");
+            routes.IgnoreRoute("Helpers/{*pathInfo}");
 
             routes.MapRoute(
                name: "CheckoutSuccess",

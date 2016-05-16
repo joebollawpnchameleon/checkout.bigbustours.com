@@ -95,9 +95,8 @@
 %>
 
          </div>
-          <div class="b-code">
-              <asp:Image runat="server" id="imgQR"/>
-              <img alt="Testing" src="~/GenericImageHandler.ashx" runat="server"/>
+          <div class="b-code">              
+              <img alt="QR-Image" width="<%= ImageWidth %>" height="<%= ImageHeight %>" src="/QrCodeImageHandler.ashx?file=logo"/>
             </div>
         </div>
     </div>

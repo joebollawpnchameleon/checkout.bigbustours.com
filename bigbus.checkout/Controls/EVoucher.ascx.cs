@@ -30,6 +30,8 @@ namespace bigbus.checkout.Controls
         protected int FamilyQuantity { get; set; }
         protected string PaymentType { get; set; }
         protected string CcNumber { get; set; }
+        protected int ImageWidth { get; set; }
+        protected int ImageHeight { get; set; }
 
         private Ticket _ticket;
 
@@ -48,6 +50,8 @@ namespace bigbus.checkout.Controls
             IsTradeTicketSale = false;
             VoucherPrice = Order.Currency.Symbol + VoucherTicket.OrderLines.Sum(x => x.GrossOrderLineValue);
             OrderTotal = Order.Currency.Symbol + Order.Total;
+
+            MakeSureImageExists();
 
             TicketLine1 = GetTicketLine1();
 
@@ -69,8 +73,8 @@ namespace bigbus.checkout.Controls
                 imgAttractionImage.ImageUrl = VoucherTicket.AttractionImageUrl;
             }
 
-            imgQR.AlternateText = "QR-Image";
-            imgQR.ImageUrl = GetImageUrl();
+            //imgQR.AlternateText = "QR-Image";
+            //imgQR.ImageUrl = GetImageUrl();
 
             if (Order.PaymentMethod.Equals("paypal", StringComparison.CurrentCultureIgnoreCase))
             {
@@ -113,17 +117,16 @@ namespace bigbus.checkout.Controls
             return sum ?? 0;
         }
 
-        private string GetImageUrl()
+        private void MakeSureImageExists()
         {
             var imageMetaData = VoucherTicket.ImageData;
 
-            if (imageMetaData == null)
-                return string.Empty;
+            ImageWidth = imageMetaData.Width;
+            ImageHeight = imageMetaData.Height;
 
+            //use image service check that file with this image id exist if it does display image file if not use httphandler to create file and then display it.
+            //if it doesn't exist, get image data and create file using ImageDB and passing bytes to ImageService
 
-            //check that file with this image id exist if it does display image file if not use httphandler to create file and then display it.
-
-            return "/UploadedImages/" + imageMetaData.ImageId + "." + imageMetaData.Type + "?w=200";
         }
        
     }
