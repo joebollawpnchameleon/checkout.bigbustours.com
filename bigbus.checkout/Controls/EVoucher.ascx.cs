@@ -7,6 +7,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using bigbus.checkout;
 using bigbus.checkout.Models;
+using System.IO;
 
 namespace bigbus.checkout.Controls
 {
@@ -15,6 +16,7 @@ namespace bigbus.checkout.Controls
         public VoucherTicket VoucherTicket { get; set; }
         public Order Order { get; set; }
         public string ValidTicketName { get; set; }
+        public string MicrositeId { get; set; }
 
         protected string TicketName { get; set; }
         protected string LeadName { get; set; }
@@ -32,6 +34,7 @@ namespace bigbus.checkout.Controls
         protected string CcNumber { get; set; }
         protected int ImageWidth { get; set; }
         protected int ImageHeight { get; set; }
+        protected string ImageId { get; set; }
 
         private Ticket _ticket;
 
@@ -124,7 +127,20 @@ namespace bigbus.checkout.Controls
             ImageWidth = imageMetaData.Width;
             ImageHeight = imageMetaData.Height;
 
+            ImageId = imageMetaData.ImageId.ToString();
+
             //use image service check that file with this image id exist if it does display image file if not use httphandler to create file and then display it.
+            var imagePath = Server.MapPath(string.Format("~/FileUploadPath/{0}/{1}{2}", MicrositeId, ImageId, imageMetaData.Type));
+            var file = new FileInfo(imagePath);
+
+            if (!file.Exists)//create it
+            {
+                FileStream fs = file.Create();
+                // Modify the file as required, and then close the file.
+                fs.Close();
+                // Delete the file.
+                file.Delete();
+            }
             //if it doesn't exist, get image data and create file using ImageDB and passing bytes to ImageService
 
         }
