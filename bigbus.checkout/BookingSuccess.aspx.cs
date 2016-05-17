@@ -82,7 +82,7 @@ namespace bigbus.checkout
 
             if (_session == null)
             {
-                GoToErrorPage(GetTranslation("Empty_Session_NotFound"), "Session Not found id:" + sessionId);
+                GoToErrorPage(GetTranslation("Session_Details_NotFound"), "Session Not found id:" + sessionId);
             }
         }
 
@@ -93,7 +93,7 @@ namespace bigbus.checkout
             if (string.IsNullOrEmpty(_basketId))
             {
                 _basketId = AuthenticationService.GetBasketIdFromCookie(BasketCookieName);
-                GoToErrorPage(GetTranslation("BasketId_NotFound"), "Basket Id not found in Session");
+                GoToErrorPage(GetTranslation("Session_Basket_NotFound"), "Basket Id not found in Session");
                 return;
             }
 
@@ -110,7 +110,7 @@ namespace bigbus.checkout
             Log("PCI web request returned status of basket ");
             if (basketStatus == null || basketStatus.Status != ReturnStatus.Success)
             {
-                GoToErrorPage(GetTranslation("Basket_NotFound"), "Basket bad status from PCI basketid:" + _basketId);
+                GoToErrorPage(GetTranslation("Session_Basket_NotFound"), "Basket bad status from PCI basketid:" + _basketId);
                 return null;
             }
 
@@ -122,7 +122,7 @@ namespace bigbus.checkout
                 return returnedStatus;
 
             Log("Invalid PCI code for basket returned : " + (returnedStatus.status == null ? "" : "Code=" + returnedStatus.status.code));
-            GoToErrorPage(GetTranslation("Basket_BadPci_Status"), "Basket status object casting crashed. basketid:" + _basketId);
+            GoToErrorPage(GetTranslation("Booking_failed"), "Basket status object casting crashed. basketid:" + _basketId);
             return null;
         }
 

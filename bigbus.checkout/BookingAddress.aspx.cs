@@ -155,7 +155,7 @@ namespace bigbus.checkout
             if (basket == null)//we are in trouble.
             {
                 var externalSessionId = AuthenticationService.GetExternalSessionId(ExternalBasketCookieName);
-                DisplayError(GetTranslation("NoBasketForExternalSessionId"), "No Basket was found matching sessionId: " + externalSessionId);
+                DisplayError(GetTranslation("Session_Basket_NotFound"), "No Basket was found matching sessionId: " + externalSessionId);
                 return;
             }
 
@@ -247,7 +247,7 @@ namespace bigbus.checkout
             if (basket == null)//we are in trouble.
             {
                 var externalSessionId = AuthenticationService.GetExternalSessionId(ExternalBasketCookieName);
-                DisplayError(GetTranslation("NoBasketForExternalSessionId"), "No Basket was found matching sessionId: " + externalSessionId);
+                DisplayError(GetTranslation("Session_Basket_NotFound"), "No Basket was found matching sessionId: " + externalSessionId);
                 return;
             }
             var sessionId = AuthenticationService.GetSessionId(SessionCookieName);

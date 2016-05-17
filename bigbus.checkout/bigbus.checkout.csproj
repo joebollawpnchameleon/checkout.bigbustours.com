@@ -142,7 +142,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="BookingAddressPayPal.aspx" />
-    <Content Include="BookingOrderCreationError.aspx" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\Design\barcode.png" />
@@ -257,8 +256,6 @@
   <ItemGroup>
     <Content Include="BookingAddress.aspx" />
     <Content Include="BookingSuccess.aspx" />
-    <Content Include="booking_process_error.aspx" />
-    <Content Include="booking_process_success.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="ErrorPages\BookingError.aspx" />
     <Content Include="ErrorPages\BookingOrderCreationError.aspx" />
@@ -286,33 +283,12 @@
     <Compile Include="BookingAddressPayPal.aspx.designer.cs">
       <DependentUpon>BookingAddressPayPal.aspx</DependentUpon>
     </Compile>
-    <Compile Include="BookingOrderCreationError.aspx.cs">
-      <DependentUpon>BookingOrderCreationError.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="BookingOrderCreationError.aspx.designer.cs">
-      <DependentUpon>BookingOrderCreationError.aspx</DependentUpon>
-    </Compile>
     <Compile Include="BookingSuccess.aspx.cs">
       <DependentUpon>BookingSuccess.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="BookingSuccess.aspx.designer.cs">
       <DependentUpon>BookingSuccess.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="booking_process_error.aspx.cs">
-      <DependentUpon>booking_process_error.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="booking_process_error.aspx.designer.cs">
-      <DependentUpon>booking_process_error.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="booking_process_success.aspx.cs">
-      <DependentUpon>booking_process_success.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="booking_process_success.aspx.designer.cs">
-      <DependentUpon>booking_process_success.aspx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\CheckoutController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
