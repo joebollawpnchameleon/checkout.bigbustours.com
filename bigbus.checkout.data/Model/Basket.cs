@@ -47,7 +47,7 @@ namespace bigbus.checkout.data.Model
 
         [StringLength(100)]
         public string ExternalCoupon { get; set; }
-
+        
         public string PurchaseLanguage { get; set; }
 
         public virtual ICollection<BasketLine> BasketLines { get; set; }

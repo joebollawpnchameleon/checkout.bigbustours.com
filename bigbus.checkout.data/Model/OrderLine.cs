@@ -89,6 +89,9 @@ namespace bigbus.checkout.data.Model
         [StringLength(10)]
         public string AttractionTimeSection { get; set; }
 
+        [StringLength(100)]
+        public string EcrProductDimensionId { get; set; }
+        
         public virtual Order Order { get; set; }
         
         public virtual MicroSite MicroSite { get; set; }

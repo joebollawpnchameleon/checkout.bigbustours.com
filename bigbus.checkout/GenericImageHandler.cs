@@ -118,7 +118,7 @@ namespace bigbus.checkout.Helpers
             if (!fi.Exists)
             {
                 //get it!
-                Mod.Image img = ImageDbService.RetrieveImageOnThefly(id);
+                var img = ImageDbService.RetrieveImageOnThefly(context.Request.QueryString["imageid"]);
 
                 if (img != null)
                 {
@@ -128,7 +128,7 @@ namespace bigbus.checkout.Helpers
                     try
                     {
                         //save locally
-                        DirectoryInfo di = Directory.CreateDirectory(fi.DirectoryName);
+                        var di = Directory.CreateDirectory(fi.DirectoryName);
 
                         System.Drawing.Image i = System.Drawing.Image.FromStream(stream);
                         System.Drawing.Image newi = null;

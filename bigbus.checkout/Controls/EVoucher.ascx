@@ -96,7 +96,7 @@
 
          </div>
           <div class="b-code">              
-              <img alt="QR-Image" width="<%= ImageWidth %>" height="<%= ImageHeight %>" src="/QrCodeImageHandler.ashx?imageid=<%= ImageId %>"/>
+              <img alt="QR-Image"  src='<%= ResolveUrl("~/QrCodeImageHandler.ashx") + "?w=200&h=200&extension=" + ImageExtension + "&micrositeid=" + MicrositeId + "&imageid=" + ImageId   %>'/>
             </div>
         </div>
     </div>

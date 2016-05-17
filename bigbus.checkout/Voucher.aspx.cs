@@ -119,6 +119,9 @@ namespace bigbus.checkout
                 var voucherControl = (EVoucher) LoadControl("~/Controls/EVoucher.ascx");
                 voucherControl.Order = _order;
                 voucherControl.VoucherTicket = voucherTicket;
+                voucherControl.ValidTicketName = voucherTicket.ValidTicketName;
+                voucherControl.MicrositeId = MicrositeId;
+
                 plcAllVouchersContent.Controls.Add(voucherControl);
 
                 if ((voucherTicket.IsAttraction || counter % 3 == 0) && MainList.Count() > counter)

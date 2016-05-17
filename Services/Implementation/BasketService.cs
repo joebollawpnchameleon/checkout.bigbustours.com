@@ -111,7 +111,8 @@ namespace Services.Implementation
                         DateAdded = DateTime.Now,
                         Price = item.UnitCost,
                         Discount = item.Discount,
-                        LineTotal = item.Total
+                        LineTotal = item.Total,
+                        EcrProductDimensionId = item.ProductDimensionUid
                     });
                     
             }

@@ -188,7 +188,8 @@ namespace Services.Implementation
                 MicrositeId = basketLineTicket.MicroSiteId,
                 TicketCost = basketLine.Price,
                 GrossOrderLineValue = basketLine.LineTotal + basketLine.Discount,
-                NettOrderLineValue = basketLine.LineTotal
+                NettOrderLineValue = basketLine.LineTotal,
+                EcrProductDimensionId = basketLine.EcrProductDimensionId
             };
 
             if (basketLineTicket.TicketType.Equals("attraction", StringComparison.CurrentCultureIgnoreCase))

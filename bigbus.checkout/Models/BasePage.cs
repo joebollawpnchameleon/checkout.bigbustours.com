@@ -139,7 +139,7 @@ namespace bigbus.checkout.Models
                 return null;
             }
 
-            var bookingTransactions = EcrServiceHelper.GetBookingTransactionDetails(orderLines);
+            var bookingTransactions = EcrServiceHelper.GetBookingTransactionDetails(orderLines, order.Currency.ISOCode);
 
             var response = EcrService.SubmitBooking(order.OrderNumber, availabilityResponse, bookingTransactions);
                 

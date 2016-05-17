@@ -335,7 +335,7 @@
     <Compile Include="Helpers\DateUtil.cs" />
     <Compile Include="Helpers\EcrService.cs" />
     <Compile Include="Helpers\EcrServiceHelper.cs" />
-    <Compile Include="Helpers\GenericImageHandler.cs" />
+    <Compile Include="GenericImageHandler.cs" />
     <Compile Include="Helpers\IEcrService.cs" />
     <Compile Include="Helpers\LanguageHelper.cs" />
     <Compile Include="QrCodeImageHandler.ashx.cs">

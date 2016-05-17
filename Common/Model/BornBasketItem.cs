@@ -12,6 +12,9 @@ namespace Common.Model
         [JsonProperty("sku")]
         public string Sku { get; set; }
 
+        [JsonProperty("ProductDimensionUID")]
+        public string ProductDimensionUid { get; set; }
+
         [JsonProperty("qty")]
         public int Quantity { get; set; }
 

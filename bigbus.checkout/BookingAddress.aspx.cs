@@ -21,7 +21,7 @@ namespace bigbus.checkout
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            var test = BasketService.GetBasket(new Guid());
+            //var test = BasketService.GetBasket(new Guid());
 
             if (!IsPostBack)
             {
