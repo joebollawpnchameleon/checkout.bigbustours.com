@@ -16,8 +16,28 @@
     <div id="dvActions" runat="server">
         <asp:Button runat="server" text="Back" OnClick="ContinueShopping" id="btnCancel"/>
         &nbsp;
-        <asp:Button runat="server" text="Checkout With Credit Card" OnClick="CheckoutWithCreditCard" id="btnContinueCheckout"/>
+        <asp:Button runat="server" text="Checkout With Credit Card" OnClientClick="return TrackUserSubscription();" OnClick="CheckoutWithCreditCard" id="btnContinueCheckout"/>
         &nbsp;
          <asp:Button runat="server" text="Checkout With Paypal" OnClick="CheckoutWithPaypal" />
     </div>
+    
+    <script type="text/javascript">
+
+        function TrackUserSubscription() {
+
+            var email = $('#txtEmail').val();
+            var checkbox = $('#ckSubscribe:checked');
+
+            //intilery tracking
+            if (email !== '' && checkbox === true) {
+                _itq.push([
+                    "_trackUserEvent", "sign in", [
+                        { "name": "Customer.Email", "value": email }
+                    ], "Sign in"
+                ]);
+            }
+        }
+
+    </script>
+
 </asp:Content>

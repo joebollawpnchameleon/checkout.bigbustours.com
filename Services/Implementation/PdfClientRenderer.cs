@@ -7,13 +7,21 @@ namespace Services.Implementation
 {
     public class PdfClientRenderer : IClientRenderService
     {
-        private readonly IConverter _converter;
+        private static IConverter _converter;
 
-        public PdfClientRenderer()
+        public static IConverter Converter
         {
-            _converter =
-                new ThreadSafeConverter(
-                    new RemotingToolset<PdfToolset>(new Win64EmbeddedDeployment(new TempFolderDeployment())));
+            get
+            {
+                if (_converter == null)
+                {
+                    var tempFolderDeployment = new TempFolderDeployment();
+                    var win64EmbeddedDeployment = new Win64EmbeddedDeployment(tempFolderDeployment);
+                    var remotingToolset = new RemotingToolset<PdfToolset>(win64EmbeddedDeployment);
+                    _converter = new ThreadSafeConverter(remotingToolset);
+                }
+                 return _converter; 
+            }
         }
 
         public virtual byte[] GetBytesFromUrl(string url, string documentTitle)
@@ -53,8 +61,8 @@ namespace Services.Implementation
                     new ObjectSettings { PageUrl = uri }
                 }
             };
-            
-            return _converter.Convert(document);
+
+            return Converter.Convert(document);
         }
     }
 }

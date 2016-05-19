@@ -42,6 +42,16 @@
                 <asp:CustomValidator CssClass="error" ID="EmailValidator" runat="server" OnServerValidate="ValidateRegistration" ValidateEmptyText="True" />
                 <p><%= ParentPage.GetTranslation("WeWillSendYouAConfirmationEmail")%></p>
             </div>
+             <div class="form-row">
+                <label>
+                    &nbsp;
+                </label>
+                <asp:CheckBox ID="ckSubscribe" runat="server" ClientIDMode="Static" />
+                
+                <p>
+                    <%= "We will send you a confirmation email <br/> Please include me in marketing emails" %><!-- translation needed -->
+                </p>
+            </div>
         </fieldset>
         <fieldset class="cf">
             <legend><%= ParentPage.GetTranslation("YourAddress") %></legend>

@@ -103,6 +103,15 @@ namespace bigbus.checkout.Controls {
         protected global::System.Web.UI.WebControls.CustomValidator EmailValidator;
         
         /// <summary>
+        /// ckSubscribe control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox ckSubscribe;
+        
+        /// <summary>
         /// txtAddress1 control.
         /// </summary>
         /// <remarks>

@@ -40,7 +40,8 @@ namespace bigbus.checkout.Controls
         public string State {get{ return   txtState.Text; }  set{txtState.Text=value;}}
         public string Country {get{ return   ddlCountryList.SelectedValue; }  set{ddlCountryList.SelectedValue=value;}}
         public bool TermsAndConditions {get{ return  ckTermsAndConditions.Checked; } }
-        
+        public bool Subscribed { get { return ckSubscribe.Checked; }}
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)

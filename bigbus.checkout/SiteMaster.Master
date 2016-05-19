@@ -1,4 +1,5 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="SiteMaster.master.cs" Inherits="bigbus.checkout.SiteMaster" %>
+<%@ Register src="~/Controls/IntileryMainScript.ascx" TagPrefix="Tag" TagName="Intilery" %>
 
 <!DOCTYPE html>
 
@@ -11,11 +12,13 @@
 </head>
 <body>
     <form id="form1" runat="server">
-    <div>
-        <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+        <Tag:Intilery runat="server"/><!-- This tag must appear before GA Tag -->
+
+        <div>
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
         
-        </asp:ContentPlaceHolder>
-    </div>
+            </asp:ContentPlaceHolder>
+        </div>
     </form>
 </body>
 </html>
