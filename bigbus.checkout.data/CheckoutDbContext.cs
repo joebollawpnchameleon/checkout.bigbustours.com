@@ -25,6 +25,9 @@ namespace bigbus.checkout.data
 
         #region Models Declaration 
 
+        public virtual DbSet<Email> Emails { get; set; }
+        public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
+        public virtual DbSet<MicrositeEmailTemplate> MicrositeEmailTemplates { get; set; }
         public virtual DbSet<EcrOrderLineBarcode> EcrOrderLineBarcodes { get; set; }
         public virtual DbSet<OrderLineGeneratedBarcode> OrderLineBarcodes { get; set; }
         public virtual DbSet<TransactionAddressPaypal> AddressPaypals { get; set; }

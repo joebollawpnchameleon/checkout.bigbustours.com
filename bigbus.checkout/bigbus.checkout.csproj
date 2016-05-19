@@ -142,6 +142,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="BookingAddressPayPal.aspx" />
+    <Content Include="BookingCompleted.aspx" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\Design\barcode.png" />
@@ -283,6 +284,13 @@
     </Compile>
     <Compile Include="BookingAddressPayPal.aspx.designer.cs">
       <DependentUpon>BookingAddressPayPal.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="BookingCompleted.aspx.cs">
+      <DependentUpon>BookingCompleted.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BookingCompleted.aspx.designer.cs">
+      <DependentUpon>BookingCompleted.aspx</DependentUpon>
     </Compile>
     <Compile Include="BookingSuccess.aspx.cs">
       <DependentUpon>BookingSuccess.aspx</DependentUpon>

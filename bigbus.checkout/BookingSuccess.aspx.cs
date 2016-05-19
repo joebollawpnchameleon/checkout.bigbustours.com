@@ -70,7 +70,7 @@ namespace bigbus.checkout
             //Prepare email notifications
 
             //Redirect user to order confirmation page or error
-            Response.Redirect(string.Format("~/Checkout/Completed/{0}", newOrder.Id));
+            Response.Redirect(string.Format("~/BookingCompleted.aspx?oid={0}", newOrder.Id));
         }    
 
         private void LoadSession()

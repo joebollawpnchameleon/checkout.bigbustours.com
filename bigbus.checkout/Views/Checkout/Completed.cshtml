@@ -13,5 +13,26 @@
         <a href="~/ViewVoucher.aspx?oid=@Model.OrderId">View your voucher</a>
     </em>
 </p>
+<p>
+    <input type="CheckBox" ID="chkReceiveNews" />
+    </p>
+
+<script type="text/javascript">
+    function TrackSubscription() {
+        var isUserSubscribed = $('#chkReceiveNews:checked').length > 0;
+        var email = '@Model.Email';
+
+        if (isUserSubscribed) {
+            _itq.push([
+                "_trackUserEvent", "subscribe",
+                [
+                    { "name": "Customer.Email", "value": email },
+                    { "name": "Customer.Subscribed", "value": "true" }
+                ],
+                "Subscribe"
+            ]);
+        }
+    }
+</script>
 
 

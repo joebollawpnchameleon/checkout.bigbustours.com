@@ -55,12 +55,15 @@
     <Compile Include="Model\Country.cs" />
     <Compile Include="Model\Currency.cs" />
     <Compile Include="Model\EcrOrderLineBarcode.cs" />
+    <Compile Include="Model\Email.cs" />
+    <Compile Include="Model\EmailTemplate.cs" />
     <Compile Include="Model\Image.cs" />
     <Compile Include="Model\ImageFolder.cs" />
     <Compile Include="Model\ImageMetaData.cs" />
     <Compile Include="Model\Language.cs" />
     <Compile Include="Model\Log.cs" />
     <Compile Include="Model\Microsite.cs" />
+    <Compile Include="Model\MicrositeEmailTemplate.cs" />
     <Compile Include="Model\MicroSiteLanguage.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\OrderLine.cs" />
