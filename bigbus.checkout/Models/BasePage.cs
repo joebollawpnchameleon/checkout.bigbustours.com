@@ -142,17 +142,11 @@ namespace bigbus.checkout.Models
             var bookingTransactions = EcrServiceHelper.GetBookingTransactionDetails(orderLines, order.Currency.ISOCode);
 
             var response = EcrService.SubmitBooking(order.OrderNumber, availabilityResponse, bookingTransactions);
-                
-            if (response == null || response.Status != (int)EcrResponseStatus.Success)
-            {
-                Log("Send to Ecr Failed with error " + (response == null ? "Booking process failed " : response.ErrorDescription));
-                return null;
-            }
 
-            order.EcrBookingShortReference = response.TransactionReference;
-            CheckoutService.SaveOrder(order);
+            if (response != null && response.Status == (int) EcrResponseStatus.Success) return response;
 
-            return response;
+            Log("Send to Ecr Failed with error " + (response == null ? "Booking process failed " : response.ErrorDescription));
+            return null;
         }
 
         protected void ClearCheckoutCookies()
