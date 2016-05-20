@@ -152,6 +152,7 @@
     <Content Include="Content\Images\Design\watermark.jpg" />
     <Content Include="Content\Images\Design\wtm_faded.png" />
     <Content Include="Content\Site.css" />
+    <Content Include="Controls\BasketDisplay.ascx" />
     <Content Include="Controls\EVoucher.ascx" />
     <Content Include="Controls\IntileryMainScript.ascx" />
     <Content Include="Controls\UserDetails.ascx" />
@@ -186,7 +187,6 @@
     <Content Include="Views\web.config" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Default\Index.cshtml" />
-    <Content Include="Views\Checkout\Success.cshtml" />
     <Content Include="Views\Checkout\Index.cshtml" />
     <Content Include="Views\Checkout\Completed.cshtml" />
     <Content Include="Views\Error\StandardErrorView.cshtml" />
@@ -303,6 +303,13 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MagentoTestController.cs" />
+    <Compile Include="Controls\BasketDisplay.ascx.cs">
+      <DependentUpon>BasketDisplay.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\BasketDisplay.ascx.designer.cs">
+      <DependentUpon>BasketDisplay.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\EVoucher.ascx.cs">
       <DependentUpon>EVoucher.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -355,6 +362,7 @@
     <Compile Include="Helpers\IEcrService.cs" />
     <Compile Include="Helpers\IntileryTagHelper.cs" />
     <Compile Include="Helpers\LanguageHelper.cs" />
+    <Compile Include="Models\BasketDisplayVM.cs" />
     <Compile Include="QrCodeImageHandler.ashx.cs">
       <DependentUpon>QrCodeImageHandler.ashx</DependentUpon>
     </Compile>

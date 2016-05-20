@@ -1,4 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UserDetails.ascx.cs" Inherits="bigbus.checkout.Controls.WebUserControl1" %>
+    <p>
+        * These fields are mandatory
+    </p>
 
     <div class="formErrors">
         <div>
@@ -8,7 +11,7 @@
             <asp:ValidationSummary ID="ValidationErrorSummary" CssClass="ValidationErrorSummaryContent" runat="server" />
         </div>
     </div>
-    
+       
         <fieldset class="cf">
             <legend><%= ParentPage.GetTranslation("YourDetails") %></legend>
             <div class="form-row">
@@ -23,7 +26,7 @@
                     <abbr title="required">*</abbr>
                 </label>
                 <asp:TextBox ID="txtFirstName" ClientIDMode="Static" runat="server" MaxLength="100" />
-                <asp:CustomValidator CssClass="error" Display="Dynamic" ID="FirstnameValidator" runat="server" OnServerValidate="ValidateRegistration" ValidateEmptyText="True" />
+                <asp:RequiredFieldValidator CssClass="error" id="rqVFirstName" Display="Dynamic"  runat="server"  ControlToValidate="txtFirstName"/>
             </div>
             <div class="form-row">
                 <label for="<%= txtLastName.ClientID%>">
@@ -31,7 +34,7 @@
                     <abbr title="required">*</abbr>
                 </label>
                 <asp:TextBox ID="txtLastName" runat="server" MaxLength="100" />
-                <asp:CustomValidator CssClass="error" ID="LastnameValidator" runat="server" OnServerValidate="ValidateRegistration" ValidateEmptyText="True" />
+                 <asp:RequiredFieldValidator CssClass="error" Display="Dynamic" id="rqVFirstLastName" runat="server"  ControlToValidate="txtLastName"/>
             </div>
             <div class="form-row">
                 <label for="<%= txtEmail.ClientID%>">
@@ -39,7 +42,8 @@
                     <abbr title="required">*</abbr>
                 </label>
                 <asp:TextBox ID="txtEmail" runat="server" MaxLength="500" />
-                <asp:CustomValidator CssClass="error" ID="EmailValidator" runat="server" OnServerValidate="ValidateRegistration" ValidateEmptyText="True" />
+                <asp:RequiredFieldValidator CssClass="error" Display="Dynamic"  id="rqVFirstEmail" runat="server"   ControlToValidate="txtEmail"/>
+                <asp:RegularExpressionValidator ID="regexEmailValid" runat="server" ValidationExpression="\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" ControlToValidate="txtEmail"/>
                 <p><%= ParentPage.GetTranslation("WeWillSendYouAConfirmationEmail")%></p>
             </div>
              <div class="form-row">
@@ -49,7 +53,7 @@
                 <asp:CheckBox ID="ckSubscribe" runat="server" ClientIDMode="Static" />
                 
                 <p>
-                    <%= "We will send you a confirmation email <br/> Please include me in marketing emails" %><!-- translation needed -->
+                    <%= "We will send you a confirmation email Please include me in marketing emails" %><!-- translation needed -->
                 </p>
             </div>
         </fieldset>
@@ -62,7 +66,7 @@
                     <abbr title="required">*</abbr>
                 </label>
                 <asp:TextBox ID="txtAddress1" runat="server" MaxLength="255" />
-                <asp:CustomValidator CssClass="error" ID="AddressValidator" runat="server" OnServerValidate="ValidateRegistration" ValidateEmptyText="True" />
+                <asp:RequiredFieldValidator CssClass="error" Display="Dynamic" id="rqVAddress1" runat="server"  ControlToValidate="txtAddress1"/>
             </div>
             <div class="form-row">
                 <label for="<%= txtAddress2.ClientID%>"><%= ParentPage.GetTranslation("AddressLine2") %></label>
@@ -74,7 +78,7 @@
                     <abbr title="required">*</abbr>
                 </label>
                 <asp:TextBox ID="txtTown" runat="server" MaxLength="100" />
-                <asp:CustomValidator CssClass="error" ID="TownValidator" runat="server" OnServerValidate="ValidateRegistration" ValidateEmptyText="True" />
+                <asp:RequiredFieldValidator CssClass="error" Display="Dynamic" id="rqVTown" runat="server"  ControlToValidate="txtTown"/>
             </div>
             <div class="form-row">
                 <label for="<%= txtPostCode.ClientID%>">
@@ -82,7 +86,7 @@
                     <abbr title="required">*</abbr>
                 </label>
                 <asp:TextBox ID="txtPostCode" runat="server" MaxLength="100" />
-                <asp:CustomValidator CssClass="error" ID="PostcodeValidator" runat="server" OnServerValidate="ValidateRegistration" ValidateEmptyText="True" />
+                <asp:RequiredFieldValidator CssClass="error" Display="Dynamic" id="rqVPostCode" runat="server"  ControlToValidate="txtPostCode"/>
             </div>
             <div class="form-row">
                 <label for="<%= txtState.ClientID%>">
@@ -96,7 +100,7 @@
                     <abbr title="required">*</abbr>
                 </label>
                 <asp:DropDownList Font-Size="12px" ID="ddlCountryList" runat="server" />
-                <asp:CustomValidator CssClass="error" ID="CountryValidator" runat="server" OnServerValidate="ValidateRegistration" ValidateEmptyText="True" />
+                <asp:CustomValidator id="cstVCountry" runat="server"  OnServerValidate="ValidateCountry" />
             </div>
         </fieldset>
         <fieldset class="cf terms">
@@ -105,8 +109,13 @@
                 <label for="<%=ckTermsAndConditions.ClientID %>">
                     <%= ParentPage.GetTranslation("IhavereadandagreetotheTermsandConditions")%><abbr title="required">*</abbr>
                 </label>
-                <p><a href="terms-and-conditions.html?browser=true" target="_blank" ><%=ParentPage.GetTranslation("TermsAndConditions")%> ></a></p>
-                <asp:CustomValidator CssClass="error" ID="TAndCValidator" runat="server" OnServerValidate="ValidateRegistration" ValidateEmptyText="True" />
+                <p>
+                    <a href="terms-and-conditions.html?browser=true" target="_blank" ><%=ParentPage.GetTranslation("TermsAndConditions")%> </a>&nbsp;
+                    <a href="privacy-policy.html?browser=true" target="_blank" ><%=ParentPage.GetTranslation("PrivacyPolicy")%> </a>
+                </p>
+                
+                <asp:CustomValidator id="cstVTerms" runat="server"  OnServerValidate="ValidateTermsAndConditions" />
+
             </div>
         </fieldset>
 

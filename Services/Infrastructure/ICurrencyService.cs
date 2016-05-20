@@ -1,4 +1,5 @@
-﻿using System;
+﻿using bigbus.checkout.data.Model;
+using System;
 
 namespace Services.Infrastructure
 {
@@ -6,6 +7,10 @@ namespace Services.Infrastructure
     {
         Guid GetCurrencyGuidByCode(string code);
 
+        Currency GetCurrencyByCode(string code);
+
         string GetCurrencyIsoCodeById(string id);
+
+        Currency GetCurrencyById(string id);
     }
 }

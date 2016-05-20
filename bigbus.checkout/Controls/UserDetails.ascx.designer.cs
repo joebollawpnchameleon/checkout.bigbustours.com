@@ -58,13 +58,13 @@ namespace bigbus.checkout.Controls {
         protected global::System.Web.UI.WebControls.TextBox txtFirstName;
         
         /// <summary>
-        /// FirstnameValidator control.
+        /// rqVFirstName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator FirstnameValidator;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rqVFirstName;
         
         /// <summary>
         /// txtLastName control.
@@ -76,13 +76,13 @@ namespace bigbus.checkout.Controls {
         protected global::System.Web.UI.WebControls.TextBox txtLastName;
         
         /// <summary>
-        /// LastnameValidator control.
+        /// rqVFirstLastName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator LastnameValidator;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rqVFirstLastName;
         
         /// <summary>
         /// txtEmail control.
@@ -94,13 +94,22 @@ namespace bigbus.checkout.Controls {
         protected global::System.Web.UI.WebControls.TextBox txtEmail;
         
         /// <summary>
-        /// EmailValidator control.
+        /// rqVFirstEmail control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator EmailValidator;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rqVFirstEmail;
+        
+        /// <summary>
+        /// regexEmailValid control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator regexEmailValid;
         
         /// <summary>
         /// ckSubscribe control.
@@ -121,13 +130,13 @@ namespace bigbus.checkout.Controls {
         protected global::System.Web.UI.WebControls.TextBox txtAddress1;
         
         /// <summary>
-        /// AddressValidator control.
+        /// rqVAddress1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator AddressValidator;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rqVAddress1;
         
         /// <summary>
         /// txtAddress2 control.
@@ -148,13 +157,13 @@ namespace bigbus.checkout.Controls {
         protected global::System.Web.UI.WebControls.TextBox txtTown;
         
         /// <summary>
-        /// TownValidator control.
+        /// rqVTown control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator TownValidator;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rqVTown;
         
         /// <summary>
         /// txtPostCode control.
@@ -166,13 +175,13 @@ namespace bigbus.checkout.Controls {
         protected global::System.Web.UI.WebControls.TextBox txtPostCode;
         
         /// <summary>
-        /// PostcodeValidator control.
+        /// rqVPostCode control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator PostcodeValidator;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rqVPostCode;
         
         /// <summary>
         /// txtState control.
@@ -193,13 +202,13 @@ namespace bigbus.checkout.Controls {
         protected global::System.Web.UI.WebControls.DropDownList ddlCountryList;
         
         /// <summary>
-        /// CountryValidator control.
+        /// cstVCountry control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator CountryValidator;
+        protected global::System.Web.UI.WebControls.CustomValidator cstVCountry;
         
         /// <summary>
         /// ckTermsAndConditions control.
@@ -211,12 +220,12 @@ namespace bigbus.checkout.Controls {
         protected global::System.Web.UI.WebControls.CheckBox ckTermsAndConditions;
         
         /// <summary>
-        /// TAndCValidator control.
+        /// cstVTerms control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator TAndCValidator;
+        protected global::System.Web.UI.WebControls.CustomValidator cstVTerms;
     }
 }

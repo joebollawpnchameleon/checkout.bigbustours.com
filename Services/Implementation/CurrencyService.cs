@@ -14,18 +14,28 @@ namespace Services.Implementation
             _repository = repository;
         }
 
-        public Guid GetCurrencyGuidByCode(string code)
+        public virtual Guid GetCurrencyGuidByCode(string code)
         {
             var currency = _repository.GetSingle(x => x.ISOCode.Equals(code, StringComparison.CurrentCultureIgnoreCase));
             return currency == null ? Guid.Empty : currency.Id;
         }
 
-        public string GetCurrencyIsoCodeById(string id)
+        public virtual Currency GetCurrencyByCode(string code)
+        {
+            return _repository.GetSingle(x => x.ISOCode.Equals(code, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public virtual string GetCurrencyIsoCodeById(string id)
         {
             var currency =
                 _repository.GetSingle(x => x.Id.ToString().Equals(id.Trim(), StringComparison.CurrentCultureIgnoreCase));
 
             return currency == null ? string.Empty : currency.ISOCode;
+        }
+
+        public virtual Currency GetCurrencyById(string id)
+        {
+            return _repository.GetSingle(x => x.Id.ToString().Equals(id.Trim(), StringComparison.CurrentCultureIgnoreCase));
         }
     }
 }

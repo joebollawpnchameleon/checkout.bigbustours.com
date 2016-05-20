@@ -173,8 +173,6 @@ namespace bigbus.checkout.Models
 
                     var imageSaveStatus = ImageDbService.GenerateQrImage(orderNumber, ticket.Id.ToString(),
                         imageBytes, MicrositeId);
-
-                    //*** record each status was successful.
                 }
             }
             catch (Exception ex)

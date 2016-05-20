@@ -1,10 +1,23 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SiteMaster.Master" AutoEventWireup="true" CodeBehind="BookingAddress.aspx.cs" Inherits="bigbus.checkout.BookingAddress" %>
 <%@ Register TagPrefix="NCK" TagName="UserDetails" src="~/Controls/UserDetails.ascx"  %>
+<%@ Register TagPrefix="NCK" TagName="BasketDisplay" src="~/Controls/BasketDisplay.ascx"  %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    <div id="dvBasketSummary">
+        <%= GetTranslation("Total") + ":" + string.Format("<span class=\"red\">{0}</span>", TotalSummary) %>     &nbsp;
+        <span class="action"><%= GetTranslation("View_Basket") %></span>
+        <hr/>
+         <NCK:BasketDisplay id="ucBasketDisplay" runat="server"/>
+         <hr/>
+    </div>
+
+    <div id="dvPayPalAction">
+        <asp:Button runat="server" text="Checkout With Paypal" OnClick="CheckoutWithPaypal" /> Or fill in your details below to pay by credit/debit card
+    </div>
+
     <div id="dvErrorSummary" runat="server" Visible="False">
         <asp:Literal runat="server" id="ltError"></asp:Literal>
     </div>
@@ -18,7 +31,7 @@
         &nbsp;
         <asp:Button runat="server" text="Checkout With Credit Card" OnClientClick="TrackUserSubscription();" OnClick="CheckoutWithCreditCard" id="btnContinueCheckout"/>
         &nbsp;
-         <asp:Button runat="server" text="Checkout With Paypal" OnClick="CheckoutWithPaypal" />
+         
     </div>
     
     <script type="text/javascript">

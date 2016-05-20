@@ -9,7 +9,7 @@
     Dear user,<br/>
     Thank you for buying from us.
     <em style="border: 1px solid red; padding: 5px;">
-        <a href="~/ViewVoucher.aspx?oid=<%= Request.QueryString["oid"] %>">View your voucher</a>
+        <a href="ViewVoucher.aspx?oid=<%= Request.QueryString["oid"] %>">View your voucher</a>
     </em>
 </p>
 <p>

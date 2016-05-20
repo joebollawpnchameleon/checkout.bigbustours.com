@@ -19,6 +19,8 @@ namespace bigbus.checkout
 {
     public partial class BookingAddress : BasePage
     {
+        protected string TotalSummary { get; set; }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //var test = BasketService.GetBasket(new Guid());
@@ -26,11 +28,12 @@ namespace bigbus.checkout
             if (!IsPostBack)
             {
                 InitControls();
-                GetExternalBasket();
-            }           
+                LoadBasket();
+            }
+            
         }
 
-        protected void GetExternalBasket()
+        protected void LoadBasket()
         {
             //Get user basket cookie at this level.
             var externalSessionId = AuthenticationService.GetExternalSessionId(ExternalBasketCookieName);
@@ -43,7 +46,13 @@ namespace bigbus.checkout
             }
 
             //first check if we don't already have this basket saved
-            if (BasketService.DoesBasketExist(externalSessionId)) return;
+            var dbBasket = BasketService.GetBasketBySessionId(externalSessionId);
+
+            if (dbBasket != null)
+            {
+                DisplayBasketDetails(dbBasket);
+                return;
+            }
 
             //retrieve basket from Magento and persist it and create session.
             var basket = ApiConnector.GetExternalBasketByCookie(externalSessionId);
@@ -58,6 +67,8 @@ namespace bigbus.checkout
             basket.ExternalCookieValue = externalSessionId;
             var basketGuid = BasketService.PersistBasket(basket);
 
+            DisplayBasketDetails(basket);
+
             //check basket has been saved
             if (basketGuid == Guid.Empty)
             {
@@ -70,6 +81,7 @@ namespace bigbus.checkout
 
             AuthenticationService.SetCookie(BasketCookieName, SessionCookieDomain, basketGuid.ToString());
         }
+        
 
         protected void ContinueShopping(object sender, EventArgs e)
         {
@@ -86,6 +98,47 @@ namespace bigbus.checkout
             dvErrorSummary.Visible = false;
             dvAddressDetails.Visible = true;
             btnContinueCheckout.Visible = true;
+        }
+
+        private void DisplayBasketDetails(BornBasket basket)
+        {
+            var currency = CurrencyService.GetCurrencyByCode(basket.CurrencyCode);
+            TotalSummary = currency.Symbol + basket.Total;
+
+            ucBasketDisplay.AddMoreUrl = ConfigurationManager.AppSettings["BornAddMoreTicketUrl"];
+            ucBasketDisplay.ParentPage = this;
+            ucBasketDisplay.ShowActionRow = true;
+            ucBasketDisplay.TotalString = TotalSummary;
+
+            var itemList = basket.BasketItems.Select(item => new BasketDisplayVm
+            {
+                TicketName = item.ProductName, Date = GetTranslation("Open_Date"), //*** translation needed
+                Quantity = item.Quantity, Title = item.TicketType.ToString(), TotalSummary = TotalSummary
+            }).ToList();
+
+            ucBasketDisplay.DataSource = itemList;
+        }
+
+        private void DisplayBasketDetails(Basket basket)
+        {
+            var currency = CurrencyService.GetCurrencyById(basket.CurrencyId.ToString());
+            TotalSummary = currency.Symbol + basket.Total;
+
+            ucBasketDisplay.AddMoreUrl = ConfigurationManager.AppSettings["BornAddMoreTicketUrl"];
+            ucBasketDisplay.ParentPage = this;
+            ucBasketDisplay.ShowActionRow = true;
+            ucBasketDisplay.TotalString = TotalSummary;
+
+            var itemList = basket.BasketLines.Select(item => new BasketDisplayVm
+            {
+                TicketName = TicketService.GetTicketById(item.TicketId.ToString()).Name,
+                Date = GetTranslation("Open_Date"), //*** translation needed
+                Quantity = item.TicketQuantity.Value,
+                Title = item.TicketType.ToString(),
+                TotalSummary = TotalSummary
+            }).ToList();
+
+            ucBasketDisplay.DataSource = itemList;
         }
 
         #endregion
@@ -109,8 +162,9 @@ namespace bigbus.checkout
 
         protected void CheckoutWithCreditCard(object sender, EventArgs e)
         {
-            if (!Page.IsValid || !ucUserDetails.IsValid)
+            if (!IsValid)
             {
+                LoadBasket();
                 return;
             }
 
@@ -233,8 +287,9 @@ namespace bigbus.checkout
 
         protected void CheckoutWithPaypal(object sender, EventArgs e)
         {
-            if (!Page.IsValid || !ucUserDetails.IsValid)
+            if (!Page.IsValid)
             {
+                LoadBasket();
                 return;
             }
 

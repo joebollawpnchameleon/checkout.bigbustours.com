@@ -20,10 +20,6 @@ namespace bigbus.checkout.Controls
 
         public ICountryService CountryService { get; set; }
 
-        public bool IsValid
-        {
-            get { return IsFormValid(); }
-        }
 
         public string UserTitle
         {
@@ -48,7 +44,9 @@ namespace bigbus.checkout.Controls
             {
                 LoadTitles();
                 LoadCountries();
+                InitControls();
             }
+            
         }
 
         private void LoadTitles()
@@ -65,122 +63,38 @@ namespace bigbus.checkout.Controls
             ddlCountryList.DataBind();
         }
 
-        protected bool IsFormValid()
+        private void InitControls()
         {
-            return true;
+            ValidationErrorSummary.HeaderText = ParentPage.GetTranslation("PleaseFixTheFollowingErrors");
+
+            rqVFirstName.Text = rqVFirstLastName.Text = rqVFirstEmail.Text = rqVAddress1.Text =
+                rqVTown.Text = rqVPostCode.Text = rqVAddress1.Text = rqVTown.Text = rqVPostCode.Text =
+                cstVCountry.Text = ParentPage.GetTranslation("Required");
+            cstVTerms.Text = "*";
+
+            rqVFirstName.ErrorMessage = ParentPage.GetTranslation("Pleaseenteryourfirstname");
+            rqVFirstLastName.ErrorMessage = ParentPage.GetTranslation("Pleaseenteryourlastname");
+            rqVFirstEmail.ErrorMessage = ParentPage.GetTranslation("Pleaseenteryouremailaddress");
+            regexEmailValid.ErrorMessage = ParentPage.GetTranslation("Pleaseenteryouremailaddress");
+            rqVAddress1.ErrorMessage = ParentPage.GetTranslation("Pleaseenteryouraddress");
+            rqVTown.ErrorMessage = ParentPage.GetTranslation("Pleasenteryourtowncity");
+            rqVPostCode.ErrorMessage = ParentPage.GetTranslation("Pleaseenteryourpostzipcode");
+            cstVCountry.ErrorMessage = ParentPage.GetTranslation("Booking_SelectCountryError");
+            cstVTerms.ErrorMessage = ParentPage.GetTranslation("Pleasereadandagreetotandc");
         }
 
-        protected void ValidateRegistration(object source, ServerValidateEventArgs value)
+        public void ValidateTermsAndConditions(object source, ServerValidateEventArgs args)
         {
-            //if (ThisSession != null)
-            //{
-            //    if (ThisSession.PayPal_Token == null)
-            //    {
-            //string requiredText = GetTranslation("Required");
-
-            //FirstnameValidator.ErrorMessage = string.Empty;
-            //LastnameValidator.ErrorMessage = string.Empty;
-            //EmailValidator.ErrorMessage = string.Empty;
-
-            //FirstnameValidator.Text = string.Empty;
-            //LastnameValidator.Text = string.Empty;
-            //EmailValidator.Text = string.Empty;
-
-            //TAndCValidator.ErrorMessage = string.Empty;
-            //TAndCValidator.Text = string.Empty;
-
-            //AddressValidator.ErrorMessage = string.Empty;
-            //TownValidator.ErrorMessage = string.Empty;
-            //PostcodeValidator.ErrorMessage = string.Empty;
-            //CountryValidator.ErrorMessage = string.Empty;
-
-            //AddressValidator.Text = string.Empty;
-            //TownValidator.Text = string.Empty;
-            //PostcodeValidator.Text = string.Empty;
-            //CountryValidator.Text = string.Empty;
-
-            //ValidationErrorSummary.HeaderText = GetTranslation("PleaseFixTheFollowingErrors");
-
-            //if (string.IsNullOrEmpty(customer.FirstName))
-            //{
-            //    FirstnameValidator.ErrorMessage = GetTranslation("Pleaseenteryourfirstname");
-            //    FirstnameValidator.Text = "*" + requiredText;
-            //    value.IsValid = false;
-            //}
-
-            //if (string.IsNullOrEmpty(customer.LastName))
-            //{
-            //    LastnameValidator.ErrorMessage = GetTranslation("Pleaseenteryourlastname");
-            //    LastnameValidator.Text = "*" + requiredText;
-            //    value.IsValid = false;
-            //}
-
-            //if (string.IsNullOrEmpty(customer.Email))
-            //{
-            //    EmailValidator.ErrorMessage = GetTranslation("Pleaseenteryouremailaddress");
-            //    EmailValidator.Text = "*" + requiredText;
-            //    value.IsValid = false;
-            //}
-
-            //if (!CheckValidEmail(customer.Email))
-            //{
-            //    EmailValidator.ErrorMessage = GetTranslation("Pleaseenteravalidemailaddress");
-            //    EmailValidator.Text = "*" + requiredText;
-            //    value.IsValid = false;
-            //}
-
-            //if (string.IsNullOrEmpty(customer.Address1))
-            //{
-            //    AddressValidator.ErrorMessage = GetTranslation("Pleaseenteryouraddress");
-            //    AddressValidator.Text = "*" + requiredText;
-            //    value.IsValid = false;
-            //}
-
-            //if (string.IsNullOrEmpty(customer.City))
-            //{
-            //    TownValidator.ErrorMessage = GetTranslation("Pleasenteryourtowncity");
-            //    TownValidator.Text = "*" + requiredText;
-            //    value.IsValid = false;
-            //}
-
-            //if (customer.Country == "-" || customer.Country == "--")
-            //{
-            //    CountryValidator.ErrorMessage = GetTranslation("Booking_SelectCountryError");
-            //    CountryValidator.Text = "*" + requiredText;
-            //    value.IsValid = false;
-            //}
-            //else if (customer.Country == "GB" || customer.Country == "US")
-            //{
-            //    if (string.IsNullOrEmpty(customer.PostCode))
-            //    {
-            //        PostcodeValidator.ErrorMessage = GetTranslation("Pleaseenteryourpostzipcode");
-            //        PostcodeValidator.Text = "*" + requiredText;
-            //        value.IsValid = false;
-            //    }
-            //}
-
-
-            //if (!AgreeTermsAndConditions.Checked)
-            //{
-            //    TAndCValidator.ErrorMessage = GetTranslation("Pleasereadandagreetotandc");
-            //    TAndCValidator.Text = "*" + requiredText;
-            //    value.IsValid = false;
-            //}
-
-            //    }
-
-            //}
+            args.IsValid = ckTermsAndConditions.Checked;
         }
 
-        public bool DoubleCheckTsAndCs()
+        protected void ValidateCountry(object source, ServerValidateEventArgs args)
         {
-            if (ckTermsAndConditions.Checked) return true;
-
-            TAndCValidator.ErrorMessage = ParentPage.GetTranslation("Pleasereadandagreetotandc");
-            TAndCValidator.Text = "*" + ParentPage.GetTranslation("Required");
-            TsAndCsLit.Text = "<span style=\"color:red\">" + ParentPage.GetTranslation("Pleasereadandagreetotandc") + "</span>";
-            TsAndCsStarLit.Text = "<span style=\"color:red\">*</span>";
-            return false;
+            var selCountry = ddlCountryList.SelectedValue;
+            
+            //validate country
+            args.IsValid = (!string.IsNullOrEmpty(selCountry) && !selCountry.Trim().Equals("-") &&
+                            !selCountry.Trim().Equals("--"));
         }
     }
 }
