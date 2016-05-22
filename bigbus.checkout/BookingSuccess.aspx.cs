@@ -6,6 +6,7 @@ using pci = Common.Model.Pci;
 using Services.Infrastructure;
 using Basket = bigbus.checkout.data.Model.Basket;
 using bigbus.checkout.EcrWServiceRefV3;
+using Common.Model;
 
 namespace bigbus.checkout
 {
@@ -15,8 +16,10 @@ namespace bigbus.checkout
         private Basket _basket;
         private string _basketId;
 
-        public EcrResponseCodes EcrBookingStatus;       
-        public IPciApiServiceNoASync PciApiServices { get; set; }       
+        public EcrResponseCodes EcrBookingStatus;
+        public IPciApiServiceNoASync PciApiServices { get; set; }
+        public INotificationService NotificationService {get;set;}
+        public ILocalizationService LocalizationService { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -68,10 +71,33 @@ namespace bigbus.checkout
             ClearCheckoutCookies();
 
             //Prepare email notifications
+            SendOrderConfirmationEmail(newOrder);
 
             //Redirect user to order confirmation page or error
             Response.Redirect(string.Format("~/BookingCompleted.aspx?oid={0}", newOrder.Id));
         }    
+
+        private void SendOrderConfirmationEmail(Order order)
+        {
+            var request = new OrderConfirmationEmailRequest
+            {
+                CityName = MicrositeId,
+                OrderNumber = order.OrderNumber.ToString(),
+                ViewAndPrintTicket_Link = "",
+                UserFullName = order.UserName,
+                DateOfOrder = LocalizationService.GetLocalDateTime(MicrositeId).ToShortDateString(), //*** format to local date
+                OrderTotal = order.Total.ToString(), //*** add currency
+                TicketQuantity = order.TotalQuantity.ToString(),
+                termsAndConditions_Link = "",
+                PrivacyPolicy_Link = "",
+                AppStore_Link = "",
+                GooglePlay_Link = "",
+                CityNumber = "",
+                CityEmail = ""
+            };
+
+            var result = NotificationService.CreateOrderConfirmationEmail(request);
+        }
 
         private void LoadSession()
         {

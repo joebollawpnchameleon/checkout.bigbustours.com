@@ -16,6 +16,9 @@ namespace Services.Implementation
         public IGenericDataRepository<Currency> CurrencyRepository { get; set; }
         public IGenericDataRepository<TransactionAddressPaypal> AddressPpRepository { get; set; }
         public IGenericDataRepository<OrderLineGeneratedBarcode> BarcodeRepository { get; set; }
+        public IGenericDataRepository<EmailTemplate> EmailTemplateRepository { get; set; }
+        public IGenericDataRepository<MicrositeEmailTemplate> MicrositeEmailRepository { get; set; }
+        public IGenericDataRepository<Email> EmailRepository { get; set; }
 
         public ILocalizationService LocalizationService { get; set; }
         public ILoggerService LoggerService { get; set; }

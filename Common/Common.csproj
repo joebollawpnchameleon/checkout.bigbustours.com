@@ -58,6 +58,7 @@
     <Compile Include="Model\CustomerSession.cs" />
     <Compile Include="Model\GenericHttpCacheProvider.cs" />
     <Compile Include="Model\Interfaces\ICacheProvider.cs" />
+    <Compile Include="Model\OrderConfirmationEmailRequest.cs" />
     <Compile Include="Model\PayPal\NvpCodec.cs" />
     <Compile Include="Model\PayPal\PayPalAddressInfo.cs" />
     <Compile Include="Model\PayPal\PayPalInitStructure.cs" />

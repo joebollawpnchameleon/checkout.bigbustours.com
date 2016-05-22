@@ -110,6 +110,7 @@
     <Compile Include="Implementation\ImageDbService.cs" />
     <Compile Include="Implementation\ImageService.cs" />
     <Compile Include="Implementation\LocalizationService.cs" />
+    <Compile Include="Implementation\NotificationService.cs" />
     <Compile Include="Implementation\PayPalService.cs" />
     <Compile Include="Implementation\PciApiService.cs" />
     <Compile Include="Implementation\PciApiServiceNoASync.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Infrastructure\IImageService.cs" />
     <Compile Include="Infrastructure\ILocalizationService.cs" />
     <Compile Include="Infrastructure\ILoggerService.cs" />
+    <Compile Include="Infrastructure\INotificationService.cs" />
     <Compile Include="Infrastructure\IPaypalService.cs" />
     <Compile Include="Infrastructure\IPciApiService.cs" />
     <Compile Include="Infrastructure\IPciApiServiceNoASync.cs" />
