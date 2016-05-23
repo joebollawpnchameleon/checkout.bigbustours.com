@@ -13,6 +13,9 @@ namespace Services.Infrastructure
         bool CreateHtmlEmail();
 
         string CreateOrderConfirmationEmail(OrderConfirmationEmailRequest request);
+
+        ContactData GetSiteContactData(string micrositeId, string page);
+
     }
 
 

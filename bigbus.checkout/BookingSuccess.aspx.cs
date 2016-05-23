@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using bigbus.checkout.data.Model;
 using bigbus.checkout.Models;
 using Common.Enums;
@@ -6,6 +7,7 @@ using pci = Common.Model.Pci;
 using Services.Infrastructure;
 using Basket = bigbus.checkout.data.Model.Basket;
 using bigbus.checkout.EcrWServiceRefV3;
+using Common.Helpers;
 using Common.Model;
 
 namespace bigbus.checkout
@@ -79,37 +81,78 @@ namespace bigbus.checkout
 
         private void SendOrderConfirmationEmail(Order order)
         {
+            if (order == null)
+                return;
+
+            var eVoucherPage = EnumHelper.GetDescription(EmailTemplatePages.EVoucher);
+            var contactData = NotificationService.GetSiteContactData(MicrositeId, eVoucherPage);
+            var rootUrl = UrlHelper.GetRootUrl(Request.Url.AbsoluteUri);
+            var defaultRootUrl = ConfigurationManager.AppSettings["BaseUrl"];
+            var eVoucherLink = (string.IsNullOrEmpty(rootUrl) ? defaultRootUrl : rootUrl) + "/" +
+                               string.Format(ConfigurationManager.AppSettings["View.Voucher"], order.Id);
+
+            var bornUrlRoot = string.Format(ConfigurationManager.AppSettings["BornBaseInsecureUrl"], CurrentLanguageId,
+                MicrositeId);
+
+            var currency = CurrencyService.GetCurrencyById(_session.CurrencyId);
+
             var request = new OrderConfirmationEmailRequest
             {
+               EmailSubject =  MakeSubject(order.OrderNumber),
+                SenderEmail = contactData.Email,
+                ReceiverEmail = order.EmailAddress,
                 CityName = MicrositeId,
+                LanguageId = CurrentLanguageId,
                 OrderNumber = order.OrderNumber.ToString(),
-                ViewAndPrintTicket_Link = "",
+                ViewAndPrintTicketLink = eVoucherLink,
                 UserFullName = order.UserName,
                 DateOfOrder = LocalizationService.GetLocalDateTime(MicrositeId).ToShortDateString(), //*** format to local date
-                OrderTotal = order.Total.ToString(), //*** add currency
+                OrderTotal = currency.Symbol + order.Total, 
                 TicketQuantity = order.TotalQuantity.ToString(),
-                termsAndConditions_Link = "",
-                PrivacyPolicy_Link = "",
-                AppStore_Link = "",
-                GooglePlay_Link = "",
-                CityNumber = "",
-                CityEmail = ""
+                TermsAndConditionsLink = bornUrlRoot + ConfigurationManager.AppSettings["TermAndCo.Url"],
+                PrivacyPolicyLink = bornUrlRoot + ConfigurationManager.AppSettings["Privac.Url"],
+                AppStoreLink = MakeAppleDownloadUrl(),
+                GooglePlayLink = MakeGooglePlayDownloadUrl(),
+                CityNumber = ConfigurationManager.AppSettings[string.Format("{0}_Telephone", MicrositeId)],
+                CityEmail = ConfigurationManager.AppSettings[string.Format("{0}_Email", MicrositeId)]
             };
 
             var result = NotificationService.CreateOrderConfirmationEmail(request);
         }
 
+        private string MakeSubject(int orderNumber)
+        {
+            return GetTranslation("Booking_Collect_Ticket_details") + " (" + GetTranslation("email_Order_number") + ": " + orderNumber + ")";
+        }
+
+        private string MakeAppleDownloadUrl()
+        {
+            var appleBaseUrl = ConfigurationManager.AppSettings["AppStore.Url"];
+            var languageId = (AppleLanguageMaps) Enum.Parse(typeof (AppleLanguageMaps), CurrentLanguageId);
+
+            return string.Format(appleBaseUrl, EnumHelper.GetDescription(languageId));
+        }
+
+        private string MakeGooglePlayDownloadUrl()
+        {
+            if (CurrentLanguageId.Equals(GooglePlayLanguageMaps.Eng.ToString(),
+                StringComparison.CurrentCultureIgnoreCase))
+                return string.Empty;
+
+            var googlePlayBaseUrl = ConfigurationManager.AppSettings["GooglePlay.Url"];
+            var languageId = (GooglePlayLanguageMaps) Enum.Parse(typeof (GooglePlayLanguageMaps), CurrentLanguageId);
+
+            return string.Format(googlePlayBaseUrl, "&hl=" + languageId);
+        }
+
         private void LoadSession()
         {
+            _session = GetSession();
+
+            if (_session != null) return;
+
             var sessionId = AuthenticationService.GetSessionId(SessionCookieName);
-            Log("Checkout Success started. sessionid: " + sessionId);
-
-            _session = AuthenticationService.GetSession(sessionId);
-
-            if (_session == null)
-            {
-                GoToErrorPage(GetTranslation("Session_Details_NotFound"), "Session Not found id:" + sessionId);
-            }
+            GoToErrorPage(GetTranslation("Session_Details_NotFound"), "Session Not found id:" + sessionId);
         }
 
         private void LoadBasket()

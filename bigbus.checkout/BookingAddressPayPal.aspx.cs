@@ -195,11 +195,7 @@ namespace bigbus.checkout
         }
 
 
-        private Session GetSession()
-        {
-            var sessionId = AuthenticationService.GetSessionId(SessionCookieName);
-            return AuthenticationService.GetSession(sessionId);
-        }
+       
 
         private void GetPayerDetails()
         {

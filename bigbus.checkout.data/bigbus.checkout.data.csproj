@@ -52,6 +52,7 @@
     <Compile Include="CheckoutDbContext.cs" />
     <Compile Include="Model\Basket.cs" />
     <Compile Include="Model\BasketLine.cs" />
+    <Compile Include="Model\ContactData.cs" />
     <Compile Include="Model\Country.cs" />
     <Compile Include="Model\Currency.cs" />
     <Compile Include="Model\EcrOrderLineBarcode.cs" />

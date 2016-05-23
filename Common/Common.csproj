@@ -46,12 +46,16 @@
   <ItemGroup>
     <Compile Include="Enums\EcrResponseCodes.cs" />
     <Compile Include="Enums\EcrResponseStatusCode.cs" />
+    <Compile Include="Enums\EmailTemplatePages.cs" />
     <Compile Include="Enums\Environment.cs" />
+    <Compile Include="Enums\ExternalLinkLanguageMappings.cs" />
     <Compile Include="Enums\PciBasketStatus.cs" />
     <Compile Include="Enums\QrImageSaveStatus.cs" />
     <Compile Include="Enums\ReturnStatus.cs" />
     <Compile Include="Enums\TicketVariation.cs" />
     <Compile Include="Enums\Titles.cs" />
+    <Compile Include="Helpers\EnumHelper.cs" />
+    <Compile Include="Helpers\UrlHelper.cs" />
     <Compile Include="Model\BornBasket.cs" />
     <Compile Include="Model\BornBasketItem.cs" />
     <Compile Include="Model\Customer.cs" />
@@ -79,9 +83,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

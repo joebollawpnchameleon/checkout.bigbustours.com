@@ -19,7 +19,8 @@ namespace Services.Implementation
         public IGenericDataRepository<EmailTemplate> EmailTemplateRepository { get; set; }
         public IGenericDataRepository<MicrositeEmailTemplate> MicrositeEmailRepository { get; set; }
         public IGenericDataRepository<Email> EmailRepository { get; set; }
-
+        public IGenericDataRepository<ContactData> ContactsRepository { get; set; }
+ 
         public ILocalizationService LocalizationService { get; set; }
         public ILoggerService LoggerService { get; set; }
         public AuthenticationService AuthenticationService { get; set; }

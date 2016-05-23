@@ -8,7 +8,8 @@ namespace bigbus.checkout.data.Model
     public class MicrositeEmailTemplate
     {
         [Key, Column(Order = 0)]
-        public Guid MicrositeId { get; set; }
+        [StringLength(50)]
+        public string MicrositeId { get; set; }
 
         [Key, Column(Order = 1)]
         public Guid EmailTemplateId {get;set;}

@@ -97,6 +97,7 @@ namespace bigbus.checkout
             builder.RegisterType<GenericDataRepository<OrderLine>>().As<IGenericDataRepository<OrderLine>>();
             builder.RegisterType<GenericDataRepository<OrderLineGeneratedBarcode>>().As<IGenericDataRepository<OrderLineGeneratedBarcode>>();
             builder.RegisterType<GenericDataRepository<EcrOrderLineBarcode>>().As<IGenericDataRepository<EcrOrderLineBarcode>>();
+            builder.RegisterType<GenericDataRepository<ContactData>>().As<IGenericDataRepository<ContactData>>();
 
             builder.RegisterType<TranslationService>().As<ITranslationService>();
             builder.RegisterType<CheckoutService>().As<ICheckoutService>();
@@ -106,7 +107,7 @@ namespace bigbus.checkout
             builder.RegisterType<LocalizationService>().As<ILocalizationService>();
             builder.RegisterType<PdfClientRenderer>().As<IClientRenderService>();
 
-            if (environmentId.Equals(Common.Enums.Environment.Live))
+            if (environmentId.Equals(Common.Enums.Environment.Live.ToString()))
             {
                 builder.Register(c => new
                  EcrService(ecrApiKey, liveEcrPoint, ecrAgentCode, ecrAgentUiId))

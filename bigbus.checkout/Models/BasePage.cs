@@ -194,6 +194,11 @@ namespace bigbus.checkout.Models
                 //ignore
             }
         }
-       
+
+        public Session GetSession()
+        {
+            var sessionId = AuthenticationService.GetSessionId(SessionCookieName);
+            return AuthenticationService.GetSession(sessionId);
+        }
     }
 }
