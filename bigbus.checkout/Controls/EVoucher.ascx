@@ -13,7 +13,7 @@
                 </div>
                 <div>
                     <p>Date:</p>
-                    <p><%= "Open Date Ticket"%></p>
+                    <p><%= OpenDayTranslation %></p>
                 </div>
 
                 <div>
@@ -39,7 +39,7 @@
                     <p><%=VoucherPrice%></p>
                 </div>
 <%
-            if (!string.IsNullOrWhiteSpace(OrderTotal))
+            if (ShowOrderTotal)
             {
 %>
                 <div>

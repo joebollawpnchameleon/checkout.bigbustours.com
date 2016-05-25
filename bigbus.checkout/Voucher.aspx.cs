@@ -26,6 +26,7 @@ namespace bigbus.checkout
       
         private bool _isCashSale;
         private bool _isRemittanceSale;
+        private int _attractionCount;
 
         public bool IsTradeTicketSale;
 
@@ -46,12 +47,13 @@ namespace bigbus.checkout
 
             _allOrderLines = _order.OrderLines.ToList();
 
-            var isPayPalTransaction = _order.PaymentMethod.Equals("PAYPAL", StringComparison.OrdinalIgnoreCase);
+            //var isPayPalTransaction = _order.PaymentMethod.Equals("PAYPAL", StringComparison.OrdinalIgnoreCase);
+            //var tourOrderLines = _allOrderLines.Where(a => a.TicketTorA == "Tour").ToList();
+
+            _attractionCount = _allOrderLines.Count(a => 
+                a.TicketTorA.Equals("attraction", StringComparison.CurrentCultureIgnoreCase));//.ToList();
+
             
-            var tourOrderLines = _allOrderLines.Where(a => a.TicketTorA == "Tour").ToList();
-
-            var attractionOrderLines = _allOrderLines.Where(a => a.TicketTorA == "Attraction").ToList();
-
             //get all Ecr barcodes
             var barcodes = ImageDbService.GetOrderEcrBarcodes(_order.OrderNumber);
 
@@ -121,6 +123,8 @@ namespace bigbus.checkout
                 voucherControl.VoucherTicket = voucherTicket;
                 voucherControl.ValidTicketName = voucherTicket.ValidTicketName;
                 voucherControl.MicrositeId = MicrositeId;
+                voucherControl.ShowOrderTotal = _attractionCount > 0;
+                voucherControl.OpenDayTranslation = GetTranslation("OpenDayTicket");
 
                 plcAllVouchersContent.Controls.Add(voucherControl);
 

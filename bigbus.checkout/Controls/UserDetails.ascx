@@ -8,7 +8,7 @@
             <asp:Literal ID="TsAndCsStarLit" runat="server"></asp:Literal><asp:Literal ID="TsAndCsLit" runat="server"></asp:Literal>
         </div>
         <div>
-            <asp:ValidationSummary ID="ValidationErrorSummary" CssClass="ValidationErrorSummaryContent" runat="server" />
+            <asp:ValidationSummary ID="ValidationErrorSummary" ValidationGroup="CreditCardCheckout"  CssClass="ValidationErrorSummaryContent" runat="server" />
         </div>
     </div>
        
@@ -26,7 +26,7 @@
                     <abbr title="required">*</abbr>
                 </label>
                 <asp:TextBox ID="txtFirstName" ClientIDMode="Static" runat="server" MaxLength="100" />
-                <asp:RequiredFieldValidator CssClass="error" id="rqVFirstName" Display="Dynamic"  runat="server"  ControlToValidate="txtFirstName"/>
+                <asp:RequiredFieldValidator ValidationGroup="CreditCardCheckout"  CssClass="error" id="rqVFirstName" Display="Dynamic"  runat="server"  ControlToValidate="txtFirstName"/>
             </div>
             <div class="form-row">
                 <label for="<%= txtLastName.ClientID%>">
@@ -34,7 +34,7 @@
                     <abbr title="required">*</abbr>
                 </label>
                 <asp:TextBox ID="txtLastName" runat="server" MaxLength="100" />
-                 <asp:RequiredFieldValidator CssClass="error" Display="Dynamic" id="rqVFirstLastName" runat="server"  ControlToValidate="txtLastName"/>
+                 <asp:RequiredFieldValidator CssClass="error" ValidationGroup="CreditCardCheckout"  Display="Dynamic" id="rqVFirstLastName" runat="server"  ControlToValidate="txtLastName"/>
             </div>
             <div class="form-row">
                 <label for="<%= txtEmail.ClientID%>">
@@ -42,8 +42,8 @@
                     <abbr title="required">*</abbr>
                 </label>
                 <asp:TextBox ID="txtEmail" runat="server" MaxLength="500" />
-                <asp:RequiredFieldValidator CssClass="error" Display="Dynamic"  id="rqVFirstEmail" runat="server"   ControlToValidate="txtEmail"/>
-                <asp:RegularExpressionValidator ID="regexEmailValid" runat="server" ValidationExpression="\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" ControlToValidate="txtEmail"/>
+                <asp:RequiredFieldValidator CssClass="error" ValidationGroup="CreditCardCheckout"  Display="Dynamic"  id="rqVFirstEmail" runat="server"   ControlToValidate="txtEmail"/>
+                <asp:RegularExpressionValidator ID="regexEmailValid" runat="server" ValidationGroup="CreditCardCheckout"  ValidationExpression="\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" ControlToValidate="txtEmail"/>
                 <p><%= ParentPage.GetTranslation("WeWillSendYouAConfirmationEmail")%></p>
             </div>
              <div class="form-row">
@@ -66,7 +66,7 @@
                     <abbr title="required">*</abbr>
                 </label>
                 <asp:TextBox ID="txtAddress1" runat="server" MaxLength="255" />
-                <asp:RequiredFieldValidator CssClass="error" Display="Dynamic" id="rqVAddress1" runat="server"  ControlToValidate="txtAddress1"/>
+                <asp:RequiredFieldValidator ValidationGroup="CreditCardCheckout" CssClass="error" Display="Dynamic" id="rqVAddress1" runat="server"  ControlToValidate="txtAddress1"/>
             </div>
             <div class="form-row">
                 <label for="<%= txtAddress2.ClientID%>"><%= ParentPage.GetTranslation("AddressLine2") %></label>
@@ -78,7 +78,7 @@
                     <abbr title="required">*</abbr>
                 </label>
                 <asp:TextBox ID="txtTown" runat="server" MaxLength="100" />
-                <asp:RequiredFieldValidator CssClass="error" Display="Dynamic" id="rqVTown" runat="server"  ControlToValidate="txtTown"/>
+                <asp:RequiredFieldValidator CssClass="error" ValidationGroup="CreditCardCheckout"  Display="Dynamic" id="rqVTown" runat="server"  ControlToValidate="txtTown"/>
             </div>
             <div class="form-row">
                 <label for="<%= txtPostCode.ClientID%>">
@@ -86,7 +86,7 @@
                     <abbr title="required">*</abbr>
                 </label>
                 <asp:TextBox ID="txtPostCode" runat="server" MaxLength="100" />
-                <asp:RequiredFieldValidator CssClass="error" Display="Dynamic" id="rqVPostCode" runat="server"  ControlToValidate="txtPostCode"/>
+                <asp:RequiredFieldValidator CssClass="error"  ValidationGroup="CreditCardCheckout" Display="Dynamic" id="rqVPostCode" runat="server"  ControlToValidate="txtPostCode"/>
             </div>
             <div class="form-row">
                 <label for="<%= txtState.ClientID%>">
@@ -100,7 +100,7 @@
                     <abbr title="required">*</abbr>
                 </label>
                 <asp:DropDownList Font-Size="12px" ID="ddlCountryList" runat="server" />
-                <asp:CustomValidator id="cstVCountry" runat="server"  OnServerValidate="ValidateCountry" />
+                <asp:CustomValidator id="cstVCountry" ValidationGroup="CreditCardCheckout"  runat="server"  OnServerValidate="ValidateCountry" />
             </div>
         </fieldset>
         <fieldset class="cf terms">
@@ -110,11 +110,11 @@
                     <%= ParentPage.GetTranslation("IhavereadandagreetotheTermsandConditions")%><abbr title="required">*</abbr>
                 </label>
                 <p>
-                    <a href="terms-and-conditions.html?browser=true" target="_blank" ><%=ParentPage.GetTranslation("TermsAndConditions")%> </a>&nbsp;
-                    <a href="privacy-policy.html?browser=true" target="_blank" ><%=ParentPage.GetTranslation("PrivacyPolicy")%> </a>
+                    <a href="<%= ConfigurationManager.AppSettings["BaseUrl"] %>terms-and-conditions.html?browser=true" target="_blank" ><%=ParentPage.GetTranslation("TermsAndConditions")%> </a>&nbsp;
+                    <a href="<%= ConfigurationManager.AppSettings["BaseUrl"] %>privacy-policy.html?browser=true" target="_blank" ><%=ParentPage.GetTranslation("PrivacyPolicy")%> </a>
                 </p>
                 
-                <asp:CustomValidator id="cstVTerms" runat="server"  OnServerValidate="ValidateTermsAndConditions" />
+                <asp:CustomValidator id="cstVTerms" ValidationGroup="CreditCardCheckout" runat="server"  OnServerValidate="ValidateTermsAndConditions" />
 
             </div>
         </fieldset>

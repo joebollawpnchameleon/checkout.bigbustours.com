@@ -7,10 +7,13 @@ using Services.Infrastructure;
 using Autofac.Integration.Web;
 using System.Web;
 using Autofac;
+using bigbus.checkout.Controls;
 using bigbus.checkout.Helpers;
 using bigbus.checkout.data.Model;
 using Common.Enums;
 using bigbus.checkout.EcrWServiceRefV3;
+using Common.Helpers;
+using Common.Model;
 
 namespace bigbus.checkout.Models
 {
@@ -34,6 +37,8 @@ namespace bigbus.checkout.Models
         public IImageService ImageService { get; set; }
         public IEcrService EcrService { get; set; }
         public ICheckoutService CheckoutService { get; set; }
+        public INotificationService NotificationService { get; set; }
+        public ILocalizationService LocalizationService { get; set; }
 
         #endregion
 
@@ -181,6 +186,80 @@ namespace bigbus.checkout.Models
             }
         }
 
+        public void SendOrderConfirmationEmail(Order order, Session session)
+        {
+            if (order == null)
+                return;
+
+            var eVoucherPage = EnumHelper.GetDescription(EmailTemplatePages.EVoucher);
+            var contactData = NotificationService.GetSiteContactData(MicrositeId, eVoucherPage);
+            var rootUrl = UrlHelper.GetRootUrl(Request.Url.AbsoluteUri);
+            var defaultRootUrl = ConfigurationManager.AppSettings["BaseUrl"];
+            var eVoucherLink = (string.IsNullOrEmpty(rootUrl) ? defaultRootUrl : rootUrl) + "/" +
+                               string.Format(ConfigurationManager.AppSettings["View.Voucher"], order.Id);
+
+            var bornUrlRoot = string.Format(ConfigurationManager.AppSettings["BornBaseInsecureUrl"], CurrentLanguageId,
+                MicrositeId);
+
+            var currency = CurrencyService.GetCurrencyById(session.CurrencyId);
+
+            var request = new OrderConfirmationEmailRequest
+            {
+                ReceiverFirstname = order.User.Firstname,
+                EmailSubject = MakeSubject(order.OrderNumber),
+                SenderEmail = "\"BigBus Admin\" <" + contactData.Email + ">",
+                ReceiverEmail = order.EmailAddress,
+                CityName = MicrositeId,
+                LanguageId = CurrentLanguageId,
+                OrderNumber = order.OrderNumber.ToString(),
+                ViewAndPrintTicketLink = eVoucherLink,
+                UserFullName = order.UserName,
+                DateOfOrder = LocalizationService.GetLocalDateTime(MicrositeId).ToShortDateString(), //*** format to local date
+                OrderTotal = currency.Symbol + order.Total,
+                TicketQuantity = order.TotalQuantity.ToString(),
+                TermsAndConditionsLink = bornUrlRoot + ConfigurationManager.AppSettings["TermAndCo.Url"],
+                PrivacyPolicyLink = bornUrlRoot + ConfigurationManager.AppSettings["Privacy.Url"],
+                ContactUsLink = bornUrlRoot + ConfigurationManager.AppSettings["ContactUs.Url"],
+                FaqLink = bornUrlRoot + ConfigurationManager.AppSettings["Faqs.Url"],
+                DownloadMapLink = bornUrlRoot + ConfigurationManager.AppSettings["RoutMap.Url"],
+                AppStoreLink = MakeAppleDownloadUrl(),
+                GooglePlayLink = MakeGooglePlayDownloadUrl(),
+                CityNumber = ConfigurationManager.AppSettings[string.Format("{0}_Telephone", MicrositeId)],
+                CityEmail = ConfigurationManager.AppSettings[string.Format("{0}_Email", MicrositeId)]
+            };
+
+            var result = NotificationService.CreateOrderConfirmationEmail(request);
+
+            Log(result);
+        }
+
+        private string MakeSubject(int orderNumber)
+        {
+            return GetTranslation("email_Your_trip_with_BigBus_has_been_booked") + " (" + GetTranslation("email_Order_number") + ": " + orderNumber + ")";
+        }
+
+        private string MakeAppleDownloadUrl()
+        {
+            var appleBaseUrl = ConfigurationManager.AppSettings["AppStore.Url"];
+            var languageId = (AppleLanguageMaps)Enum.Parse(typeof(AppleLanguageMaps), CurrentLanguageId, true);
+
+            return string.Format(appleBaseUrl, EnumHelper.GetDescription(languageId));
+        }
+
+        private string MakeGooglePlayDownloadUrl()
+        {
+            var googlePlayBaseUrl = ConfigurationManager.AppSettings["GooglePlay.Url"];
+            var languageId = (GooglePlayLanguageMaps)Enum.Parse(typeof(GooglePlayLanguageMaps), CurrentLanguageId, true);
+
+            var lang =
+                (CurrentLanguageId.Equals(GooglePlayLanguageMaps.Eng.ToString(),
+                    StringComparison.CurrentCultureIgnoreCase))
+                    ? string.Empty
+                    : "&hl=" + languageId;
+
+            return string.Format(googlePlayBaseUrl, lang);
+        }
+
         public void AddMetas(string metasHtml)
         {
             //add no follow meta
@@ -199,6 +278,39 @@ namespace bigbus.checkout.Models
         {
             var sessionId = AuthenticationService.GetSessionId(SessionCookieName);
             return AuthenticationService.GetSession(sessionId);
+        }
+
+        public Basket GetBasket()
+        {
+            try
+            {
+                var basketCookie = AuthenticationService.GetBasketIdFromCookie(BasketCookieName);
+                return BasketService.GetBasket(new Guid(basketCookie));
+            }
+            catch (Exception ex)
+            {
+                Log(ex.Message);
+                return null;
+            }
+        }
+
+        public void DisplayBasketDetails(Basket basket, BasketDisplay ucBasketDisplay, string currencySymbol)
+        {
+            ucBasketDisplay.AddMoreUrl = ConfigurationManager.AppSettings["BornAddMoreTicketUrl"];
+            ucBasketDisplay.ParentPage = this;
+            ucBasketDisplay.ShowActionRow = true;
+            ucBasketDisplay.TotalString = currencySymbol + basket.Total;
+
+            var itemList = basket.BasketLines.Select(item => new BasketDisplayVm
+            {
+                TicketName = TicketService.GetTicketById(item.TicketId.ToString()).Name,
+                Date = GetTranslation("OpenDayTicket"),
+                Quantity = item.TicketQuantity ?? 1,
+                Title = item.TicketType.ToString(),
+                TotalSummary = currencySymbol + item.LineTotal.ToString()
+            }).ToList();
+
+            ucBasketDisplay.DataSource = itemList;
         }
     }
 }

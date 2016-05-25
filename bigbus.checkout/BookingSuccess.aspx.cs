@@ -20,8 +20,6 @@ namespace bigbus.checkout
 
         public EcrResponseCodes EcrBookingStatus;
         public IPciApiServiceNoASync PciApiServices { get; set; }
-        public INotificationService NotificationService {get;set;}
-        public ILocalizationService LocalizationService { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -73,77 +71,13 @@ namespace bigbus.checkout
             ClearCheckoutCookies();
 
             //Prepare email notifications
-            SendOrderConfirmationEmail(newOrder);
+            SendOrderConfirmationEmail(newOrder, _session);
 
             //Redirect user to order confirmation page or error
-            Response.Redirect(string.Format("~/BookingCompleted.aspx?oid={0}", newOrder.Id));
+            Response.Redirect(string.Format("~/BookingCompleted.aspx?oid={0}", newOrder.Id), false);
         }    
 
-        private void SendOrderConfirmationEmail(Order order)
-        {
-            if (order == null)
-                return;
-
-            var eVoucherPage = EnumHelper.GetDescription(EmailTemplatePages.EVoucher);
-            var contactData = NotificationService.GetSiteContactData(MicrositeId, eVoucherPage);
-            var rootUrl = UrlHelper.GetRootUrl(Request.Url.AbsoluteUri);
-            var defaultRootUrl = ConfigurationManager.AppSettings["BaseUrl"];
-            var eVoucherLink = (string.IsNullOrEmpty(rootUrl) ? defaultRootUrl : rootUrl) + "/" +
-                               string.Format(ConfigurationManager.AppSettings["View.Voucher"], order.Id);
-
-            var bornUrlRoot = string.Format(ConfigurationManager.AppSettings["BornBaseInsecureUrl"], CurrentLanguageId,
-                MicrositeId);
-
-            var currency = CurrencyService.GetCurrencyById(_session.CurrencyId);
-
-            var request = new OrderConfirmationEmailRequest
-            {
-               EmailSubject =  MakeSubject(order.OrderNumber),
-                SenderEmail = contactData.Email,
-                ReceiverEmail = order.EmailAddress,
-                CityName = MicrositeId,
-                LanguageId = CurrentLanguageId,
-                OrderNumber = order.OrderNumber.ToString(),
-                ViewAndPrintTicketLink = eVoucherLink,
-                UserFullName = order.UserName,
-                DateOfOrder = LocalizationService.GetLocalDateTime(MicrositeId).ToShortDateString(), //*** format to local date
-                OrderTotal = currency.Symbol + order.Total, 
-                TicketQuantity = order.TotalQuantity.ToString(),
-                TermsAndConditionsLink = bornUrlRoot + ConfigurationManager.AppSettings["TermAndCo.Url"],
-                PrivacyPolicyLink = bornUrlRoot + ConfigurationManager.AppSettings["Privac.Url"],
-                AppStoreLink = MakeAppleDownloadUrl(),
-                GooglePlayLink = MakeGooglePlayDownloadUrl(),
-                CityNumber = ConfigurationManager.AppSettings[string.Format("{0}_Telephone", MicrositeId)],
-                CityEmail = ConfigurationManager.AppSettings[string.Format("{0}_Email", MicrositeId)]
-            };
-
-            var result = NotificationService.CreateOrderConfirmationEmail(request);
-        }
-
-        private string MakeSubject(int orderNumber)
-        {
-            return GetTranslation("Booking_Collect_Ticket_details") + " (" + GetTranslation("email_Order_number") + ": " + orderNumber + ")";
-        }
-
-        private string MakeAppleDownloadUrl()
-        {
-            var appleBaseUrl = ConfigurationManager.AppSettings["AppStore.Url"];
-            var languageId = (AppleLanguageMaps) Enum.Parse(typeof (AppleLanguageMaps), CurrentLanguageId);
-
-            return string.Format(appleBaseUrl, EnumHelper.GetDescription(languageId));
-        }
-
-        private string MakeGooglePlayDownloadUrl()
-        {
-            if (CurrentLanguageId.Equals(GooglePlayLanguageMaps.Eng.ToString(),
-                StringComparison.CurrentCultureIgnoreCase))
-                return string.Empty;
-
-            var googlePlayBaseUrl = ConfigurationManager.AppSettings["GooglePlay.Url"];
-            var languageId = (GooglePlayLanguageMaps) Enum.Parse(typeof (GooglePlayLanguageMaps), CurrentLanguageId);
-
-            return string.Format(googlePlayBaseUrl, "&hl=" + languageId);
-        }
+       
 
         private void LoadSession()
         {

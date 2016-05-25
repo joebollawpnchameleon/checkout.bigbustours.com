@@ -19,11 +19,19 @@ namespace bigbus.checkout
     public partial class BookingAddressPayPal : BasePage
     {
         private Session _session;
+        private Basket _basket;
+        protected string TotalSummary { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             _session = GetSession();
+            _basket = GetBasket();
             GetPayerDetails();
+
+            //handle validation make sure there is basket and session available.
+            var currency = CurrencyService.GetCurrencyById(_basket.CurrencyId.ToString());
+            TotalSummary = currency.Symbol + _basket.Total;
+            DisplayBasketDetails(_basket, ucBasketDisplay, currency.Symbol);
         }
 
         protected void CompletePaypalCheckout(object sender, EventArgs e)
@@ -31,7 +39,8 @@ namespace bigbus.checkout
             if (!Page.IsValid) return;
 
             var orderId = string.Empty;
-            
+            var bCheckoutCompleted = false;
+
             try
             {
                 // end create new user
@@ -48,13 +57,13 @@ namespace bigbus.checkout
                     return;
                 }
 
-                var basket = BasketService.GetBasket(_session.BasketId.Value);
+                //_basket = BasketService.GetBasket(_session.BasketId.Value);
                 
                 var isoCurrencyCode = CurrencyService.GetCurrencyIsoCodeById(_session.CurrencyId);
 
                 Log("Paypal log- payment to take next, next is order");
 
-                var payPalReturn = PaypalService.ConfirmPayment((basket.Total.ToString(CultureInfo.InvariantCulture)), isoCurrencyCode, _session.PayPalToken, _session.PayPalPayerId);
+                var payPalReturn = PaypalService.ConfirmPayment((_basket.Total.ToString(CultureInfo.InvariantCulture)), isoCurrencyCode, _session.PayPalToken, _session.PayPalPayerId);
 
                 Log("Paypal log- payment taken, next is order, paypal return status: " + payPalReturn.ErrorMessage);
 
@@ -66,26 +75,28 @@ namespace bigbus.checkout
                 {
                     throw new Exception(payPalReturn.ErrorMessage);
                 }
-                
-                var order = CheckoutService.CreateOrderPayPal(_session, basket, newUser, GetClientIpAddress(), CurrentLanguageId,
+
+                var order = CheckoutService.CreateOrderPayPal(_session, _basket, newUser, GetClientIpAddress(), CurrentLanguageId,
                     MicrositeId);
+
+                orderId = order.Id.ToString();
 
                 CheckoutService.CreateAddressPaypal(order, _session, newUser);
 
                 //send booking to ECR.
-                Log("Sending booking to ECR basketid: " + basket.Id);
+                Log("Sending booking to ECR basketid: " + _basket.Id);
                 var result = SendBookingToEcr(order);
 
                 //result from booking must be there.
                 if (result == null)
                 {
-                    JumpToOrderCreationError("Booking_failed", "Booking failed for ECR basketId: " + basket.Id);
+                    JumpToOrderCreationError("Booking_failed", "Booking failed for ECR basketId: " + _basket.Id);
                 }
 
                 //make sure we have barcode returned
                 if (result.Barcodes.Length < 1)
                 {
-                    JumpToOrderCreationError("Booking_failed", "Booking failed (no barcode returned for ECR basketId: " + basket.Id
+                    JumpToOrderCreationError("Booking_failed", "Booking failed (no barcode returned for ECR basketId: " + _basket.Id
                         + System.Environment.NewLine + " message: " + result.ErrorDescription);
                 }
 
@@ -100,14 +111,14 @@ namespace bigbus.checkout
                 ClearCheckoutCookies();
 
                 //Prepare email notifications
+                SendOrderConfirmationEmail(order, _session);
 
-                //Redirect user to order confirmation page or error
-                Response.Redirect(string.Format("~/Checkout/Completed/{0}", order.Id));
+                bCheckoutCompleted = true;
             }
             catch (Exception ex)
             {
                 Log("Paypal Payment Error: " + ex.Message);
-                Response.Redirect(@"~/Error/PayPalProcessingError/standard" );
+                bCheckoutCompleted = false;
             }
             finally
             {
@@ -115,28 +126,13 @@ namespace bigbus.checkout
                 Log("PayPal Payment - Session unlocked");
             }
 
-            Response.Redirect(@"~/Checkout/Completed/" + orderId);
+            //Redirect user to order confirmation page or error
+            Response.Redirect(bCheckoutCompleted
+                ? string.Format("~/BookingCompleted.aspx?oid={0}", orderId)
+                : @"~/Error/PayPalProcessingError/standard");
         }
 
-        //private void JumpToOrderCreationError(string message, string logMessage)
-        //{
-        //    _session.BasketId = null;
-        //    _session.InOrderCreationProcess = false;
-        //    _session.AgentUseCustomersAddress = false;
-        //    _session.AgentFakeUserId = null;
-        //    _session.AgentIsTradeTicketSale = true;
-        //    _session.AgentNameToPrintOnTicket = null;
-
-        //    AuthenticationService.UpdateSession(_session);
-
-        //    if (Response.Cookies[BasketCookieName] != null)
-        //    {
-        //        Response.Cookies[BasketCookieName].Expires = DateTime.Now.AddDays(-1);
-        //    }
-
-        //    GoToErrorPage(message, logMessage);
-        //}
-
+      
         private void UnlockSessionFromOrderCreationLock(Session session)
         {
             session.BasketId = null;
@@ -193,10 +189,7 @@ namespace bigbus.checkout
             DisplayError(GetTranslation("FailedToCreateUser"), "User creation failed.");
             return null;
         }
-
-
-       
-
+        
         private void GetPayerDetails()
         {
             var session = GetSession();

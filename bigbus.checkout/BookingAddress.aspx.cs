@@ -50,7 +50,11 @@ namespace bigbus.checkout
 
             if (dbBasket != null)
             {
-                DisplayBasketDetails(dbBasket);
+                
+                var currency = CurrencyService.GetCurrencyById(dbBasket.CurrencyId.ToString());
+                TotalSummary = currency.Symbol + dbBasket.Total;
+
+                DisplayBasketDetails(dbBasket, ucBasketDisplay, currency.Symbol);
                 return;
             }
 
@@ -112,34 +116,17 @@ namespace bigbus.checkout
 
             var itemList = basket.BasketItems.Select(item => new BasketDisplayVm
             {
-                TicketName = item.ProductName, Date = GetTranslation("Open_Date"), //*** translation needed
-                Quantity = item.Quantity, Title = item.TicketType.ToString(), TotalSummary = TotalSummary
-            }).ToList();
-
-            ucBasketDisplay.DataSource = itemList;
-        }
-
-        private void DisplayBasketDetails(Basket basket)
-        {
-            var currency = CurrencyService.GetCurrencyById(basket.CurrencyId.ToString());
-            TotalSummary = currency.Symbol + basket.Total;
-
-            ucBasketDisplay.AddMoreUrl = ConfigurationManager.AppSettings["BornAddMoreTicketUrl"];
-            ucBasketDisplay.ParentPage = this;
-            ucBasketDisplay.ShowActionRow = true;
-            ucBasketDisplay.TotalString = TotalSummary;
-
-            var itemList = basket.BasketLines.Select(item => new BasketDisplayVm
-            {
-                TicketName = TicketService.GetTicketById(item.TicketId.ToString()).Name,
-                Date = GetTranslation("Open_Date"), //*** translation needed
-                Quantity = item.TicketQuantity.Value,
+                TicketName = item.ProductName,
+                Date = GetTranslation("OpenDayTicket"), 
+                Quantity = item.Quantity, 
                 Title = item.TicketType.ToString(),
-                TotalSummary = TotalSummary
+                TotalSummary = currency.Symbol + item.Total
             }).ToList();
 
             ucBasketDisplay.DataSource = itemList;
         }
+
+        
 
         #endregion
 

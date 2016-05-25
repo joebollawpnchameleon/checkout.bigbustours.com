@@ -8,6 +8,7 @@ using System.Web.UI.WebControls;
 using bigbus.checkout;
 using bigbus.checkout.Models;
 using System.IO;
+using System.Text;
 using Services.Implementation;
 
 namespace bigbus.checkout.Controls
@@ -18,6 +19,8 @@ namespace bigbus.checkout.Controls
         public Order Order { get; set; }
         public string ValidTicketName { get; set; }
         public string MicrositeId { get; set; }
+        public string OpenDayTranslation { get; set; }
+        public bool ShowOrderTotal { get; set; }
 
         protected string TicketName { get; set; }
         protected string LeadName { get; set; }
@@ -50,10 +53,10 @@ namespace bigbus.checkout.Controls
         {
             _ticket = VoucherTicket.Ticket;
             TicketName = _ticket.Name;
-            LeadName = Order.NameOnCard;
+            LeadName = Order.PaymentMethod.Equals("Paypal", StringComparison.CurrentCultureIgnoreCase)? Order.UserName : Order.NameOnCard;
             OrderNumber = Order.OrderNumber.ToString();
             IsTradeTicketSale = false;
-            VoucherPrice = Order.Currency.Symbol + VoucherTicket.OrderLines.Sum(x => x.NettOrderLineValue.Value);
+            VoucherPrice = Order.Currency.Symbol + VoucherTicket.OrderLines.Sum(x => x.NettOrderLineValue ?? (decimal)0.0);
             OrderTotal = Order.Currency.Symbol + Order.Total;
 
            // MakeSureImageExists();
@@ -97,14 +100,18 @@ namespace bigbus.checkout.Controls
 
         private string GetTicketLine1()
         {
-            var line1 =
+            var sbTemp = new StringBuilder();
 
-                (string.IsNullOrWhiteSpace(_ticket.TicketTextTopLine) ? string.Empty : _ticket.TicketTextTopLine.Trim() + " ") +
-                (string.IsNullOrWhiteSpace(_ticket.TicketTextMiddleLine) ? string.Empty : _ticket.TicketTextMiddleLine.Trim() + " ") +
-                (string.IsNullOrWhiteSpace(_ticket.TicketTextBottomLine) ? string.Empty : _ticket.TicketTextBottomLine.Trim() + " ")
-            ;
+            if (!string.IsNullOrWhiteSpace(_ticket.TicketTextTopLine))
+                sbTemp.Append(_ticket.TicketTextTopLine + " ");
 
-            return !string.IsNullOrEmpty(line1) ? line1.Trim() : "";
+            if (!string.IsNullOrWhiteSpace(_ticket.TicketTextMiddleLine))
+                sbTemp.Append(_ticket.TicketTextMiddleLine + " ");
+
+            if (!string.IsNullOrWhiteSpace(_ticket.TicketTextBottomLine))
+                sbTemp.Append(_ticket.TicketTextBottomLine + " ");
+
+            return sbTemp.ToString();
         }
 
         private int GetQuantityByUserType(string userType)

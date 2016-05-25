@@ -3,6 +3,7 @@ namespace Common.Model
 {
     public class OrderConfirmationEmailRequest
     {
+        public string ReceiverFirstname { get; set; }
         public string EmailSubject { get; set; }
         public string SenderEmail { get; set; }
         public string ReceiverEmail { get; set; }
@@ -18,6 +19,11 @@ namespace Common.Model
         public string PrivacyPolicyLink{get;set;}
         public string AppStoreLink { get;set;}
         public string GooglePlayLink { get;set;}
+        public string ContactUsLink { get; set; }
+        public string FaqLink { get; set; }
+        public string DownloadMapLink { get; set; }
+        public string TrustPilotLink { get; set; }
+        public string TripAdvisorLink { get; set; }
         public string CityNumber{get;set;}
         public string CityEmail{get;set;}
     }

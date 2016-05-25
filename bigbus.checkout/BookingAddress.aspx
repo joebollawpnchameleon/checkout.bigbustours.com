@@ -29,7 +29,7 @@
     <div id="dvActions" runat="server">
         <asp:Button runat="server" text="Back" OnClick="ContinueShopping" id="btnCancel"/>
         &nbsp;
-        <asp:Button runat="server" text="Checkout With Credit Card" OnClientClick="TrackUserSubscription();" OnClick="CheckoutWithCreditCard" id="btnContinueCheckout"/>
+        <asp:Button runat="server" ValidationGroup="CreditCardCheckout" text="Checkout With Credit Card" OnClientClick="TrackUserSubscription();" OnClick="CheckoutWithCreditCard" id="btnContinueCheckout"/>
         &nbsp;
          
     </div>

@@ -18,10 +18,13 @@ namespace Services.Implementation
         {
             var siteTemlate = MicrositeEmailRepository.GetSingle(x =>
                     x.MicrositeId.Equals(request.CityName, StringComparison.CurrentCultureIgnoreCase)
-                    && x.MicrositeId.Equals(request.LanguageId, StringComparison.CurrentCultureIgnoreCase));
+                    && x.LanguageId.Equals(request.LanguageId, StringComparison.CurrentCultureIgnoreCase));
 
             if (siteTemlate == null)
                 return "Microsite Email template not found!";
+
+            request.TripAdvisorLink = siteTemlate.TripAdvisorLink;
+            request.TrustPilotLink = siteTemlate.TrustPilotLink;
 
             var template = EmailTemplateRepository.GetSingle(x => x.Id.Equals(siteTemlate.EmailTemplateId));
 
@@ -39,15 +42,19 @@ namespace Services.Implementation
                  ReadyToSend = true
             };
 
+            EmailRepository.Add(email);
+
             return string.Empty;
         }
         
 
-        private string FillEmailVariables(string emailContent, OrderConfirmationEmailRequest request)
+        public static string FillEmailVariables(string emailContent, OrderConfirmationEmailRequest request)
         {
             var sbTemp = new StringBuilder(emailContent);
 
-            sbTemp.Replace("[City_Name]", request.CityName)
+            sbTemp
+                .Replace("[Customer_First_Name]", request.ReceiverFirstname)
+                .Replace("[City_Name]", request.CityName)
                 .Replace("[Order_Number]", request.OrderNumber)
                 .Replace("[@View_And_print_ticket@]", request.ViewAndPrintTicketLink)
                 .Replace("[User_Full_Name]", request.UserFullName)
@@ -59,7 +66,12 @@ namespace Services.Implementation
                 .Replace("[@App_Store@]", request.AppStoreLink)
                 .Replace("[@Google_Play@]", request.GooglePlayLink)
                 .Replace("[City_Number]", request.CityNumber)
-                .Replace("[City_Email] ", request.CityEmail);
+                .Replace("[City_Email]", request.CityEmail)
+                .Replace("[@Contact_Us@]", request.ContactUsLink)
+                .Replace("[@Faqs@]", request.FaqLink)
+                .Replace("[@Download_Map@]", request.DownloadMapLink)
+                .Replace("[@Trip_Advisor@]", request.TripAdvisorLink)
+                .Replace("[@Trust_Pilot@]", request.TrustPilotLink);
 
             return sbTemp.ToString();
         }

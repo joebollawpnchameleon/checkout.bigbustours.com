@@ -17,5 +17,9 @@ namespace bigbus.checkout.data.Model
         public string LanguageId { get; set; }
 
         public DateTime Created { get; set; }
+
+        public string TrustPilotLink { get; set; }
+
+        public string TripAdvisorLink { get; set; }
     }
 }

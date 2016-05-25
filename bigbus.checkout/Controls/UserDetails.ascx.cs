@@ -6,12 +6,11 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using bigbus.checkout.Models;
 using Common.Enums;
-using Services.Implementation;
 using Services.Infrastructure;
 
 namespace bigbus.checkout.Controls
 {
-    public partial class WebUserControl1 : System.Web.UI.UserControl
+    public partial class WebUserControl1 : UserControl
     {
         protected BasePage ParentPage
         {
