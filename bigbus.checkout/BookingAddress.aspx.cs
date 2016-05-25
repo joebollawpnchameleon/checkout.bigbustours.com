@@ -175,7 +175,8 @@ namespace bigbus.checkout
                 CurrencyId = customerSession.CurrencyId,
                 MicroSiteId = MicrositeId,
                 Authorised = false,
-                ReceiveNewsletter = ucUserDetails.Subscribed
+                ReceiveNewsletter = ucUserDetails.Subscribed,
+                ExpectedTravelDate =  ucUserDetails.ExpectedTravelDate
             };
 
             UserService.CreateCustomer(customer);

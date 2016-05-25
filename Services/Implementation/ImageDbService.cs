@@ -176,6 +176,16 @@ namespace Services.Implementation
                     string.Empty;
         }
 
+        public virtual ImageMetaData GetMetaData(Guid metaDataId)
+        {
+            return _metaDataRepository.GetSingle(x => x.Id.Equals(metaDataId));
+        }
+
+        public virtual ImageMetaData GetMetaData(string metaDataId)
+        {
+            return _metaDataRepository.GetSingle(x => x.Id.ToString().Equals(metaDataId, StringComparison.CurrentCultureIgnoreCase));  
+        }
+
         public Image GetImage(string imageId)
         {
             return _imageRepository.GetSingle(x => x.Id.ToString().Equals(imageId, StringComparison.CurrentCultureIgnoreCase));

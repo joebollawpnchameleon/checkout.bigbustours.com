@@ -127,6 +127,8 @@ namespace bigbus.checkout.data.Model
         [Column("IsECR")]
         public bool IsEcr { get; set; }
 
+        public DateTime? ExpectedTravelDate { get; set; }
+
         public bool AllowCashSales { get; set; }
 
         public bool AllowCreditCardSales { get; set; }

@@ -49,7 +49,7 @@ namespace bigbus.checkout.data.Model
         public string ExternalCoupon { get; set; }
         
         public string PurchaseLanguage { get; set; }
-
+       
         public virtual ICollection<BasketLine> BasketLines { get; set; }
     }
 }

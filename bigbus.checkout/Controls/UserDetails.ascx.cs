@@ -36,6 +36,7 @@ namespace bigbus.checkout.Controls
         public string Country {get{ return   ddlCountryList.SelectedValue; }  set{ddlCountryList.SelectedValue=value;}}
         public bool TermsAndConditions {get{ return  ckTermsAndConditions.Checked; } }
         public bool Subscribed { get { return ckSubscribe.Checked; }}
+        public string ExpectedTravelDate { get { return txtExpectedTourDate.Text; } }
 
         protected void Page_Load(object sender, EventArgs e)
         {

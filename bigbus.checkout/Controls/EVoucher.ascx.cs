@@ -79,10 +79,14 @@ namespace bigbus.checkout.Controls
             ChildQuantity = GetQuantityByUserType("Child");
             FamilyQuantity = GetQuantityByUserType("Family");
             
-            if (!string.IsNullOrEmpty(VoucherTicket.AttractionImageUrl))
+            if (VoucherTicket.AttractionImageData != null)
             {
-                imgAttractionImage.AlternateText = TicketName;
-                imgAttractionImage.ImageUrl = VoucherTicket.AttractionImageUrl;
+                imgAttraction.Visible = true;
+                imgAttraction.Alt = "";
+                imgAttraction.Src = ResolveUrl("~/QrCodeImageHandler.ashx?w=124&h=102&extension=") +
+                                    VoucherTicket.AttractionImageData.Type
+                                    + "&micrositeid=" + MicrositeId + "&imageid=" +
+                                    VoucherTicket.AttractionImageData.ImageId;
             }
 
            if (Order.PaymentMethod.Equals("paypal", StringComparison.CurrentCultureIgnoreCase))
@@ -130,83 +134,6 @@ namespace bigbus.checkout.Controls
             return sum ?? 0;
         }
 
-        //private void MakeSureImageExists()
-        //{
-        //    var imageMetaData = VoucherTicket.ImageData;
-        //    var image = imageMetaData.RelatedImage;
-
-        //    ImageWidth = imageMetaData.Width;
-        //    ImageHeight = imageMetaData.Height;
-
-        //    ImageId = imageMetaData.ImageId.ToString();
-
-
-        //    //use image service check that file with this image id exist if it does display image file if not use httphandler to create file and then display it.
-        //    var imagePath = Server.MapPath(string.Format("~/FileUploadPath/{0}/{1}{2}", MicrositeId, ImageId, imageMetaData.Type));
-
-        //    var file = new FileInfo(imagePath);
-
-        //    if (!file.Exists)//create it
-        //    {
-        //        var stream = new System.IO.MemoryStream(image.Data);
-        //        var newstream = new MemoryStream();
-
-        //        if (file.DirectoryName != null)
-        //        {
-        //            var dir = Directory.CreateDirectory(file.DirectoryName);
-        //            System.Drawing.Image i = System.Drawing.Image.FromStream(stream);
-        //            System.Drawing.Image newi = null;
-        //            if (width > 0 && height > 0 && (width != i.Width || height != i.Height))
-        //            {
-        //                if (keepRatio)
-        //                    newi = ImageService.ScaleImageToFixedSize(i, new System.Drawing.Size(width, height));
-        //                else
-        //                    newi = ImageService.ResizeImage(i, new System.Drawing.Size(width, height));
-
-        //                newi.Save(newstream, i.RawFormat);
-        //            }
-        //            else if (width > 0 && width != i.Width)
-        //            {
-        //                newi = ImageService.ScaleImageToWidth(i, width);
-        //                newi.Save(newstream, i.RawFormat);
-        //            }
-        //            else if (height > 0 && height != i.Height)
-        //            {
-        //                newi = ImageService.ScaleImageToHeight(i, height);
-        //                newi.Save(newstream, i.RawFormat);
-        //            }
-        //            else if (square > 0)
-        //            {
-        //                if (i.Width >= i.Height)
-        //                    newi = ImageService.ScaleImageToHeight(i, square);
-        //                else
-        //                    newi = ImageService.ScaleImageToWidth(i, square);
-
-        //                int cx = (newi.Width / 2) - (square / 2);
-        //                int cy = (newi.Height / 2) - (square / 2);
-        //                newi = ImageService.CropImage(newi, cx, cy, square, square);
-        //                newi.Save(newstream, i.RawFormat);
-        //            }
-        //            else
-        //            {
-        //                newi = i;
-        //                newstream = stream;
-        //            }
-
-        //            newi.Save(file.FullName, i.RawFormat);
-        //            newi.Dispose();
-        //            i.Dispose();
-        //        }
-
-        //        var fs = file.Create();
-        //        // Modify the file as required, and then close the file.
-        //        fs.Close();
-        //        // Delete the file.
-        //        file.Delete();
-        //    }
-        //    //if it doesn't exist, get image data and create file using ImageDB and passing bytes to ImageService
-
-        //}
-       
+     
     }
 }

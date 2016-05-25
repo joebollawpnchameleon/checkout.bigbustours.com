@@ -50,5 +50,7 @@ namespace Common.Model
 
         public bool IsEcr { get; set; }
 
+        public string ExpectedTravelDate { get; set; }
+
     }
 }

@@ -42,6 +42,15 @@ namespace Services.Implementation
                 StateProvince = newCustomer.StateProvince
             };
 
+            try
+            {
+                newUser.ExpectedTravelDate = DateTime.Parse(newCustomer.ExpectedTravelDate);
+            }
+            catch
+            {
+                //ignore
+            }
+
             _userRepository.Add(newUser);
 
             newCustomer.Id = newUser.Id;

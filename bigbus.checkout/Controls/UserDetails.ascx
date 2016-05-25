@@ -51,10 +51,13 @@
                     &nbsp;
                 </label>
                 <asp:CheckBox ID="ckSubscribe" runat="server" ClientIDMode="Static" />
-                
                 <p>
                     <%= "We will send you a confirmation email Please include me in marketing emails" %><!-- translation needed -->
                 </p>
+            </div>
+             <div class="form-row">
+                <label for="<%= txtAddress2.ClientID%>"><%= ParentPage.GetTranslation("ExpectedTourDate") %></label>
+                <asp:TextBox ID="txtExpectedTourDate" runat="server" MaxLength="12" />
             </div>
         </fieldset>
         <fieldset class="cf">

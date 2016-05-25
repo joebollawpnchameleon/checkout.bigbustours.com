@@ -15,7 +15,7 @@ namespace bigbus.checkout.Models
 
         public ImageMetaData ImageData { get; set; }
 
-        public string AttractionImageUrl { get; set; }
+        public ImageMetaData AttractionImageData { get; set; }
 
         public bool IsAttraction 
         { 

@@ -87,13 +87,17 @@ namespace bigbus.checkout
                 var validTicketName = ticket.Name.ToLower().Contains(microsite.Name.ToLower())
                     ? ticket.Name
                     : string.Concat(microsite.Name, " ", ticket.Name);
-                
-                    MainList.Add(
+
+                var attractionMetaData = ticket.ImageMetaDataId != null
+                    ? ImageDbService.GetMetaData(ticket.ImageMetaDataId.Value.ToString())
+                    : null;
+                    
+                MainList.Add(
                         new VoucherTicket
                         {
                              OrderLines = tempOrderLines.ToList(),
                              Ticket = ticket,
-                             AttractionImageUrl = ticket.ImageMetaDataId != null? ImageDbService.GetTicketImageUrl(ticket.ImageMetaDataId.ToString()) : string.Empty,
+                             AttractionImageData = attractionMetaData,
                              ImageData = ImageDbService.GetImageMetaData(barcode.ImageId),
                              ValidTicketName = validTicketName
                         }

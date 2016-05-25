@@ -3,8 +3,10 @@
     <div class="wrapper">
         <div class="lhs">
             <div class="branding">
-                <img src="/Content/images/design/logo-bigbus.png"/>
-                <asp:Image ID="imgAttractionImage" runat="server" />                
+                <img src="/Content/images/design/logo-bigbus.png" alt="BigBus" />
+                
+                <img id="imgAttraction" runat="server" Visible="False"/>
+                
             </div>
             <div class="specs">
                 <div>

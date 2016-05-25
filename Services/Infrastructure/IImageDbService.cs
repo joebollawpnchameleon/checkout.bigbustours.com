@@ -18,5 +18,9 @@ namespace Services.Infrastructure
         string GetTicketImageUrl(string ticketImageId);
 
         Image GetImage(string imageId);
+
+        ImageMetaData GetMetaData(Guid metaDataId);
+
+        ImageMetaData GetMetaData(string metaDataId);
     }
 }
