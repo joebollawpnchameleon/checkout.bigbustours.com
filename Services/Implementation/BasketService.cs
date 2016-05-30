@@ -35,7 +35,7 @@ namespace Services.Implementation
         }
 
         public virtual Basket GetBasket(Guid basketId)
-        {
+        {            
             return _repository.GetSingle(x => x.Id == basketId, x => x.BasketLines);
         }
 
