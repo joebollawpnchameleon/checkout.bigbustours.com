@@ -180,9 +180,6 @@ namespace bigbus.checkout.mvc.App_Start
             builder.Register(c => new PayPalService(paypalInitStruct,
                    c.Resolve<ILoggerService>()
                    )).As<IPaypalService>();
-
-            // provider up with your registrations.
-            //_containerProvider = new ContainerProvider(builder.Build());
         }
     }
 }

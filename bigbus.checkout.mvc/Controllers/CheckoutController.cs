@@ -1,5 +1,6 @@
 ﻿
 using bigbus.checkout.mvc.Helpers;
+using bigbus.checkout.mvc.Models;
 using Services.Infrastructure;
 using System.Web.Mvc;
 
@@ -34,5 +35,14 @@ namespace bigbus.checkout.mvc.Controllers
             return View();
         }
 
+        [ValidateAntiForgeryToken()]
+        [HttpPost]
+        public ActionResult SaveUserDetails(UserDetailsVM user)
+        {
+            if (!ModelState.IsValid)
+                return View("UserDetails");
+            else
+                return Redirect("~/");
+        }
     }
 }

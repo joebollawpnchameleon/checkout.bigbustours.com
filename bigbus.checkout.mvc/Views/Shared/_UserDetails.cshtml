@@ -1,5 +1,120 @@
 ﻿@model bigbus.checkout.mvc.Models.UserDetailsVM
 
-@Html.BeginForm("UserDetails", "Checkout", FormMethod.Post, new { @class = "my_form" }){ 
+@{ 
+    var countryList =  new List<SelectListItem> { new SelectListItem { Value = "", Text = "Select" } };//populate with translations
+    var titleList = new List<SelectListItem> { new SelectListItem { Value = "", Text = "Select" } };//populate with translations
+}
+
+@using (Html.BeginForm("SaveUserDetails", "Checkout", FormMethod.Post, new { @id = "formTemplate", @class = "form-horizontal" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary()
+
+
+<fieldset class="cf">
+    <legend></legend>
+    <div class="form-row">
+        <label for="<%= TitleList.ClientID%>">
+            @Html.LabelFor(model => model.Title)
+        </label>
+        @Html.DropDownListFor(model => model.Title, titleList)
+    </div>
+    <div class="form-row">
+        <label for="<%= txtFirstName.ClientID%>">
+            @Html.LabelFor(Model => Model.Firstname)
+            <abbr title="required">*</abbr>
+        </label>
+        @Html.TextBoxFor(model => model.Firstname)
+    </div>
+    <div class="form-row">
+        <label for="<%= txtLastName.ClientID%>">
+            @Html.LabelFor(Model => Model.Lastname)
+            <abbr title="required">*</abbr>
+        </label>
+        @Html.TextBoxFor(model => model.Lastname)
+        
+    </div>
+    <div class="form-row">
+        <label for="<%= txtEmail.ClientID%>">
+            @Html.LabelFor(Model => Model.Email)
+            <abbr title="required">*</abbr>
+        </label>
+        @Html.TextBoxFor(model => model.Email)      
+    </div>
+    <div class="form-row">
+        <label>
+            &nbsp;
+        </label>
+        @Html.CheckBoxFor(model => model.ReceiveNewsletter)
+        <p>
+            @Html.LabelFor(model => model.ReceiveNewsletter)
+           
+        </p>
+    </div>
+    <div class="form-row">
+        @Html.LabelFor(model => model.ExpectedTravelDate)
+        @Html.TextBoxFor(model => model.ExpectedTravelDate)
+    </div>
+</fieldset>
+<fieldset class="cf">
+        <legend></legend>
+        <p></p>
+        <div class="form-row">
+            <label for="AddressLine1>">
+                @Html.LabelFor(model => model.AddressLine1)
+                <abbr title="required">*</abbr>
+            </label>
+            @Html.TextBoxFor(model => model.AddressLine1)
+        </div>
+        <div class="form-row">
+            <label for="AddressLine2">@Html.LabelFor(model => model.AddressLine2)</label>
+            @Html.TextBoxFor(model => model.AddressLine2)
+        </div>
+        <div class="form-row">
+            <label for="City">
+                @Html.LabelFor(model => model.City)
+                <abbr title="required">*</abbr>
+            </label>
+            @Html.TextBoxFor(model => model.City)
+        </div>
+        <div class="form-row">
+            <label for="PostCode">
+                @Html.LabelFor(model => model.PostCode)
+                <abbr title="required">*</abbr>
+            </label>
+            @Html.TextBoxFor(model => model.PostCode)
+        </div>
+        <div class="form-row">
+            <label for="StateProvince">
+                @Html.LabelFor(model => model.StateProvince)
+            </label>
+            @Html.TextBoxFor(model => model.StateProvince)
+        </div>
+        <div class="form-row">
+            <label for="CountryId">
+                @Html.LabelFor(model => model.CountryId)
+                <abbr title="required">*</abbr>
+            </label>
+            @Html.DropDownListFor(model => model.CountryId, countryList)
+        </div>
+    </fieldset>
+<fieldset class="cf terms">
+    <div class="form-row">
+        @Html.CheckBoxFor(model => model.TermsAndCAccepted)
+        @Html.LabelFor(model => model.TermsAndCAccepted)
+
+        @*<label for="<%=ckTermsAndConditions.ClientID %>">
+            <%= ParentPage.GetTranslation("IhavereadandagreetotheTermsandConditions")%><abbr title="required">*</abbr>
+        </label>
+        <p>
+            <a href="<%= ConfigurationManager.AppSettings[" BaseUrl"] %>terms-and-conditions.html?browser=true" target="_blank" ><%=ParentPage.GetTranslation("TermsAndConditions")%> </a>&nbsp;
+            <a href="<%= ConfigurationManager.AppSettings[" BaseUrl"] %>privacy-policy.html?browser=true" target="_blank" ><%=ParentPage.GetTranslation("PrivacyPolicy")%> </a>
+        </p>*@
+
+        @*<asp:CustomValidator id="cstVTerms" ValidationGroup="CreditCardCheckout" runat="server" OnServerValidate="ValidateTermsAndConditions" />*@
+
+        <input type="submit" value="Submit" />
+    </div>
+</fieldset>
 
 }
