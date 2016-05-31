@@ -8,12 +8,11 @@ namespace Common.Model
     public class LocalRequiredAttribute : RequiredAttribute
     {
         private ITranslationService _translationService;
-        string _name;
+        private string _name;
 
         public LocalRequiredAttribute(string name)
         {
             _name = name;
-            Name = name;
             _translationService = DependencyResolver.Current.GetService<ITranslationService>();
         }
 
