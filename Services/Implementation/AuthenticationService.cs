@@ -51,7 +51,7 @@ namespace Services.Implementation
             var sessCookie = HttpContext.Current.Request.Cookies[sessionCookieName];
             return sessCookie == null ? string.Empty : sessCookie.Value;
         }
-               
+        
         public virtual Guid GetSessionId(string sessionCookieName)
         {
             var sessCookie = HttpContext.Current.Request.Cookies[sessionCookieName];
