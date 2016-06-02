@@ -90,22 +90,9 @@ namespace bigbus.checkout
                 //result from booking must be there.
                 if (result == null)
                 {
-                    JumpToOrderCreationError("Booking_failed", "Booking failed for ECR basketId: " + _basket.Id);
+                    JumpToOrderCreationError("Booking_failed", result.ErrorMessage);
+                    return;
                 }
-
-                //make sure we have barcode returned
-                if (result.Barcodes.Length < 1)
-                {
-                    JumpToOrderCreationError("Booking_failed", "Booking failed (no barcode returned for ECR basketId: " + _basket.Id
-                        + System.Environment.NewLine + " message: " + result.ErrorDescription);
-                }
-
-                order.EcrBookingShortReference = result.TransactionReference;
-                CheckoutService.SaveOrder(order);
-
-                Log("Saving external barcodes");
-
-                SaveBarcodes(result, order.OrderNumber);
 
                 //clear cookie sessions and remove session from checkout mode
                 ClearCheckoutCookies();

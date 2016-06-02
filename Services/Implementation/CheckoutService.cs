@@ -205,32 +205,20 @@ namespace Services.Implementation
             OrderRepository.Update(order);
         }
 
-        //public virtual void SaveOrderLineBarCodes(BookingResult result, Order order)
-        //{
-        //    var lines = order.OrderLines;
-        //    var selectedLines = new List<string>();
+        public List<OrderLineGeneratedBarcode> GetOrderLineGeneratedBarcodes(OrderLine orderLine)
+        {
+            var orderLineGBC =  OrderLineGeneratedBCRepository.GetList(x => x.OrderLineId != null && x.OrderLineId.Value == orderLine.Id);
+            return (orderLineGBC != null)? orderLineGBC.ToList() : null;
+        }
 
-        //    foreach (var code in result.Barcodes)
-        //    {
-        //        var orderline = lines.FirstOrDefault(x =>
-        //            x.TicketId != null && 
-        //            x.TicketId.Value.ToString().Equals(code.TicketId, StringComparison.CurrentCultureIgnoreCase)
-        //            && !selectedLines.Contains(x.Id.ToString())
-        //            );
-                 
-        //        if(orderline == null)
-        //            continue;
+        public virtual void SaveOrderLineBarCode(OrderLineGeneratedBarcode orderLineGBC)
+        {
+            if (orderLineGBC.Id == null || orderLineGBC.Id == Guid.Empty)
+                OrderLineGeneratedBCRepository.Add(orderLineGBC);
+            else
+                OrderLineGeneratedBCRepository.Update(orderLineGBC);
 
-        //        selectedLines.Add(orderline.Id.ToString());
-
-        //        BarcodeRepository.Add(new OrderLineGeneratedBarcode
-        //        {
-        //             DateCreated = DateTime.Now,
-        //             OrderLineId = orderline.Id,
-        //             GeneratedBarcode = code.Code
-        //        });
-        //    }
-        //}
+        }
 
         public virtual Order GetFullOrder(string orderId)
         {

@@ -42,6 +42,9 @@ namespace bigbus.checkout
             Log("Starting order creation basketid: " + _basketId);
             var newOrder = CheckoutService.CreateOrder(_session, _basket, returnedStatus, GetClientIpAddress(), CurrentLanguageId, MicrositeId);
 
+            Log("Payment success - Generate barcode");
+            GenerateOrderBarcodes(newOrder);
+
             //send booking to ECR.
             Log("Sending booking to ECR basketid: " + _basketId);
             var result = SendBookingToEcr(newOrder);
@@ -49,23 +52,9 @@ namespace bigbus.checkout
             //result from booking must be there.
             if (result == null)
             {
-                JumpToOrderCreationError("Booking_failed", "Booking failed for ECR basketId: " + _basketId);
-            }
-
-            //make sure we have barcode returned
-            if (result.Barcodes.Length < 1)
-            {
-                JumpToOrderCreationError("Booking_failed", "Booking failed (no barcode returned for ECR basketId: " + _basketId 
-                    + System.Environment.NewLine + " message: " + result.ErrorDescription);
-            }
-
-            newOrder.EcrBookingShortReference = result.TransactionReference;
-            CheckoutService.SaveOrder(newOrder);
-
-            Log("Saving external barcodes");
-            SaveBarcodes(result, newOrder.OrderNumber);
-
-            //CreateQrImages(result, newOrder);
+                JumpToOrderCreationError("Booking_failed", result.ErrorMessage);
+                return;
+            }           
 
             //clear cookie sessions and remove session from checkout mode
             ClearCheckoutCookies();

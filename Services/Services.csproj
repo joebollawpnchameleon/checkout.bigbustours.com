@@ -101,6 +101,7 @@
   <ItemGroup>
     <Compile Include="Implementation\ApiConnectorService.cs" />
     <Compile Include="Implementation\AuthenticationService.cs" />
+    <Compile Include="Implementation\BarcodeService.cs" />
     <Compile Include="Implementation\BaseService.cs" />
     <Compile Include="Implementation\BasketService.cs" />
     <Compile Include="Implementation\CheckoutService.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="Implementation\UserService.cs" />
     <Compile Include="Infrastructure\IApiConnectorService.cs" />
     <Compile Include="Infrastructure\IAuthenticationService.cs" />
+    <Compile Include="Infrastructure\IBarcodeService.cs" />
     <Compile Include="Infrastructure\IBasketService.cs" />
     <Compile Include="Infrastructure\ICheckoutService.cs" />
     <Compile Include="Infrastructure\IClientRenderService.cs" />

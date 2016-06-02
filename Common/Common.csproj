@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Enums\EcrResponseCodes.cs" />
     <Compile Include="Enums\EcrResponseStatusCode.cs" />
+    <Compile Include="Enums\EcrVersions.cs" />
     <Compile Include="Enums\EmailTemplatePages.cs" />
     <Compile Include="Enums\Environment.cs" />
     <Compile Include="Enums\ExternalLinkLanguageMappings.cs" />

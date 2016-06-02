@@ -14,6 +14,7 @@ using Common.Enums;
 using bigbus.checkout.EcrWServiceRefV3;
 using Common.Helpers;
 using Common.Model;
+using System.Data;
 
 namespace bigbus.checkout.Models
 {
@@ -39,6 +40,7 @@ namespace bigbus.checkout.Models
         public ICheckoutService CheckoutService { get; set; }
         public INotificationService NotificationService { get; set; }
         public ILocalizationService LocalizationService { get; set; }
+        public IBarcodeService BarcodeService { get; set; }
 
         #endregion
 
@@ -135,9 +137,114 @@ namespace bigbus.checkout.Models
             return clientIpAddress;
         }
 
-        protected BookingResponse SendBookingToEcr(Order order)
+        public void GenerateOrderBarcodes(Order order)
         {
 
+            try
+            {
+                var orderLines = order.OrderLines;
+
+                if (orderLines != null && orderLines.Count > 0)
+                {
+                    foreach (var orderline in orderLines)
+                    {
+                        var orderLineGenerateBarCodes = CheckoutService.GetOrderLineGeneratedBarcodes(orderline);
+
+                        for (var y = 0; y < orderline.TicketQuantity; y++)
+                        {
+                            if (orderLineGenerateBarCodes == null || orderLineGenerateBarCodes.Count == 0)
+                            {
+                                var barcode = BarcodeService.GetNextBarcode(orderline.Ticket, orderline.TicketType).Substring(0, 12);
+
+                                var orderlineGeneratedBarcode = new OrderLineGeneratedBarcode();
+
+                                orderlineGeneratedBarcode.OrderLineId = orderline.Id;
+
+                                orderlineGeneratedBarcode.GeneratedBarcode =
+                                    barcode +
+                                    CalculateBarcodeChecksum(barcode.Substring(0, 12));
+
+                                CheckoutService.SaveOrderLineBarCode(orderlineGeneratedBarcode);
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                Log("***Exception : GenerateOrderBarcodes for the current orderid:" + order.Id);
+            }
+        }
+       
+
+        /// <summary>
+        /// This function calculates the checksum digit for a barcode
+        /// </summary>
+        public static int CalculateBarcodeChecksum(string code)
+        {
+            if (code == null || code.Length != 12)
+                throw new ArgumentException("Code length should be 12, i.e. excluding the checksum digit");
+
+            int sum = 0;
+            for (int i = 0; i < 12; i++)
+            {
+                int v;
+                if (!int.TryParse(code[i].ToString(), out v))
+                    throw new ArgumentException("Invalid character encountered in specified code.");
+                sum += (i % 2 == 0 ? v : v * 3);
+            }
+            int check = 10 - (sum % 10);
+            return check % 10;
+        }
+
+
+        protected EcrResult SendBookingToEcr(Order order)
+        {
+            Log("Sending booking to ECR");
+            
+            //check site that doesn't support QR Code as all may need it.
+
+            if (CurrentSite.NewCKEcrVersionId == (int) EcrVersion.Three)
+            {
+                var response = SendBookingToEcr3(order);
+
+                //check response is OK
+                if (response == null)
+                {
+                    return new EcrResult { ErrorMessage = "Booking failed for ECR OrderId: " + order.Id, Status = EcrResponseCodes.BookingFailure };
+                }
+
+                //check barcode are available
+                if (response.Barcodes == null || response.Barcodes.Length < 1)
+                {
+                    return new EcrResult
+                    {
+                        ErrorMessage = "Booking failed (no barcode returned for ECR OrderId: " + order.Id,
+                        Status = EcrResponseCodes.QrCodeRetrievalFailure
+                    };
+                }
+
+                order.EcrBookingShortReference = response.TransactionReference;
+                CheckoutService.SaveOrder(order);
+
+                Log("Saving external barcodes");
+                SaveBarcodes(response, order.OrderNumber);
+
+                return new EcrResult { Status = EcrResponseCodes.BookingSuccess };
+            }
+            else if(CurrentSite.NewCKEcrVersionId == (int)EcrVersion.One)
+            {
+                //add web service for old Ecr version
+
+                //make up order booking
+
+                return new EcrResult { Status = EcrResponseCodes.BookingFailure };
+            }
+
+            return new EcrResult { Status = EcrResponseCodes.BookingFailure };
+        }
+
+        protected BookingResponse SendBookingToEcr3(Order order) {
 
             var orderLines = order.OrderLines.ToList();
 

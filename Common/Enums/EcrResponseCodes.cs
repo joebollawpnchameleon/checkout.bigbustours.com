@@ -10,4 +10,11 @@ namespace Common.Enums
         BookingSuccess = 4,
         QrCodeRetrievalFailure = 5
     }
+
+    public class EcrResult
+    {
+        public EcrResponseCodes Status { get; set; }
+
+        public string ErrorMessage { get; set; }
+    }
 }

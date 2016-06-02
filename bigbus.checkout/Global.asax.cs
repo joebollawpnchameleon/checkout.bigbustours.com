@@ -17,6 +17,7 @@ using Services.Implementation;
 using Services.Infrastructure;
 using System.Web.Mvc;
 using Common.Model.PayPal;
+using bigbus.checkout.data.PlainQueries;
 
 namespace bigbus.checkout
 {
@@ -59,6 +60,7 @@ namespace bigbus.checkout
             var ecrAgentUiId = ConfigurationManager.AppSettings["EcrAgentUiId"];
             var environmentId = ConfigurationManager.AppSettings["Environment"];
             var liveEcrPoint = ConfigurationManager.AppSettings["LiveEcrEndPoint"];
+            var connString = ConfigurationManager.ConnectionStrings["BigBusDataModelConn"];
 
             var paypalInitStruct = new PayPalInitStructure
             {
@@ -69,6 +71,9 @@ namespace bigbus.checkout
                 InTestMode = Convert.ToBoolean(ConfigurationManager.AppSettings["PayPal.InTestMode"]),
                 RealEndPoint = ConfigurationManager.AppSettings["PayPal.RealEndPoint"]
             };
+
+            builder.RegisterType<BarcodeFunctions>().As<IBarcodeFunctions>()
+                .WithParameter("connString", connString);
 
             builder.RegisterType<ApiConnectorService>().As<IApiConnectorService>()
                 .WithParameter("fullUrl", fullUrl);

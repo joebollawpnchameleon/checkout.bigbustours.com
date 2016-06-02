@@ -1,6 +1,7 @@
 ﻿using bigbus.checkout.data.Model;
 using pci = Common.Model.Pci;
 using Basket = bigbus.checkout.data.Model.Basket;
+using System.Collections.Generic;
 
 namespace Services.Infrastructure
 {
@@ -18,6 +19,8 @@ namespace Services.Infrastructure
 
         TransactionAddressPaypal CreateAddressPaypal(Order order, Session session, User user);
 
-        //void SaveOrderLineBarCodes(BookingResult result, Order order);
+        List<OrderLineGeneratedBarcode> GetOrderLineGeneratedBarcodes(OrderLine orderLine);
+
+        void SaveOrderLineBarCode(OrderLineGeneratedBarcode orderLineGBC);
     }
 }

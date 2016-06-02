@@ -75,6 +75,8 @@
     <Compile Include="Model\Ticket.cs" />
     <Compile Include="Model\TransactionAddressPaypal.cs" />
     <Compile Include="Model\User.cs" />
+    <Compile Include="PlainQueries\BarcodeFunctions.cs" />
+    <Compile Include="PlainQueries\IBarcodeFunctions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\Implementation\GenericDataRepository.cs" />
     <Compile Include="Repositories\Infrastructure\IGenericDataRepository.cs" />
