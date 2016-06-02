@@ -1,6 +1,7 @@
 ﻿using Services.Implementation;
 using Services.Infrastructure;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Web.Mvc;
 
 namespace Common.Model
@@ -20,10 +21,20 @@ namespace Common.Model
 
         public override string FormatErrorMessage(string name)
         {
-            //get language
-            var term = _translationService.TranslateTerm(_name, "eng");
+            var language = GetUserLanguage();
+            var term = _translationService.TranslateTerm(_name, language);
             ErrorMessage = term;
             return base.FormatErrorMessage(term);
+        }
+
+        private string GetUserLanguage()
+        {
+            var langCookieName = ConfigurationManager.AppSettings["Session.LanguageCookieName"];
+            var defaultLanguage = ConfigurationManager.AppSettings["Default.Language"];
+
+            var userLanguage = AuthenticationService.GetCookieValue(langCookieName);
+
+            return string.IsNullOrEmpty(userLanguage) ? defaultLanguage : userLanguage;
         }
     }
 }
