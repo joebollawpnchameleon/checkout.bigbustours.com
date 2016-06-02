@@ -99,6 +99,8 @@ namespace bigbus.checkout.data.Model
 
         public int EcrVersionId { get; set; }
 
+        public int NewCKEcrVersionId { get; set; }
+
         public virtual ICollection<MicroSiteLanguage> MicroSiteLanguage { get; set; }
         
     }

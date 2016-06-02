@@ -42,6 +42,8 @@ namespace bigbus.checkout.Models
 
         #endregion
 
+        private MicroSite _currentSite;
+
         public string ExternalBasketCookieName { get { return ConfigurationManager.AppSettings["External.Basket.CookieName"]; } }
         public string SessionCookieName { get { return ConfigurationManager.AppSettings["Session.CookieName"]; } }
         public string SessionCookieDomain { get { return ConfigurationManager.AppSettings["Session.CookieDomain"]; } }
@@ -66,6 +68,16 @@ namespace bigbus.checkout.Models
             return siteService.GetMicroSiteById(MicrositeId).IsUS;
         }
 
+        protected MicroSite CurrentSite
+        {
+            get
+            {
+                if(_currentSite == null)
+                    _currentSite = SiteService.GetMicroSiteById(MicrositeId);
+
+                return _currentSite;
+            }
+        }
         protected void Page_PreInit(object sender, EventArgs e)
         {
             var cpa = (IContainerProviderAccessor)HttpContext.Current.ApplicationInstance;
@@ -125,6 +137,8 @@ namespace bigbus.checkout.Models
 
         protected BookingResponse SendBookingToEcr(Order order)
         {
+
+
             var orderLines = order.OrderLines.ToList();
 
             var availability = EcrServiceHelper.GetAvailabilityFromOrderLines(orderLines);
