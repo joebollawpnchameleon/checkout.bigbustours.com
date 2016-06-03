@@ -60,7 +60,7 @@ namespace bigbus.checkout
             var ecrAgentUiId = ConfigurationManager.AppSettings["EcrAgentUiId"];
             var environmentId = ConfigurationManager.AppSettings["Environment"];
             var liveEcrPoint = ConfigurationManager.AppSettings["LiveEcrEndPoint"];
-            var connString = ConfigurationManager.ConnectionStrings["BigBusDataModelConn"];
+            var connString = ConfigurationManager.ConnectionStrings["BigBusDataModelConn"].ToString();
 
             var paypalInitStruct = new PayPalInitStructure
             {

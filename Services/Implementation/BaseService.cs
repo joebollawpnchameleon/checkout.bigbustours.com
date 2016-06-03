@@ -30,9 +30,9 @@ namespace Services.Implementation
 
         public BaseService()
         {
-            //var cpa = (IContainerProviderAccessor)HttpContext.Current.ApplicationInstance;
-            //var cp = cpa.ContainerProvider;
-            //cp.RequestLifetime.InjectProperties(this);
+            var cpa = (IContainerProviderAccessor)HttpContext.Current.ApplicationInstance;
+            var cp = cpa.ContainerProvider;
+            cp.RequestLifetime.InjectProperties(this);
         }
 
         public void Log(string message)
