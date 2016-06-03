@@ -61,7 +61,9 @@ namespace Services.Implementation
             //validate all tickets in basket
             foreach (var basketItem in brnBasket.BasketItems)
             {
-                var ticket = _ticketService.GetTicketBySku(basketItem.Sku);
+                var site = _siteService.GetMicroSiteById(basketItem.Microsite);
+                var ticket = _ticketService.GetTicketBySku(basketItem.Sku, site.NewCKEcrVersionId);
+
                 if (ticket == null)
                 {
                     //log invalid ticket and return

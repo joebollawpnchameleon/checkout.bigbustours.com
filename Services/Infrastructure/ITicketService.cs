@@ -4,7 +4,7 @@ namespace Services.Infrastructure
 {
     public interface ITicketService
     {
-        Ticket GetTicketBySku(string sku);
+        Ticket GetTicketBySku(string sku, int ecrVersionId);
 
         Ticket GetTicketById(string id);
 

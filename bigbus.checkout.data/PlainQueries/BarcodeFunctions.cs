@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace bigbus.checkout.data.PlainQueries
 {
-    public class BarcodeFunctions
+    public class BarcodeFunctions : IBarcodeFunctions
     {
-        private string _connString;
+        private readonly string _connString;
 
         public BarcodeFunctions(string connString)
         {
