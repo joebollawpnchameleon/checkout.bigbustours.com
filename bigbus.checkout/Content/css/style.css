@@ -469,7 +469,7 @@ th {
 
 /* line 17, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/partials/_site-header.scss */
 .site-header__logo {
-  background: url("/images/big-bus-logo.png");
+  background: url("/Content/images/Design/big-bus-logo.png");
   background-size: contain;
   display: inline-block;
   height: 17px;
@@ -538,31 +538,31 @@ th {
 
 /* line 35, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/partials/_site-footer.scss */
 .site-footer .payment-method-visa {
-  background: url("/images/visa-card.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/visa-card.png") 50% 50% no-repeat;
   background-size: contain;
 }
 
 /* line 41, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/partials/_site-footer.scss */
 .site-footer .payment-method-mastercard {
-  background: url("/images/mastercard-card.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/mastercard-card.png") 50% 50% no-repeat;
   background-size: contain;
 }
 
 /* line 46, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/partials/_site-footer.scss */
 .site-footer .payment-method-american-express {
-  background: url("/images/amex-card.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/amex-card.png") 50% 50% no-repeat;
   background-size: contain;
 }
 
 /* line 51, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/partials/_site-footer.scss */
 .site-footer .payment-method-paypal {
-  background: url("/images/paypal-card.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/paypal-card.png") 50% 50% no-repeat;
   background-size: contain;
 }
 
 /* line 56, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/partials/_site-footer.scss */
 .site-footer .payment-method-quo-vadis {
-  background: url("/images/quovadis-card.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/quovadis-card.png") 50% 50% no-repeat;
   background-size: contain;
   height: 31px;
   width: 100px;
@@ -690,7 +690,7 @@ th {
 
 /* line 58, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_form.scss */
 .form__secure::before {
-  background: url("/images/padlock.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/padlock.png") 50% 50% no-repeat;
   background-size: contain;
   content: '';
   display: inline-block;
@@ -837,7 +837,7 @@ th {
 
 /* line 16, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_basket.scss */
 .basket__toggle::after {
-  background: url("/images/arrow-down.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/arrow-down.png") 50% 50% no-repeat;
   background-size: contain;
   content: '';
   display: inline-block;
@@ -849,7 +849,7 @@ th {
 
 /* line 28, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_basket.scss */
 .basket__toggle_active::after {
-  background: url("/images/arrow-up.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/arrow-up.png") 50% 50% no-repeat;
   background-size: contain;
 }
 
@@ -1051,7 +1051,7 @@ th {
 
 /* line 11, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_button.scss */
 .button_back span::before {
-  background: url("/images/arrow-left.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/arrow-left.png") 50% 50% no-repeat;
   background-size: contain;
   content: '';
   display: inline-block;
@@ -1062,7 +1062,7 @@ th {
 
 /* line 25, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_button.scss */
 .button_forward span::after {
-  background: url("/images/arrow-right.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/arrow-right.png") 50% 50% no-repeat;
   background-size: contain;
   content: '';
   display: inline-block;
@@ -1091,7 +1091,7 @@ th {
 
 /* line 57, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_button.scss */
 .button_red.button_back span::before {
-  background: url("/images/arrow-left-white.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/arrow-left-white.png") 50% 50% no-repeat;
   background-size: contain;
   content: '';
   display: inline-block;
@@ -1102,7 +1102,7 @@ th {
 
 /* line 71, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_button.scss */
 .button_red.button_forward span::after {
-  background: url("/images/arrow-right-white.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/arrow-right-white.png") 50% 50% no-repeat;
   background-size: contain;
   content: '';
   display: inline-block;
@@ -1216,7 +1216,7 @@ th {
 
 /* line 1, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_ui-datepicker.scss */
 .hasDatepicker {
-  background: url("/images/calendar.png") 95% 50% no-repeat;
+  background: url("/Content/images/Design/calendar.png") 95% 50% no-repeat;
 }
 
 /* line 5, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_ui-datepicker.scss */
@@ -1300,7 +1300,7 @@ th {
 
 /* line 79, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_ui-datepicker.scss */
 .ui-datepicker .ui-datepicker-prev span {
-  background: url("/images/arrow-left.png") 50% 50% no-repeat transparent;
+  background: url("/Content/images/Design/arrow-left.png") 50% 50% no-repeat transparent;
   background-size: contain;
   height: 10px;
   margin-left: -4px;
@@ -1316,7 +1316,7 @@ th {
 
 /* line 92, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_ui-datepicker.scss */
 .ui-datepicker .ui-datepicker-prev-hover span {
-  background: url("/images/arrow-left-white.png") 50% 50% no-repeat transparent;
+  background: url("/Content/images/Design/arrow-left-white.png") 50% 50% no-repeat transparent;
   background-size: contain;
 }
 
@@ -1327,7 +1327,7 @@ th {
 
 /* line 100, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_ui-datepicker.scss */
 .ui-datepicker .ui-datepicker-next span {
-  background: url("/images/arrow-right.png") 50% 50% no-repeat transparent;
+  background: url("/Content/images/Design/arrow-right.png") 50% 50% no-repeat transparent;
   background-size: contain;
   height: 10px;
   margin-left: -4px;
@@ -1343,7 +1343,7 @@ th {
 
 /* line 113, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_ui-datepicker.scss */
 .ui-datepicker .ui-datepicker-next-hover span {
-  background: url("/images/arrow-right-white.png") 50% 50% no-repeat transparent;
+  background: url("/Content/images/Design/arrow-right-white.png") 50% 50% no-repeat transparent;
   background-size: contain;
 }
 
@@ -1533,7 +1533,7 @@ th {
 
 /* line 2, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_logo.scss */
 .logo_mastercard-securecode {
-  background: url("/images/mastercard-securecode.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/mastercard-securecode.png") 50% 50% no-repeat;
   background-size: contain;
   height: 19px;
   width: 49px;
@@ -1541,7 +1541,7 @@ th {
 
 /* line 9, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_logo.scss */
 .logo_safekey {
-  background: url("/images/safekey.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/safekey.png") 50% 50% no-repeat;
   background-size: contain;
   height: 19px;
   width: 55px;
@@ -1549,7 +1549,7 @@ th {
 
 /* line 16, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_logo.scss */
 .logo_verified-visa {
-  background: url("/images/verified-visa.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/verified-visa.png") 50% 50% no-repeat;
   background-size: contain;
   height: 25px;
   width: 45px;
@@ -1557,7 +1557,7 @@ th {
 
 /* line 23, /Applications/MAMP/htdocs/clients/big-bus/born-redesign/checkout/src/_assets/sass/modules/_logo.scss */
 .logo_worldpay {
-  background: url("/images/worldpay.png") 50% 50% no-repeat;
+  background: url("/Content/images/Design/worldpay.png") 50% 50% no-repeat;
   background-size: contain;
   height: 23px;
   width: 86px;

@@ -25,12 +25,14 @@ namespace Services.Implementation
         public IGenericDataRepository<Navigation> NavigationRepository { get; set; }
         public IGenericDataRepository<NavigationItem> NavigationItemRepository { get; set; }
         public IGenericDataRepository<NavigationItemLanguage> NavigationItemLanguageRepository { get; set; }
+        public IGenericDataRepository<DiallingCode> DiallingCodeRepository { get; set; } 
  
         public ILocalizationService LocalizationService { get; set; }
         public ILoggerService LoggerService { get; set; }
         public AuthenticationService AuthenticationService { get; set; }
-        public IBarcodeFunctions BarcodeDBFunctions { get; set; }
+        public IQueryFunctions BarcodeDBFunctions { get; set; }
         public ITranslationService TranslationService { get; set; }
+        public IQueryFunctions QueryFunctions { get; set; }
 
         public BaseService()
         {

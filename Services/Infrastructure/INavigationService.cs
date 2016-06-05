@@ -1,6 +1,7 @@
 ﻿using bigbus.checkout.data.Model;
 using Common.Helpers;
 using System.Collections.Generic;
+using Common.Model;
 
 namespace Services.Infrastructure
 {
@@ -8,6 +9,7 @@ namespace Services.Infrastructure
     {
         Navigation GetNavigationBySiteAndSection(string site, string section);
 
-        TranslatedNavigationItem[] GetTranslatedItems(ICollection<NavigationItem> items, string languageId);
+        List<FrontEndNavigationItem> GetNavigationBySiteAndSection(string site, string section, string languageid);
+
     }
 }

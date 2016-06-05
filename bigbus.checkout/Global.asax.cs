@@ -38,8 +38,8 @@ namespace bigbus.checkout
 
             new ScriptResourceDefinition
             {
-                Path = "~/scripts/jquery-1.7.2.min.js",
-                DebugPath = "~/scripts/jquery-1.7.2.min.js",
+                Path = "~/scripts/jquery-1.10.2.min.js",
+                DebugPath = "~/scripts/jquery-1.10.2.min.js",
                 CdnPath = "http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.1.min.js",
                 CdnDebugPath = "http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.1.js"
             });
@@ -72,7 +72,7 @@ namespace bigbus.checkout
                 RealEndPoint = ConfigurationManager.AppSettings["PayPal.RealEndPoint"]
             };
 
-            builder.RegisterType<BarcodeFunctions>().As<IBarcodeFunctions>()
+            builder.RegisterType<QueryFunctions>().As<IQueryFunctions>()
                 .WithParameter("connString", connString);
 
             builder.RegisterType<ApiConnectorService>().As<IApiConnectorService>()
@@ -106,10 +106,10 @@ namespace bigbus.checkout
             builder.RegisterType<GenericDataRepository<MicrositeEmailTemplate>>().As<IGenericDataRepository<MicrositeEmailTemplate>>();
             builder.RegisterType<GenericDataRepository<EmailTemplate>>().As<IGenericDataRepository<EmailTemplate>>();
             builder.RegisterType<GenericDataRepository<Email>>().As<IGenericDataRepository<Email>>();
-
             builder.RegisterType<GenericDataRepository<Navigation>>().As<IGenericDataRepository<Navigation>>();
             builder.RegisterType<GenericDataRepository<NavigationItem>>().As<IGenericDataRepository<NavigationItem>>();
             builder.RegisterType<GenericDataRepository<NavigationItemLanguage>>().As<IGenericDataRepository<NavigationItemLanguage>>();
+            builder.RegisterType<GenericDataRepository<DiallingCode>>().As<IGenericDataRepository<DiallingCode>>();
 
             builder.RegisterType<TranslationService>().As<ITranslationService>();
             builder.RegisterType<CheckoutService>().As<ICheckoutService>();

@@ -6,8 +6,10 @@ using System.Data.SqlClient;
 
 namespace bigbus.checkout.data.PlainQueries
 {
-    public interface IBarcodeFunctions
+    public interface IQueryFunctions
     {
         DataSet DataSetFromStoredProcedure(string storedProcedureName, IEnumerable<SqlParameter> parameters);
+
+        DataTable DataTableFromStoredProcedure(string storedProcedureName, IEnumerable<SqlParameter> parameters);
     }
 }

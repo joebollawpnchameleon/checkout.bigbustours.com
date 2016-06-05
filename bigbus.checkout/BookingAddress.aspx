@@ -14,32 +14,63 @@
 
     <section class="basket">
         <div id="basket__header">
-            <p><%= GetTranslation("Total") + ":" + string.Format("<span class=\"red\">{0}</span>", TotalSummary) %>   </p>
+            <p><span class="title"><%= GetTranslation("Total") + ":" + string.Format("<span class=\"red\">{0}</span>", TotalSummary) %>   </span></p>
             <p><a class="basket__toggle js-toggle-basket" href="#"><%=GetTranslation("ViewBasket")%></a></p>
         </div>
         <NCK:BasketDisplay id="ucBasketDisplay" runat="server"/>   
     </section>
-
-    <div id="dvPayPalAction">
-        <asp:Button runat="server" text="Checkout With Paypal" OnClick="CheckoutWithPaypal" /> Or fill in your details below to pay by credit/debit card
-    </div>
-
-    <div id="dvErrorSummary" runat="server" Visible="False">
-        <asp:Literal runat="server" id="ltError"></asp:Literal>
-    </div>
-   
-    <div  runat="server" id="dvAddressDetails" Visible="True" class="customer-details">
-        <NCK:UserDetails id="ucUserDetails" runat="server"/>
-    </div>
-   
-    <div id="dvActions" runat="server">
-        <asp:Button runat="server" text="Back" OnClick="ContinueShopping" id="btnCancel"/>
-        &nbsp;
-        <asp:Button runat="server" ValidationGroup="CreditCardCheckout" text="Checkout With Credit Card" OnClientClick="TrackUserSubscription();" OnClick="CheckoutWithCreditCard" id="btnContinueCheckout"/>
-        &nbsp;
-         
-    </div>
     
+    <section class="contact-details">
+        <div class="contact-details__header">
+            <p class="contact-details__payment-options">
+                <asp:LinkButton runat="server" CssClass="contact-details__paypal-link" OnClick="CheckoutWithPaypal">
+                    <img src="/Content/images/Design/paypal.png" alt="PayPal">
+                </asp:LinkButton>
+                <%= GetTranslation("PaymentOrFillYourDetails") %>
+            </p>
+        </div>
+
+        <div class="form contact-details__form">
+
+            <div id="dvErrorSummary" runat="server" Visible="False">
+                <asp:Literal runat="server" id="ltError"></asp:Literal>
+            </div>
+
+            <NCK:UserDetails id="ucUserDetails" runat="server"/>
+            
+            <div class="form-footer">
+                <p class="form__buttons">
+                    <asp:LinkButton runat="server" CssClass="form__back button button_grey button_back" OnClick="ContinueShopping" id="btnCancel">
+                        <span><%=GetTranslation("Back")%></span>
+                    </asp:LinkButton>
+
+                    <%--<a class="form__back button button_grey button_back" href="<%= GenerateBasketPageUrl() %>">
+                        <span><%=GetTranslation("Back")%></span>
+                    </a>--%>
+                    <asp:LinkButton ID="btnContinueCheckout" ValidationGroup="CreditCardCheckout"  runat="server" OnClientClick="TrackUserSubscription();" OnClick="CheckoutWithCreditCard" CssClass="form__continue button button_red button_forward">
+                        <span id="spnContinueText" runat="server" class="right"><%= GetTranslation("ContinueToSecurePayment") %></span>
+                    </asp:LinkButton>
+                </p>
+                <p class="form__secure"><%=GetTranslation("OurCheckoutIsSecureAndYourDetailsAreProtected")%></p>
+                <ul class="form__secure-logos">
+                    <li><img src="/Content/images/paymentMethods/worldpay.png" alt="Worldpay" /></li>
+                    <li><img src="/Content/images/paymentMethods/safekey.png" alt="SafeKey" /></li>
+                    <li><img src="/Content/images/paymentMethods/verified-visa.png" alt="Verified by Visa" /></li>
+                    <li><img src="/Content/images/paymentMethods/mastercard-securecode.png" alt="Mastercard Securecode" /></li>
+                </ul>
+            </div>
+
+           <%-- <div id="dvActions" runat="server">
+                <asp:Button runat="server" text="Back" OnClick="ContinueShopping" id="btnCancel"/>
+                &nbsp;
+                <asp:Button runat="server" ValidationGroup="CreditCardCheckout" text="Checkout With Credit Card" OnClientClick="TrackUserSubscription();" OnClick="CheckoutWithCreditCard" id="btnContinueCheckout"/>
+                &nbsp;
+         
+            </div>--%>
+
+    </div>
+</section>
+
     <script type="text/javascript">
 
         function TrackUserSubscription() {
@@ -58,6 +89,60 @@
             }
         }
       
+        $(function () {
+            $('.btnSubmit_Order').click(function () {
+                ShowPopUp();
+                StartTimeout();
+            });
+
+            function StartTimeout() {
+                setTimeout("ResetForm()", 45000);
+            }
+        });
+
+        function ShowPopUp() {
+            $('#loadingModalBox').show();
+            $('#loadingModalContent').show();
+            $('.btnSubmit_Order').hide();
+            $('#loadingHeader').blink();
+            return false;
+        }
+
+        function HidePopup() {
+            $('#loadingModalBox').hide();
+            $('#loadingModalContent').hide();
+            $('.btnSubmit_Order').show();
+            return false;
+        }
+
+        function ResetForm() {
+            HidePopup();
+        }
+
+        (function ($) {
+            $.fn.blink = function (options) {
+                var defaults = { delay: 800, altText: '' };
+                var options = $.extend(defaults, options);
+                return this.each(function () {
+                    var obj = $(this);
+                    var originalText = $(this).html();
+                    // If we dont have alt Text, Blink
+                    if (options.altText === '') setInterval(function () { if ($(obj).css("visibility") === "visible") { $(obj).css('visibility', 'hidden'); } else { $(obj).css('visibility', 'visible'); } }, options.delay);
+                        // Else swap text on delay
+                    else setInterval(function () { if ($(obj).html() === originalText) { $(obj).html(options.altText); } else { $(obj).html(originalText); } }, options.delay);
+                });
+            }
+        }(jQuery));
+
     </script>
 
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="cphFooterScriptAndStylesheets" runat="server">
+    <script src="/Scripts/vendor/jquery/dist/jquery.js" type="text/javascript"></script>
+    <script src="/Scripts/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script src="/Scripts/vendor/jquery-ui/ui/core.min.js"></script>
+    <script src="/Scripts/vendor/jquery-ui/ui/datepicker.min.js"></script>
+   <%-- <script src="/Scripts/local/basket.js"></script>--%>
+    <%= GetQuovadisScripts() %>
 </asp:Content>

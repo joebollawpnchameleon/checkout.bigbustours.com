@@ -100,7 +100,8 @@ namespace bigbus.checkout
         {
             ltError.Text = string.Empty;
             dvErrorSummary.Visible = false;
-            dvAddressDetails.Visible = true;
+            //btnCancel.Text = GetTranslation("Back");
+            ucUserDetails.Visible = true;
             btnContinueCheckout.Visible = true;
         }
 
@@ -327,7 +328,7 @@ namespace bigbus.checkout
             ltError.Text = message;
             Log(logMessage);
             dvErrorSummary.Visible = true;
-            dvAddressDetails.Visible = false;
+            ucUserDetails.Visible = false;
             btnContinueCheckout.Visible = false;
         }
 

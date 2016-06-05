@@ -452,32 +452,24 @@ namespace bigbus.checkout.Models
             ucBasketDisplay.DataSource = itemList;
         }
 
-        public Navigation GetFooterNavigation()
+        public List<FrontEndNavigationItem> GetFooterNavigation()
         {
-            Navigation navigation = null;
+            var navigationItemsCachKey = string.Format("Navigation_Footer_{0}", MicrositeId);
 
-            string navigationItemsCachKey = string.Format("Navigation_Footer_{0}", CurrentSite);
+            var navigation = CacheProvider.GetFromCache<List<FrontEndNavigationItem>>(navigationItemsCachKey);
 
-            navigation = CacheProvider.GetFromCache<Navigation>(navigationItemsCachKey);
+            if (navigation != null) return navigation;
 
-            if (navigation == null)
+            //Only cache for the normal users
+            navigation = NavigationService.GetNavigationBySiteAndSection(MicrositeId, "footer", CurrentLanguageId);
+
+            //cache this for 5 mins
+            if (navigation != null && navigation.Count > 0)
             {
-                //Only cache for the normal users
-                navigation = NavigationService.GetNavigationBySiteAndSection(MicrositeId, "footer");
-
-                //cache this for 5 mins
-                if (navigation.NavigationItems.Count > 0)
-                {
-                    CacheProvider.AddToCache(navigationItemsCachKey, navigation, DateTime.Now.AddMinutes(5));
-                }
-            }            
+                CacheProvider.AddToCache(navigationItemsCachKey, navigation, DateTime.Now.AddMinutes(5));
+            }
 
             return navigation;
-        }
-
-        public TranslatedNavigationItem[] GetTranslatedItems(ICollection<NavigationItem> items)
-        {
-           return NavigationService.GetTranslatedItems(items, CurrentLanguageId);
         }
 
         public void LoadMasterValues()
@@ -490,7 +482,36 @@ namespace bigbus.checkout.Models
             master.CurrentLanguage = TranslationService.GetLanguage(CurrentLanguageId);
             master.IsMobileSession = false;
             master.MicrositeId = MicrositeId;
-            //*** load home url
+            master.HomeUrl = ConfigurationManager.AppSettings["BornHomeTicketUrl"];
         }
+
+        public void RedirectToHomePage()
+        {
+            Response.Redirect(ConfigurationManager.AppSettings["BornHomeTicketUrl"]);
+        }
+
+        public string GetQuovadisImage()
+        {
+            return @"<div class=""quovadis-wrapper"">
+                        <div class=""quovadis"">
+                            <a href="""">
+                                <img src=""/Content/images/design/quovadis_110x46.gif"" alt=""QuoVadis Secured Site - Click for details"" onclick=""return popUp();"">
+                            </a>
+                         </div>
+                    </div>";
+        }
+
+        public string GetQuovadisScripts()
+        {
+            return
+                @"<script type=""text/javascript"" src=""https://siteseal.quovadisglobal.com/scripts/script.js""></script>
+                <script type=""text/javascript"">
+                    function popUp() {
+                        window.open('https://siteseal.quovadisglobal.com/default.aspx?cn=*.bigbustours.com', 'popUp', 'toolbar=no,resizable=yes,scrollbars=yes,location=yes,dependent=yes,status=0,alwaysRaised=yes,left=300,top=200,width=655,height=610');
+                        return false;
+                    }
+                </script>";
+        }
+
     }
 }

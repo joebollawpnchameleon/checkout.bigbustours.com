@@ -244,5 +244,24 @@ namespace Services.Implementation
             return null;
         }
 
+        public virtual List<DiallingCode> GetAlldiallingDiallingCodes()
+        {
+            return DiallingCodeRepository.GetAll().ToList();
+        }
+
+        public virtual DiallingCode GetDiallingCode(string id)
+        {
+            return DiallingCodeRepository.GetSingle(x => x.Id.Equals(id, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public virtual bool OrderAllTicketShowMobile(Order order)
+        {
+            if (order.OrderLines == null)
+                return false;
+
+            return order.OrderLines.Select(orderLine => 
+                TicketRepository.GetSingle(x => x.Id.Equals(orderLine.TicketId.Value)))
+                .All(ticket => ticket == null || ticket.HasMobile);
+        }
     }
 }

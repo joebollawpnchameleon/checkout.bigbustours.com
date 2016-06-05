@@ -22,5 +22,11 @@ namespace Services.Infrastructure
         List<OrderLineGeneratedBarcode> GetOrderLineGeneratedBarcodes(OrderLine orderLine);
 
         void SaveOrderLineBarCode(OrderLineGeneratedBarcode orderLineGBC);
+
+        List<DiallingCode> GetAlldiallingDiallingCodes();
+
+        DiallingCode GetDiallingCode(string id);
+
+        bool OrderAllTicketShowMobile(Order order);
     }
 }

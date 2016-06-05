@@ -9,5 +9,9 @@ namespace Services.Infrastructure
         Guid CreateUser(User user);
 
         User CreateCustomer(Customer newCustomer);
+
+        User GetUserByEmail(string email);
+
+        void SaveUser(User user);
     }
 }

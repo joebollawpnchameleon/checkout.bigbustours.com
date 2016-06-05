@@ -57,5 +57,17 @@ namespace Services.Implementation
 
             return newUser;
         }
+
+        public User GetUserByEmail(string email)
+        {
+            return _userRepository.GetSingle(x => x.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase) ||
+                                                  x.FriendlyEmail.Equals(email,
+                                                      StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public void SaveUser(User user)
+        {
+            _userRepository.Update(user);
+        }
     }
 }

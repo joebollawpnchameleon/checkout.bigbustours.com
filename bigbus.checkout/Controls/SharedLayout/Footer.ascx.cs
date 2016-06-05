@@ -15,23 +15,15 @@ namespace bigbus.checkout.Controls.SharedLayout
         //This method is duplicated so any changes here need to be made there as well
         private void LoadFooter()
         {
-            Navigation navigation = BasePage.GetFooterNavigation();
+            var navigationItems = BasePage.GetFooterNavigation();
 
-            if (navigation != null)
-            {
-                var items = navigation.NavigationItems;
+            if (navigationItems == null || navigationItems.Count < 1)
+                return;
 
-                if (items != null && items.Count > 0)
-                {
-                    rptFooterNavigation.DataSource = BasePage.GetTranslatedItems(items);
-                    rptFooterNavigation.DataBind();
-                    rptFooterNavigation.Visible = true;
-                }
-            }
-            else
-            {
-                rptFooterNavigation.Visible = false;
-            }
+            //*** format url in front page to go to born
+            rptFooterNavigation.DataSource = navigationItems;
+            rptFooterNavigation.DataBind();
+            rptFooterNavigation.Visible = true;
         }
     }
 }

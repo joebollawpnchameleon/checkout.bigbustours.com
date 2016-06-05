@@ -164,15 +164,50 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\css\style-ie.css" />
     <Content Include="Content\css\style.css" />
+    <Content Include="Content\Images\Design\amex-card.png" />
+    <Content Include="Content\Images\Design\arrow-down.png" />
+    <Content Include="Content\Images\Design\arrow-left-white.png" />
+    <Content Include="Content\Images\Design\arrow-left.png" />
+    <Content Include="Content\Images\Design\arrow-right-white.png" />
+    <Content Include="Content\Images\Design\arrow-right.png" />
+    <Content Include="Content\Images\Design\arrow-up.png" />
+    <Content Include="Content\Images\Design\arrow.png" />
+    <Content Include="Content\Images\Design\arrow_990033.gif" />
+    <Content Include="Content\Images\Design\arrow_dwn.png" />
+    <Content Include="Content\Images\Design\arrow_dwn2.png" />
     <Content Include="Content\Images\Design\barcode.png" />
+    <Content Include="Content\Images\Design\big-bus-logo.png" />
+    <Content Include="Content\Images\Design\calendar.png" />
     <Content Include="Content\Images\Design\logo-bigbus.png" />
     <Content Include="Content\Images\Design\logo-other.png" />
+    <Content Include="Content\Images\Design\mastercard-card.png" />
+    <Content Include="Content\Images\Design\padlock.png" />
+    <Content Include="Content\Images\Design\paypal-card.png" />
+    <Content Include="Content\Images\Design\paypal.png" />
+    <Content Include="Content\Images\Design\quovadis-card.png" />
+    <Content Include="Content\Images\Design\quovadis_110x46.gif" />
     <Content Include="Content\Images\Design\ticket_empty.png" />
+    <Content Include="Content\Images\Design\visa-card.png" />
     <Content Include="Content\Images\Design\watermark.jpg" />
+    <Content Include="Content\Images\Design\worldpay.png" />
+    <Content Include="Content\Images\Design\WorldPay_Credit_Cards.jpg" />
+    <Content Include="Content\Images\Design\WorldPay_Credit_Cards2.jpg" />
     <Content Include="Content\Images\Design\wtm_faded.png" />
+    <Content Include="Content\Images\paymentMethods\american-express.png" />
+    <Content Include="Content\Images\paymentMethods\maestro.png" />
+    <Content Include="Content\Images\paymentMethods\mastercard-securecode.png" />
+    <Content Include="Content\Images\paymentMethods\mastercard.png" />
+    <Content Include="Content\Images\paymentMethods\payment-types.png" />
+    <Content Include="Content\Images\paymentMethods\paypal.png" />
+    <Content Include="Content\Images\paymentMethods\safekey.png" />
+    <Content Include="Content\Images\paymentMethods\verified-visa.png" />
+    <Content Include="Content\Images\paymentMethods\visa-electron.png" />
+    <Content Include="Content\Images\paymentMethods\visa.png" />
+    <Content Include="Content\Images\paymentMethods\worldpay.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Controls\AffiliateWindow\AdvertiserTracking.ascx" />
     <Content Include="Controls\BasketDisplay.ascx" />
+    <Content Include="Controls\CommissionJunctionTag.ascx" />
     <Content Include="Controls\EptecaImage.ascx" />
     <Content Include="Controls\EVoucher.ascx" />
     <Content Include="Controls\Google\Analytics.ascx" />
@@ -187,6 +222,8 @@
     <Content Include="Controls\SharedLayout\Footer.ascx" />
     <Content Include="Controls\SurveyMonkey\Survey.ascx" />
     <Content Include="Controls\UserDetails.ascx" />
+    <Content Include="Controls\ViatorWidget\Desktop.ascx" />
+    <Content Include="Controls\ViatorWidget\Mobile.ascx" />
     <Content Include="favicon-16x16.png" />
     <Content Include="favicon-194x194.png" />
     <Content Include="favicon-32x32.png" />
@@ -202,6 +239,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="QrCodeImageHandler.ashx" />
     <Content Include="manifest.json" />
+    <Content Include="BlankTemplate.Master" />
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Properties\PublishProfiles\UAT.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -213,6 +251,10 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\Vendor\jquery-ui\jquery-ui.min.js" />
+    <Content Include="Scripts\Vendor\jquery-ui\ui\core.min.js" />
+    <Content Include="Scripts\Vendor\jquery-ui\ui\datepicker.min.js" />
+    <Content Include="Scripts\Vendor\jquery\dist\jquery.js" />
     <Content Include="Scripts\Vendor\Modernizr\modernizr.js" />
     <Content Include="Scripts\Vendor\Modernizr\modernizr.min.js" />
     <Content Include="Scripts\Vendor\selectivizr\selectivizr-min.js" />
@@ -325,6 +367,13 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="BlankTemplate.Master.cs">
+      <DependentUpon>BlankTemplate.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BlankTemplate.Master.designer.cs">
+      <DependentUpon>BlankTemplate.Master</DependentUpon>
+    </Compile>
     <Compile Include="BookingAddress.aspx.cs">
       <DependentUpon>BookingAddress.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -373,6 +422,13 @@
     </Compile>
     <Compile Include="Controls\BasketDisplay.ascx.designer.cs">
       <DependentUpon>BasketDisplay.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CommissionJunctionTag.ascx.cs">
+      <DependentUpon>CommissionJunctionTag.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\CommissionJunctionTag.ascx.designer.cs">
+      <DependentUpon>CommissionJunctionTag.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\EptecaImage.ascx.cs">
       <DependentUpon>EptecaImage.ascx</DependentUpon>
@@ -472,6 +528,20 @@
     </Compile>
     <Compile Include="Controls\UserDetails.ascx.designer.cs">
       <DependentUpon>UserDetails.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ViatorWidget\Desktop.ascx.cs">
+      <DependentUpon>Desktop.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ViatorWidget\Desktop.ascx.designer.cs">
+      <DependentUpon>Desktop.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ViatorWidget\Mobile.ascx.cs">
+      <DependentUpon>Mobile.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ViatorWidget\Mobile.ascx.designer.cs">
+      <DependentUpon>Mobile.ascx</DependentUpon>
     </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
