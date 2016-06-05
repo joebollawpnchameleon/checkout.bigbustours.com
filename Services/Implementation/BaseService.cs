@@ -22,11 +22,15 @@ namespace Services.Implementation
         public IGenericDataRepository<MicrositeEmailTemplate> MicrositeEmailRepository { get; set; }
         public IGenericDataRepository<Email> EmailRepository { get; set; }
         public IGenericDataRepository<ContactData> ContactsRepository { get; set; }
+        public IGenericDataRepository<Navigation> NavigationRepository { get; set; }
+        public IGenericDataRepository<NavigationItem> NavigationItemRepository { get; set; }
+        public IGenericDataRepository<NavigationItemLanguage> NavigationItemLanguageRepository { get; set; }
  
         public ILocalizationService LocalizationService { get; set; }
         public ILoggerService LoggerService { get; set; }
         public AuthenticationService AuthenticationService { get; set; }
         public IBarcodeFunctions BarcodeDBFunctions { get; set; }
+        public ITranslationService TranslationService { get; set; }
 
         public BaseService()
         {

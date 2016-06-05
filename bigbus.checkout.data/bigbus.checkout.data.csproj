@@ -66,6 +66,9 @@
     <Compile Include="Model\Microsite.cs" />
     <Compile Include="Model\MicrositeEmailTemplate.cs" />
     <Compile Include="Model\MicroSiteLanguage.cs" />
+    <Compile Include="Model\Navigation.cs" />
+    <Compile Include="Model\NavigationItem.cs" />
+    <Compile Include="Model\NavigationItemLanguage.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\OrderLine.cs" />
     <Compile Include="Model\OrderLineGeneratedBarcode.cs" />

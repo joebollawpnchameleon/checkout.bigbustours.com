@@ -2,17 +2,23 @@
 <%@ Register TagPrefix="NCK" TagName="UserDetails" src="~/Controls/UserDetails.ascx"  %>
 <%@ Register TagPrefix="NCK" TagName="BasketDisplay" src="~/Controls/BasketDisplay.ascx"  %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+<asp:Content ContentPlaceHolderID="cphHeaderScriptAndStylesheets" runat="server">
+    <link rel="stylesheet" href="/Scripts/vendor/slick/slick-theme.css" />
+    <link rel="stylesheet" href="/Scripts/vendor/slick/slick.css" />
 </asp:Content>
 
-<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <div id="dvBasketSummary">
-        <%= GetTranslation("Total") + ":" + string.Format("<span class=\"red\">{0}</span>", TotalSummary) %>     &nbsp;
-        <span class="action"><%= GetTranslation("View_Basket") %></span>
-        <hr/>
-         <NCK:BasketDisplay id="ucBasketDisplay" runat="server"/>
-         <hr/>
-    </div>
+<asp:Content ID="Content2" ContentPlaceHolderID="cplhBody" runat="server">
+    <header class="content__header">
+        <h1><%= GetTranslation("Booking_Step3") %></h1>
+    </header>
+
+    <section class="basket">
+        <div id="basket__header">
+            <p><%= GetTranslation("Total") + ":" + string.Format("<span class=\"red\">{0}</span>", TotalSummary) %>   </p>
+            <p><a class="basket__toggle js-toggle-basket" href="#"><%=GetTranslation("ViewBasket")%></a></p>
+        </div>
+        <NCK:BasketDisplay id="ucBasketDisplay" runat="server"/>   
+    </section>
 
     <div id="dvPayPalAction">
         <asp:Button runat="server" text="Checkout With Paypal" OnClick="CheckoutWithPaypal" /> Or fill in your details below to pay by credit/debit card

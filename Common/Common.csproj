@@ -35,6 +35,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -55,7 +56,11 @@
     <Compile Include="Enums\ReturnStatus.cs" />
     <Compile Include="Enums\TicketVariation.cs" />
     <Compile Include="Enums\Titles.cs" />
+    <Compile Include="Helpers\Affiliates.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
+    <Compile Include="Helpers\Fingerprint.cs" />
+    <Compile Include="Helpers\TranslatedNavigationItem.cs" />
+    <Compile Include="Helpers\TrustPilot.cs" />
     <Compile Include="Helpers\UrlHelper.cs" />
     <Compile Include="Model\BornBasket.cs" />
     <Compile Include="Model\BornBasketItem.cs" />

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
+﻿using bigbus.checkout.data.Model;
+using System;
+
 
 namespace bigbus.checkout
 {
@@ -13,6 +10,14 @@ namespace bigbus.checkout
         {
             ltAdditionalMetas.Text += metas;
         }
+
+        public Language CurrentLanguage { get; set; }
+
+        public bool IsMobileSession { get; set; }
+
+        public string MicrositeId { get; set; }
+
+        public string HomeUrl { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {

@@ -1,8 +1,10 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="BasketDisplay.ascx.cs" Inherits="bigbus.checkout.Controls.BasketDisplay" %>
 
+ <div class="basket__container basket__container_open">
+
 <asp:Repeater runat="server" id="rptBasketLines">
     <HeaderTemplate>
-        <table>
+        <table class="basket__table">
         <tr>
             <td>&nbsp;</td>
             <td><%= ParentPage.GetTranslation("Date") %></td>
@@ -32,3 +34,5 @@
         </table>
     </FooterTemplate>
 </asp:Repeater>
+
+ </div>

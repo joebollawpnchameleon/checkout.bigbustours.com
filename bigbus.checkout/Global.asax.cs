@@ -106,7 +106,11 @@ namespace bigbus.checkout
             builder.RegisterType<GenericDataRepository<MicrositeEmailTemplate>>().As<IGenericDataRepository<MicrositeEmailTemplate>>();
             builder.RegisterType<GenericDataRepository<EmailTemplate>>().As<IGenericDataRepository<EmailTemplate>>();
             builder.RegisterType<GenericDataRepository<Email>>().As<IGenericDataRepository<Email>>();
-            
+
+            builder.RegisterType<GenericDataRepository<Navigation>>().As<IGenericDataRepository<Navigation>>();
+            builder.RegisterType<GenericDataRepository<NavigationItem>>().As<IGenericDataRepository<NavigationItem>>();
+            builder.RegisterType<GenericDataRepository<NavigationItemLanguage>>().As<IGenericDataRepository<NavigationItemLanguage>>();
+
             builder.RegisterType<TranslationService>().As<ITranslationService>();
             builder.RegisterType<CheckoutService>().As<ICheckoutService>();
             builder.RegisterType<GenericHttpCacheProvider>().As<ICacheProvider>();
@@ -115,6 +119,7 @@ namespace bigbus.checkout
             builder.RegisterType<LocalizationService>().As<ILocalizationService>();
             builder.RegisterType<PdfClientRenderer>().As<IClientRenderService>();
             builder.RegisterType<NotificationService>().As<INotificationService>();
+            builder.RegisterType<NavigationService>().As<INavigationService>();
 
             if (environmentId.Equals(Common.Enums.Environment.Live.ToString()))
             {

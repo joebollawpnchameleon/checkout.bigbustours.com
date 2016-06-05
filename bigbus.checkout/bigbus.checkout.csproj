@@ -141,10 +141,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="android-chrome-144x144.png" />
+    <Content Include="android-chrome-192x192.png" />
+    <Content Include="android-chrome-36x36.png" />
+    <Content Include="android-chrome-48x48.png" />
+    <Content Include="android-chrome-72x72.png" />
+    <Content Include="android-chrome-96x96.png" />
+    <Content Include="apple-touch-icon-114x114.png" />
+    <Content Include="apple-touch-icon-120x120.png" />
+    <Content Include="apple-touch-icon-144x144.png" />
+    <Content Include="apple-touch-icon-152x152.png" />
+    <Content Include="apple-touch-icon-180x180.png" />
+    <Content Include="apple-touch-icon-57x57.png" />
+    <Content Include="apple-touch-icon-60x60.png" />
+    <Content Include="apple-touch-icon-72x72.png" />
+    <Content Include="apple-touch-icon-76x76.png" />
+    <Content Include="apple-touch-icon-precomposed.png" />
+    <Content Include="apple-touch-icon.png" />
     <Content Include="BookingAddressPayPal.aspx" />
     <Content Include="BookingCompleted.aspx" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\css\style-ie.css" />
+    <Content Include="Content\css\style.css" />
     <Content Include="Content\Images\Design\barcode.png" />
     <Content Include="Content\Images\Design\logo-bigbus.png" />
     <Content Include="Content\Images\Design\logo-other.png" />
@@ -152,14 +171,37 @@
     <Content Include="Content\Images\Design\watermark.jpg" />
     <Content Include="Content\Images\Design\wtm_faded.png" />
     <Content Include="Content\Site.css" />
+    <Content Include="Controls\AffiliateWindow\AdvertiserTracking.ascx" />
     <Content Include="Controls\BasketDisplay.ascx" />
+    <Content Include="Controls\EptecaImage.ascx" />
     <Content Include="Controls\EVoucher.ascx" />
+    <Content Include="Controls\Google\Analytics.ascx" />
+    <Content Include="Controls\Google\RemarketingScript.ascx" />
+    <Content Include="Controls\Google\TagManager.ascx" />
     <Content Include="Controls\IntileryMainScript.ascx" />
+    <Content Include="Controls\LayoutBookingNoLightbox.ascx" />
+    <Content Include="Controls\Misc\CloudFrontScript.ascx" />
+    <Content Include="Controls\Misc\QualarooScript.ascx" />
+    <Content Include="Controls\QuoVadis\DesktopBookingHeader.ascx" />
+    <Content Include="Controls\QuoVadis\MobileBookingHeader.ascx" />
+    <Content Include="Controls\SharedLayout\Footer.ascx" />
+    <Content Include="Controls\SurveyMonkey\Survey.ascx" />
     <Content Include="Controls\UserDetails.ascx" />
+    <Content Include="favicon-16x16.png" />
+    <Content Include="favicon-194x194.png" />
+    <Content Include="favicon-32x32.png" />
+    <Content Include="favicon-96x96.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="mstile-144x144.png" />
+    <Content Include="mstile-150x150.png" />
+    <Content Include="mstile-310x150.png" />
+    <Content Include="mstile-310x310.png" />
+    <Content Include="mstile-70x70.png" />
+    <Content Include="robots.txt" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="QrCodeImageHandler.ashx" />
+    <Content Include="manifest.json" />
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Properties\PublishProfiles\UAT.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -171,11 +213,18 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\Vendor\Modernizr\modernizr.js" />
+    <Content Include="Scripts\Vendor\Modernizr\modernizr.min.js" />
+    <Content Include="Scripts\Vendor\selectivizr\selectivizr-min.js" />
+    <Content Include="Scripts\Vendor\slick\ajax-loader.gif" />
+    <Content Include="Scripts\Vendor\slick\fonts\slick.svg" />
+    <Content Include="Scripts\Vendor\slick\slick-theme.css" />
+    <Content Include="Scripts\Vendor\slick\slick.css" />
+    <Content Include="Scripts\Vendor\slick\slick.min.js" />
     <Content Include="SiteMaster.Master" />
     <Content Include="packages.config" />
     <Content Include="ViewVoucher.aspx" />
     <Content Include="Voucher.aspx" />
-    <Content Include="WebForm1.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
@@ -195,6 +244,9 @@
     <Content Include="Views\Checkout\CancelBookingPayPal.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Checkout\Cancelled.cshtml" />
+    <Content Include="Scripts\Vendor\slick\fonts\slick.eot" />
+    <Content Include="Scripts\Vendor\slick\fonts\slick.ttf" />
+    <Content Include="Scripts\Vendor\slick\fonts\slick.woff" />
     <None Include="Web References\EcrServiceRef\Api.wsdl" />
     <None Include="Web References\EcrServiceRef\Api.xsd">
       <SubType>Designer</SubType>
@@ -305,12 +357,29 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MagentoTestController.cs" />
+    <Compile Include="Controls\AffiliateWindow\AdvertiserTracking.ascx.cs">
+      <DependentUpon>AdvertiserTracking.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\AffiliateWindow\AdvertiserTracking.ascx.designer.cs">
+      <DependentUpon>AdvertiserTracking.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BaseControl.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Controls\BasketDisplay.ascx.cs">
       <DependentUpon>BasketDisplay.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Controls\BasketDisplay.ascx.designer.cs">
       <DependentUpon>BasketDisplay.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\EptecaImage.ascx.cs">
+      <DependentUpon>EptecaImage.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\EptecaImage.ascx.designer.cs">
+      <DependentUpon>EptecaImage.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\EVoucher.ascx.cs">
       <DependentUpon>EVoucher.ascx</DependentUpon>
@@ -319,12 +388,83 @@
     <Compile Include="Controls\EVoucher.ascx.designer.cs">
       <DependentUpon>EVoucher.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Google\Analytics.ascx.cs">
+      <DependentUpon>Analytics.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Google\Analytics.ascx.designer.cs">
+      <DependentUpon>Analytics.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Google\RemarketingScript.ascx.cs">
+      <DependentUpon>RemarketingScript.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Google\RemarketingScript.ascx.designer.cs">
+      <DependentUpon>RemarketingScript.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Google\TagManager.ascx.cs">
+      <DependentUpon>TagManager.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Google\TagManager.ascx.designer.cs">
+      <DependentUpon>TagManager.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\IntileryMainScript.ascx.cs">
       <DependentUpon>IntileryMainScript.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Controls\IntileryMainScript.ascx.designer.cs">
       <DependentUpon>IntileryMainScript.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\LayoutBookingNoLightbox.ascx.cs">
+      <DependentUpon>LayoutBookingNoLightbox.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\LayoutBookingNoLightbox.ascx.designer.cs">
+      <DependentUpon>LayoutBookingNoLightbox.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Misc\CloudFrontScript.ascx.cs">
+      <DependentUpon>CloudFrontScript.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Misc\CloudFrontScript.ascx.designer.cs">
+      <DependentUpon>CloudFrontScript.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Misc\QualarooScript.ascx.cs">
+      <DependentUpon>QualarooScript.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Misc\QualarooScript.ascx.designer.cs">
+      <DependentUpon>QualarooScript.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\QuoVadis\DesktopBookingHeader.ascx.cs">
+      <DependentUpon>DesktopBookingHeader.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\QuoVadis\DesktopBookingHeader.ascx.designer.cs">
+      <DependentUpon>DesktopBookingHeader.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\QuoVadis\MobileBookingHeader.ascx.cs">
+      <DependentUpon>MobileBookingHeader.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\QuoVadis\MobileBookingHeader.ascx.designer.cs">
+      <DependentUpon>MobileBookingHeader.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SharedLayout\Footer.ascx.cs">
+      <DependentUpon>Footer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SharedLayout\Footer.ascx.designer.cs">
+      <DependentUpon>Footer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SharedLayout\NavigationItems.cs" />
+    <Compile Include="Controls\SurveyMonkey\Survey.ascx.cs">
+      <DependentUpon>Survey.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SurveyMonkey\Survey.ascx.designer.cs">
+      <DependentUpon>Survey.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\UserDetails.ascx.cs">
       <DependentUpon>UserDetails.ascx</DependentUpon>
@@ -363,6 +503,7 @@
     <Compile Include="Helpers\IEcrService.cs" />
     <Compile Include="Helpers\IntileryTagHelper.cs" />
     <Compile Include="Helpers\LanguageHelper.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Models\BasketDisplayVM.cs" />
     <Compile Include="QrCodeImageHandler.ashx.cs">
       <DependentUpon>QrCodeImageHandler.ashx</DependentUpon>
@@ -409,13 +550,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="WebForm1.aspx.cs">
-      <DependentUpon>WebForm1.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WebForm1.aspx.designer.cs">
-      <DependentUpon>WebForm1.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

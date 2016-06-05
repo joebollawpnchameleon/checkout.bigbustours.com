@@ -7,8 +7,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using bigbus.checkout.Controls;
-
 namespace bigbus.checkout {
     
     

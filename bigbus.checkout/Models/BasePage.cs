@@ -15,6 +15,9 @@ using bigbus.checkout.EcrWServiceRefV3;
 using Common.Helpers;
 using Common.Model;
 using System.Data;
+using Common.Model.Interfaces;
+using BigBusWebsite.controls.SharedLayout;
+using System.Collections.Generic;
 
 namespace bigbus.checkout.Models
 {
@@ -41,6 +44,8 @@ namespace bigbus.checkout.Models
         public INotificationService NotificationService { get; set; }
         public ILocalizationService LocalizationService { get; set; }
         public IBarcodeService BarcodeService { get; set; }
+        public ICacheProvider CacheProvider { get; set; }
+        public INavigationService NavigationService { get; set; }
 
         #endregion
 
@@ -61,16 +66,16 @@ namespace bigbus.checkout.Models
         public string EcrApiKey { get { return ConfigurationManager.AppSettings["EcrApiKey"]; } }
         public int EnvironmentId { get { return (ConfigurationManager.AppSettings["Environment"] != null)? Convert.ToInt32(ConfigurationManager.AppSettings["Environment"]) : (int)Common.Enums.Environment.Local; } }
 
-        protected string CurrentLanguageId { get { return "eng"; } } //***replace with function
-        protected string MicrositeId { get { return "london"; } } //*** get from url as in function
-        protected string SubSite { get { return "london"; } }  //*** work out from old code
+        public string CurrentLanguageId { get { return "eng"; } } //***replace with function
+        public string MicrositeId { get { return "london"; } } //*** get from url as in function
+        public string SubSite { get { return "london"; } }  //*** work out from old code
 
-        protected bool SiteIsUs(ISiteService siteService)
+        public bool SiteIsUs(ISiteService siteService)
         {
             return siteService.GetMicroSiteById(MicrositeId).IsUS;
         }
 
-        protected MicroSite CurrentSite
+        public MicroSite CurrentSite
         {
             get
             {
@@ -80,11 +85,24 @@ namespace bigbus.checkout.Models
                 return _currentSite;
             }
         }
+
+        public bool ShowAffiliateWindow
+        {
+            get
+            {
+                return
+                    !string.IsNullOrWhiteSpace(CurrentSite.AffiliateWindowMerchantId) &&
+                    !string.IsNullOrWhiteSpace(CurrentSite.AffiliateWindowAttractionCommissionLabel) &&
+                    !string.IsNullOrWhiteSpace(CurrentSite.AffiliateWindowTourCommissionLabel);
+            }
+        }
+
         protected void Page_PreInit(object sender, EventArgs e)
         {
             var cpa = (IContainerProviderAccessor)HttpContext.Current.ApplicationInstance;
             var cp = cpa.ContainerProvider;
             cp.RequestLifetime.InjectProperties(this);
+            LoadMasterValues();
         }
 
         public string GetTranslation(string keyPhrase)
@@ -432,6 +450,47 @@ namespace bigbus.checkout.Models
             }).ToList();
 
             ucBasketDisplay.DataSource = itemList;
+        }
+
+        public Navigation GetFooterNavigation()
+        {
+            Navigation navigation = null;
+
+            string navigationItemsCachKey = string.Format("Navigation_Footer_{0}", CurrentSite);
+
+            navigation = CacheProvider.GetFromCache<Navigation>(navigationItemsCachKey);
+
+            if (navigation == null)
+            {
+                //Only cache for the normal users
+                navigation = NavigationService.GetNavigationBySiteAndSection(MicrositeId, "footer");
+
+                //cache this for 5 mins
+                if (navigation.NavigationItems.Count > 0)
+                {
+                    CacheProvider.AddToCache(navigationItemsCachKey, navigation, DateTime.Now.AddMinutes(5));
+                }
+            }            
+
+            return navigation;
+        }
+
+        public TranslatedNavigationItem[] GetTranslatedItems(ICollection<NavigationItem> items)
+        {
+           return NavigationService.GetTranslatedItems(items, CurrentLanguageId);
+        }
+
+        public void LoadMasterValues()
+        {
+            var master = Master as SiteMaster;
+
+            if (master == null)
+                return;
+
+            master.CurrentLanguage = TranslationService.GetLanguage(CurrentLanguageId);
+            master.IsMobileSession = false;
+            master.MicrositeId = MicrositeId;
+            //*** load home url
         }
     }
 }

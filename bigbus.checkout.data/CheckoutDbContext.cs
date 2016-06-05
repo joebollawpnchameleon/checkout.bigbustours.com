@@ -24,7 +24,9 @@ namespace bigbus.checkout.data
         }
 
         #region Models Declaration 
-
+        public virtual DbSet<Navigation> Navigations { get; set; }
+        public virtual DbSet<NavigationItem> NavigationItems { get; set; }
+        public virtual DbSet<NavigationItemLanguage> NavigationItemLanguages { get; set; }
         public virtual DbSet<ContactData> ContactDatas{ get; set; }
         public virtual DbSet<Email> Emails { get; set; }
         public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
