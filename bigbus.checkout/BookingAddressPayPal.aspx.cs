@@ -24,6 +24,7 @@ namespace bigbus.checkout
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            Log("BookingAddressPayPal => Page_Load() started.");
             _session = GetSession();
             _basket = GetBasket();
             GetPayerDetails();
@@ -149,6 +150,7 @@ namespace bigbus.checkout
         private User CreateUser()
         {
             var customerSession = GetSession();
+            Log("Creating User Email: " + ucUserDetails.Email);
 
             var customer = new Customer
             {
@@ -179,19 +181,23 @@ namespace bigbus.checkout
         
         private void GetPayerDetails()
         {
-            var session = GetSession();
+            Log("BookingAddressPayPal => GetPayerDetails() - started.");
+            
+            if(_session == null)
+                _session = GetSession();
+            
+            Log("BookingAddressPayPal => GetPayerDetails() - Confirming Checkout Details.");
+            var paypalDetails = PaypalService.ConfirmCheckoutDetails(_session.PayPalToken);
 
-            var paypalDetails = PaypalService.ConfirmCheckoutDetails(session.PayPalToken);
-
-            session.PayPalPayerId = paypalDetails.PayPalReturnUserInfo.Payer_Id;
-            session.PayPalOrderId = paypalDetails.Transaction_Id;
-
-            AuthenticationService.UpdateSession(session);
+            Log("Updating Paypal Payment details");
+            _session.PayPalPayerId = paypalDetails.PayPalReturnUserInfo.Payer_Id;
+            _session.PayPalOrderId = paypalDetails.Transaction_Id;
+            AuthenticationService.UpdateSession(_session);
 
             if (paypalDetails.PayPalReturnUserInfo.Firstname != null)
             {
-                PopulateCustomerDetails(paypalDetails);
                 //populate user details form. and update address session details.
+                PopulateCustomerDetails(paypalDetails);
             }
         }
 

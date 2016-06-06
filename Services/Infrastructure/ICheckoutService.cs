@@ -2,6 +2,7 @@
 using pci = Common.Model.Pci;
 using Basket = bigbus.checkout.data.Model.Basket;
 using System.Collections.Generic;
+using Common.Model;
 
 namespace Services.Infrastructure
 {
@@ -28,5 +29,7 @@ namespace Services.Infrastructure
         DiallingCode GetDiallingCode(string id);
 
         bool OrderAllTicketShowMobile(Order order);
+
+        List<EcrOrderLineData> GetOrderLineDetails(string orderId);
     }
 }

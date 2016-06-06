@@ -18,6 +18,7 @@ using System.Data;
 using Common.Model.Interfaces;
 using BigBusWebsite.controls.SharedLayout;
 using System.Collections.Generic;
+using bigbus.checkout.data.PlainQueries;
 
 namespace bigbus.checkout.Models
 {
@@ -219,8 +220,20 @@ namespace bigbus.checkout.Models
         protected EcrResult SendBookingToEcr(Order order)
         {
             Log("Sending booking to ECR");
-            
+
+            var orderId = order.Id.ToString();
+            var orderLineDetails = CheckoutService.GetOrderLineDetails(orderId);
+
+            if (orderLineDetails == null)
+            {
+                Log("Could not retrieve orderline details for order id: " + orderId);
+                return new EcrResult { ErrorMessage = "Booking failed for ECR OrderId: " + order.Id + " couldn't retrieve orderline details.", Status = EcrResponseCodes.BookingFailure }; 
+            }
+
             //check site that doesn't support QR Code as all may need it.
+
+            //pull orderlines that need sending to Ecr.
+            //var selectedOrderLines = order.OrderLines.Where(x => x.MicroSite);
 
             if (CurrentSite.NewCKEcrVersionId == (int) EcrVersion.Three)
             {

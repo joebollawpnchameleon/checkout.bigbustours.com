@@ -10,7 +10,7 @@ using Services.Infrastructure;
 
 namespace Services.Implementation
 {
-    public class ApiConnectorService : IApiConnectorService
+    public class ApiConnectorService : BaseService, IApiConnectorService
     {
         private readonly string _endPoint;
         private readonly string _apiPath;
@@ -33,6 +33,8 @@ namespace Services.Implementation
 
             try
             {
+                LoggerService.LogItem("Retrieving basket for external sessionid: " + cookieValue);
+
                 var client = new HttpClient();
                 var task = client.GetAsync(_fullUrl)
                   .ContinueWith((taskwithresponse) =>
@@ -50,6 +52,7 @@ namespace Services.Implementation
             catch (Exception ex)
             {
                 //log exception here.
+                LoggerService.LogItem("External basket retrieval failed: external sessionid "  + cookieValue + Environment.NewLine + ex.Message);
             }
 
             return basket;

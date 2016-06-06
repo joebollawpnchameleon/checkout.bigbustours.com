@@ -10,7 +10,7 @@ using pci = Common.Model.Pci;
 
 namespace Services.Implementation
 {
-    public class BasketService : IBasketService
+    public class BasketService : BaseService, IBasketService
     {
         private readonly IGenericDataRepository<Basket> _repository;
         private readonly IGenericDataRepository<BasketLine> _lineRepository;
@@ -61,12 +61,14 @@ namespace Services.Implementation
             //validate all tickets in basket
             foreach (var basketItem in brnBasket.BasketItems)
             {
+                //*** change validation based on Ecr Version of the site.
                 var site = _siteService.GetMicroSiteById(basketItem.Microsite);
                 var ticket = _ticketService.GetTicketBySku(basketItem.Sku, site.NewCKEcrVersionId);
 
                 if (ticket == null)
                 {
                     //log invalid ticket and return
+                    LoggerService.LogItem("BasketService => IsBornBasketValid(). Invalid ticket found in basket ticketid: " + basketItem.Sku + " basket external session id: " + brnBasket.ExternalCookieValue);
                     return false;
                 }
                 basketItem.TicketId = ticket.Id;

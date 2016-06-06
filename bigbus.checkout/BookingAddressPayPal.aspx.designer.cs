@@ -40,15 +40,6 @@ namespace bigbus.checkout {
         protected global::System.Web.UI.WebControls.Literal ltError;
         
         /// <summary>
-        /// dvAddressDetails control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl dvAddressDetails;
-        
-        /// <summary>
         /// ucUserDetails control.
         /// </summary>
         /// <remarks>
@@ -58,12 +49,21 @@ namespace bigbus.checkout {
         protected global::bigbus.checkout.Controls.WebUserControl1 ucUserDetails;
         
         /// <summary>
-        /// dvActions control.
+        /// btnContinueCheckout control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl dvActions;
+        protected global::System.Web.UI.WebControls.LinkButton btnContinueCheckout;
+        
+        /// <summary>
+        /// spnContinueText control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl spnContinueText;
     }
 }

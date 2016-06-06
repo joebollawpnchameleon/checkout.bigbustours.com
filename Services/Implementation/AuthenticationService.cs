@@ -18,11 +18,10 @@ namespace Services.Implementation
         {
             var oldCookie = HttpContext.Current.Request.Cookies[cookieName];
 
-            if (oldCookie != null)
-            {
-                oldCookie.Expires = DateTime.Now.Add(new TimeSpan(-1, 0, 0, 0));
-                HttpContext.Current.Response.Cookies.Add(oldCookie);
-            }
+            if (oldCookie == null) return true;
+
+            oldCookie.Expires = DateTime.Now.Add(new TimeSpan(-1, 0, 0, 0));
+            HttpContext.Current.Response.Cookies.Add(oldCookie);
 
             return true;
         }

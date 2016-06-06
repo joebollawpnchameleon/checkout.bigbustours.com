@@ -4,10 +4,14 @@ using bigbus.checkout.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using bigbus.checkout.Controls;
+using bigbus.checkout.Controls.Google;
+using BigBusWebsite.controls;
 using Services.Implementation;
 
 namespace bigbus.checkout
@@ -166,17 +170,16 @@ namespace bigbus.checkout
 
             //***MobileAppSessionMadness(session);
 
-            //***DisplayMarketingScript();
+            DisplayMarketingScript();
 
             CheckIfMobileSectionShouldBeShown(order);
-
-            //This will ensure that the last order for the user is being displayed
+            
             //by getting the details for the order from the database
-            eVoucherLink.NavigateUrl = ResolveUrl("~/ViewVoucher.aspx?oid=" + order.Id + "&name=file.pdf&browser=true");
+            eVoucherLink.NavigateUrl = ResolveUrl("~/viewvoucher.aspx?oid=" + order.Id + "&name=file.pdf&browser=true");
 
             _useremail = order.EmailAddress;
 
-            //***UpdateAnalyticsTrackers(order);
+            UpdateAnalyticsTrackers(order);
         }
 
         private void CheckIfMobileSectionShouldBeShown(Order order)
@@ -193,7 +196,7 @@ namespace bigbus.checkout
             {
                 var dialcodes = CheckoutService.GetAlldiallingDiallingCodes();
 
-                var allDialingCodeList = dialcodes.ToList();
+                var allDialingCodeList = dialcodes;
 
                 var usa = allDialingCodeList.FirstOrDefault(x => x.Id == "United States of America");
                 var uk = allDialingCodeList.FirstOrDefault(x => x.Id == "United Kingdom");
@@ -369,6 +372,178 @@ namespace bigbus.checkout
 //            }
         }
 
+        private void DisplayMarketingScript()
+        {
+            string comment = null;
+            string conversionlabel = null;
+            string conversionid = null;
+
+            var subsite = MicrositeId.ToLower();
+
+            switch (subsite)
+            {
+                case "london":
+                    {
+                        //London successful Checkout script
+                        DisplaySurveyLink.Visible = true;
+
+                        comment = "<!--- London successful Checkout ---><!-- Google Code for London Negative List Remarketing List -->";
+                        conversionlabel = "Ri7WCMyskwIQ-quV8AM";
+                        conversionid = "1040537082";
+                        break;
+                    }
+
+                case "dubai":
+                    {
+                        //dubai successful Checkout script
+                        comment = @"<!--- Dubai successful Checkout ---><!-- Google Code for Dubai Negative List Remarketing List -->";
+                        conversionlabel = @"WYpyCMStkwIQ-quV8AM";
+                        conversionid = @"1040537082";
+                        break;
+                    }
+
+                case "lasvegas":
+                    {
+                        DisplaySurveyLink.Visible = true;
+                        lnkSurveyMonkey.NavigateUrl = "https://www.surveymonkey.com/s/las-vegas-post";
+                        break;
+                    }
+
+                case "newyork":
+                    {
+                        DisplaySurveyLink.Visible = true;
+                        lnkSurveyMonkey.NavigateUrl = "https://www.surveymonkey.com/s/new-york-post";
+                        break;
+                    }
+
+                case "sanfrancisco":
+                    {
+                        DisplaySurveyLink.Visible = true;
+                        lnkSurveyMonkey.NavigateUrl = "https://www.surveymonkey.com/s/san-fran-post";
+                        break;
+                    }
+
+                case "miami":
+                    {
+                        DisplaySurveyLink.Visible = true;
+                        lnkSurveyMonkey.NavigateUrl = "https://www.surveymonkey.com/s/miami-post";
+                        break;
+                    }
+
+                case "washington":
+                    {
+                        DisplaySurveyLink.Visible = true;
+                        lnkSurveyMonkey.NavigateUrl = "https://www.surveymonkey.com/s/dc-post";
+                        break;
+                    }
+
+                default:
+                    {
+                        return;
+                    }
+            }
+
+            if (conversionid == null)
+            {
+                return;
+            }
+
+            marketingscripts.Text = GetMarketingScript(comment, conversionid, conversionlabel);
+        }
+
+        private static string GetMarketingScript(string comment, string conversionid, string conversionlabel)
+        {
+            var marketingScript =
+                comment +
+                @"<script type='text/javascript'>
+                    /* <![CDATA[ */
+                    var google_conversion_id = " + conversionid + @";
+                    var google_conversion_language = 'en';
+                    var google_conversion_format = '3';
+                    var google_conversion_color = '666666';
+                    var google_conversion_label = '" + conversionlabel + @"';
+                    var google_conversion_value = 0;
+                    /* ]]> */
+                </script>
+                <script type='text/javascript' src='https://www.googleadservices.com/pagead/conversion.js'></script>
+                <noscript>
+                    <div style='display:inline;'>
+                        <img height='1' width='1' style='border-style:none;' alt='' src='https://www.googleadservices.com/pagead/conversion/" +
+                            conversionid +
+                            @"/?label=" +
+                            conversionlabel +
+                            @"&amp;guid=ON&amp;script=0'/>
+                    </div>
+                </noscript>
+                <!--- End --->
+                ";
+
+            return marketingScript;
+        }
+
+        private void UpdateAnalyticsTrackers(Order order)
+        {
+            if (Master == null || order.OrderConfirmationViewed)
+                return;
+            
+            //do tag manager tracking
+            try
+            {
+                var tagMangerControl = Master.FindControl("gglTagManager") as TagManager;
+
+                if (tagMangerControl == null)
+                {
+                    Log(
+                        "BookingCompleted => UpdateAnalyticsTrackers() - TagManager control 'gglTagManager' missing. OrderId = " +
+                        order.Id);
+                }
+                else
+                    tagMangerControl.OrderId = order.Id.ToString();
+            }
+            catch (Exception ex)
+            {
+                Log("UpdateAnalyticsTrackers() - " +  ex.Message);
+            }
+
+            // affiliatewindow trackers
+            try
+            {
+                var adTracker = Master.FindControl("afAdvertiserTracking") as AdvertiserTracking;
+                    
+                if (adTracker == null)
+                {
+                    Log(
+                        "BookingCompleted => UpdateAnalyticsTrackers() - AdvertiserTracking control 'afAdvertiserTracking' missing. OrderId = " +
+                        order.Id);
+                }
+                else
+                    adTracker.OrderId = order.Id.ToString();
+            }
+            catch (Exception ex)
+            {
+                    Log("UpdateAnalyticsTrackers() - " +  ex.Message);
+            }
+                  
+            try
+            {
+                var eptecaImageControl = Master.FindControl("EptecaImage1") as EptecaImage;
+
+                if (eptecaImageControl == null)
+                {
+                    Log(
+                       "BookingCompleted => UpdateAnalyticsTrackers() - EptecaImage control 'EptecaImage1' missing. OrderId = " +
+                       order.Id);
+                }else
+                    eptecaImageControl.OrderId = order.Id.ToString();
+            }
+            catch(Exception ex)
+            {
+                Log("UpdateAnalyticsTrackers() - " + ex.Message);
+            }
+
+            order.OrderConfirmationViewed = true;
+            CheckoutService.SaveOrder(order);
+        }
 
     }
 }

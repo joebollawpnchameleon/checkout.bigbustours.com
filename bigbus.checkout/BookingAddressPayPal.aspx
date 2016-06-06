@@ -2,27 +2,55 @@
 <%@ Register TagPrefix="NCK" TagName="UserDetails" src="~/Controls/UserDetails.ascx"  %>
 <%@ Register TagPrefix="NCK" TagName="BasketDisplay" Src="~/Controls/BasketDisplay.ascx" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+<asp:Content ContentPlaceHolderID="cphHeaderScriptAndStylesheets" runat="server">
+    <link rel="stylesheet" href="/Scripts/vendor/slick/slick-theme.css" />
+    <link rel="stylesheet" href="/Scripts/vendor/slick/slick.css" />
 </asp:Content>
 
-<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <div id="dvBasketSummary">
+<asp:Content ID="Content2" ContentPlaceHolderID="cplhBody" runat="server">
+     <header class="content__header">
+        <h1><%= GetTranslation("Booking_Step3") %></h1>
+    </header>
+
+    <section class="basket">
+        <div id="basket__header">
         <%= GetTranslation("Total") + ":" + string.Format("<span class=\"red\">{0}</span>", TotalSummary) %>     &nbsp;
         <span class="action"><%= GetTranslation("View_Basket") %></span>
-        <hr/>
          <NCK:BasketDisplay id="ucBasketDisplay" runat="server"/>
-         <hr/>
-    </div>
-     <div id="dvErrorSummary" runat="server" Visible="False">
-        <asp:Literal runat="server" id="ltError"></asp:Literal>
-    </div>
-     <div  runat="server" id="dvAddressDetails" Visible="True" class="customer-details">
-        <NCK:UserDetails id="ucUserDetails" runat="server"/>
-    </div>
+        </div>
+    </section>
 
-     <div id="dvActions" runat="server">
-         <asp:Button runat="server" text="Complete Ticket Purchase" OnClientClick="TrackUserSubscription();" OnClick="CompletePaypalCheckout" />
-    </div>
+    <section class="contact-details">
+        <div class="contact-details__header">
+            
+         </div>
+         
+        <div class="form contact-details__form">
+         
+            <div id="dvErrorSummary" runat="server" Visible="False">
+                <asp:Literal runat="server" id="ltError"></asp:Literal>
+            </div>
+
+            <NCK:UserDetails id="ucUserDetails" runat="server"/>
+            
+            <div class="form-footer">
+                <p class="form__buttons">
+                   <asp:LinkButton ID="btnContinueCheckout"  runat="server" OnClientClick="TrackUserSubscription();"  OnClick="CompletePaypalCheckout" 
+                        CssClass="form__continue button button_red button_forward">
+                        <span id="spnContinueText" runat="server" class="right"><%= GetTranslation("CompleteMyTicketPurchase") %></span>
+                    </asp:LinkButton>
+                </p>
+                <p class="form__secure"><%=GetTranslation("OurCheckoutIsSecureAndYourDetailsAreProtected")%></p>
+                <ul class="form__secure-logos">
+                    <li><img src="/Content/images/paymentMethods/worldpay.png" alt="Worldpay" /></li>
+                    <li><img src="/Content/images/paymentMethods/safekey.png" alt="SafeKey" /></li>
+                    <li><img src="/Content/images/paymentMethods/verified-visa.png" alt="Verified by Visa" /></li>
+                    <li><img src="/Content/images/paymentMethods/mastercard-securecode.png" alt="Mastercard Securecode" /></li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
     
     <script type="text/javascript">
 

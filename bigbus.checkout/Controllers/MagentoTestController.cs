@@ -38,7 +38,7 @@ namespace bigbus.checkout.Controllers
 
             @"{
             ""items"":[
-             {""name"":""London 24 hour"",""sku"":""01011"",""ProductDimensionUID"":""c4bf36f4-acf4-4da8-b8ca-f4f9ce9345a0"",""qty"":2,""price"":29.99,""discount"":0,""total"":59.98,""city"":""London"",""type"":""adult""},            
+             {""name"":""London 24 hour"",""sku"":""1348"",""ProductDimensionUID"":""c4bf36f4-acf4-4da8-b8ca-f4f9ce9345a0"",""qty"":2,""price"":29.99,""discount"":0,""total"":59.98,""city"":""London"",""type"":""adult""},            
             {""name"":""Madame Tusseau"",""sku"":""32033"",""ProductDimensionUID"":""E5CD49D7-3575-464F-AE3F-A093C83261BB"",""qty"":1,""price"":23.59,""discount"":3.5,""total"":20.09,""city"":""London"",""type"":""adult""}],
             ""subtotal"":83.57,""discount"":3.5,""total"":80.07,""coupon"":""TEST-COUPON1"",""currency"":""GBP"",""language"":""eng""
             }";

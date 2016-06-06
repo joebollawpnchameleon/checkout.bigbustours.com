@@ -72,7 +72,7 @@
                     <p>Thank you for buying from Big Bus Tours today. We really value your feedback, so please take a few moments to tell us about your experience so we can improve the website for our customers.</p>
                 </div>
                 <div class="cta-container">
-                    <asp:HyperLink ID="HyperLink1" runat="server" CssClass="cta" Target="_blank" NavigateUrl="https://www.surveymonkey.com/s/JY63RH8?browser=true"><span class="right">Take the survey</span></asp:HyperLink>
+                    <asp:HyperLink ID="lnkSurveyMonkey" runat="server" CssClass="cta" Target="_blank" NavigateUrl="https://www.surveymonkey.com/s/JY63RH8?browser=true"><span class="right">Take the survey</span></asp:HyperLink>
                 </div>
             </li>
         </asp:PlaceHolder>

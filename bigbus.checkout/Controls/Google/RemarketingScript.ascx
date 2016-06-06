@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RemarketingScript.ascx.cs" Inherits="BigBusWebsite.controls.Google.RemarketingScript" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RemarketingScript.ascx.cs" Inherits="bigbus.checkout.Controls.Google.RemarketingScript" %>
 <!-- Google Code for Big Bus Home Page Remarketing List -->
 <script type='text/javascript'>
     /* <![CDATA[ */

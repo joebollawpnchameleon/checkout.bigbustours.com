@@ -1,8 +1,5 @@
 ﻿
-
-using bigbus.checkout.Controls;
-
-namespace BigBusWebsite.controls.Google
+namespace bigbus.checkout.Controls.Google
 {
     public partial class RemarketingScript : BaseControl
     {
@@ -13,11 +10,11 @@ namespace BigBusWebsite.controls.Google
             if (!string.IsNullOrWhiteSpace(BasePage.CurrentSite.GoogleRemarketingConversionId) &&
                 !string.IsNullOrWhiteSpace(BasePage.CurrentSite.GoogleRemarketingConversionLabel))
             {
-                this.Visible = true;
+                Visible = true;
             }
             else
             {
-                this.Visible = true;
+                Visible = true;
             }
         }
     }

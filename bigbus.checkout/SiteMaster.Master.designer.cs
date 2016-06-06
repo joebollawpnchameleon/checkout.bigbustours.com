@@ -58,6 +58,15 @@ namespace bigbus.checkout {
         protected global::System.Web.UI.WebControls.Literal ltIntileryEvent;
         
         /// <summary>
+        /// gglTagManager control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::bigbus.checkout.Controls.Google.TagManager gglTagManager;
+        
+        /// <summary>
         /// form2 control.
         /// </summary>
         /// <remarks>
@@ -83,6 +92,15 @@ namespace bigbus.checkout {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder cplhBody;
+        
+        /// <summary>
+        /// afAdvertiserTracking control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::bigbus.checkout.Controls.AdvertiserTracking afAdvertiserTracking;
         
         /// <summary>
         /// EptecaImage1 control.

@@ -57,7 +57,7 @@
     
     <asp:Literal runat="server" id="ltIntileryEvent"></asp:Literal>
 
-    <Google:TagManager runat="server" />
+    <Google:TagManager id="gglTagManager" runat="server" />
 
 
     <form id="form2" runat="server" autocomplete="off">
@@ -95,7 +95,7 @@
                 <Google:Analytics runat="server" />
                 <BigBus:CloudFrontScript runat="server" />
                 <BigBus:QualarooScript runat="server" />
-                <AffiliateWindow:Tracking runat="server"/>
+                <AffiliateWindow:Tracking id="afAdvertiserTracking" runat="server"/>
                 <PageHeaders:EptecaImage runat="server" ID="EptecaImage1" />
             </div>
         
