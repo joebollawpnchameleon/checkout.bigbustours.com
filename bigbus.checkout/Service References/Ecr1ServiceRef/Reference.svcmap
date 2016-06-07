@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="9584af07-01a6-4027-b95a-8126ee4e50bd" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://bpslondon.bigbustours.com:9970/BBCTickets.Dts.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="BBCTickets.xsd" MetadataType="Schema" ID="1991dc34-13da-4d8b-ac41-80f3a38b777b" SourceId="1" SourceUrl="http://bpslondon.bigbustours.com:9970/BBCTickets.Dts.svc?xsd=xsd0" />
+    <MetadataFile FileName="BBCTickets.disco" MetadataType="Disco" ID="7231da60-83c2-4768-842d-477eb2446566" SourceId="1" SourceUrl="http://bpslondon.bigbustours.com:9970/BBCTickets.Dts.svc?disco" />
+    <MetadataFile FileName="BBCTickets1.xsd" MetadataType="Schema" ID="832f09b0-c305-4d15-bfae-4d79fb1b0cd4" SourceId="1" SourceUrl="http://bpslondon.bigbustours.com:9970/BBCTickets.Dts.svc?xsd=xsd1" />
+    <MetadataFile FileName="Dts.wsdl" MetadataType="Wsdl" ID="6e2cf832-a909-47c2-88f4-69f91a570d7b" SourceId="1" SourceUrl="http://bpslondon.bigbustours.com:9970/BBCTickets.Dts.svc?wsdl" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

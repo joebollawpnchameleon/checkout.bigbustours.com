@@ -6,7 +6,7 @@ namespace bigbus.checkout.Tests.UnitTests.ServiceTests
     public class CheckoutServiceTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void CanSendBookingToEcr()
         {
         }
     }

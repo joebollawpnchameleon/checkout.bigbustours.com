@@ -6,6 +6,9 @@ using pci = Common.Model.Pci;
 using Services.Infrastructure;
 using Basket = bigbus.checkout.data.Model.Basket;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using Common.Model;
 
 namespace Services.Implementation
 {
@@ -207,16 +210,16 @@ namespace Services.Implementation
 
         public List<OrderLineGeneratedBarcode> GetOrderLineGeneratedBarcodes(OrderLine orderLine)
         {
-            var orderLineGBC =  OrderLineGeneratedBCRepository.GetList(x => x.OrderLineId != null && x.OrderLineId.Value == orderLine.Id);
-            return (orderLineGBC != null)? orderLineGBC.ToList() : null;
+            var orderLineGbc =  OrderLineGeneratedBCRepository.GetList(x => x.OrderLineId != null && x.OrderLineId.Value == orderLine.Id);
+            return (orderLineGbc != null)? orderLineGbc.ToList() : null;
         }
 
-        public virtual void SaveOrderLineBarCode(OrderLineGeneratedBarcode orderLineGBC)
+        public virtual void SaveOrderLineBarCode(OrderLineGeneratedBarcode orderLineGbc)
         {
-            if (orderLineGBC.Id == null || orderLineGBC.Id == Guid.Empty)
-                OrderLineGeneratedBCRepository.Add(orderLineGBC);
+            if (orderLineGbc.Id == Guid.Empty)
+                OrderLineGeneratedBCRepository.Add(orderLineGbc);
             else
-                OrderLineGeneratedBCRepository.Update(orderLineGBC);
+                OrderLineGeneratedBCRepository.Update(orderLineGbc);
 
         }
 
@@ -262,6 +265,36 @@ namespace Services.Implementation
             return order.OrderLines.Select(orderLine => 
                 TicketRepository.GetSingle(x => x.Id.Equals(orderLine.TicketId.Value)))
                 .All(ticket => ticket == null || ticket.HasMobile);
+        }
+
+        public List<EcrOrderLineData> GetOrderLineDetails(string orderId)
+        {
+             var paramList = new List<SqlParameter>
+            {
+                new SqlParameter("orderid", orderId)
+            };
+
+            var orderLineData = QueryFunctions.DataTableFromStoredProcedure("SP_Order_GetOrderLineEcrVersions",
+                paramList);
+
+            var returnedItems = new List<EcrOrderLineData>();
+
+            if (orderLineData == null || orderLineData.Rows == null || orderLineData.Rows.Count <= 0)
+                return returnedItems;
+
+            returnedItems.AddRange(from DataRow row in orderLineData.Rows where Convert.ToBoolean(row["UseQr"])
+                select new EcrOrderLineData
+                {
+                    MicrositeId = row["Microsite_Id"].ToString(), 
+                    NewCheckoutEcrProductCode = (row["NCEcrProductCode"] != DBNull.Value)? 
+                        row["NCEcrProductCode"].ToString() : string.Empty, 
+                    NewCheckoutVersionId = (row["NewCKEcrVersionId"] != DBNull.Value) ? 
+                        Convert.ToInt32(row["NewCKEcrVersionId"]) : 1, 
+                    OrderLineId = row["Id"].ToString(),
+                    UseQrCode = Convert.ToBoolean(row["UseQR"])
+                });
+
+            return returnedItems;
         }
     }
 }

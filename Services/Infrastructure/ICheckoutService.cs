@@ -22,7 +22,7 @@ namespace Services.Infrastructure
 
         List<OrderLineGeneratedBarcode> GetOrderLineGeneratedBarcodes(OrderLine orderLine);
 
-        void SaveOrderLineBarCode(OrderLineGeneratedBarcode orderLineGBC);
+        void SaveOrderLineBarCode(OrderLineGeneratedBarcode orderLineGbc);
 
         List<DiallingCode> GetAlldiallingDiallingCodes();
 

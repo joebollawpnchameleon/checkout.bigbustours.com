@@ -66,6 +66,7 @@
     <Compile Include="Model\BornBasketItem.cs" />
     <Compile Include="Model\Customer.cs" />
     <Compile Include="Model\CustomerSession.cs" />
+    <Compile Include="Model\EcrOrderLineData.cs" />
     <Compile Include="Model\FrontEndNavigationItem.cs" />
     <Compile Include="Model\GenericHttpCacheProvider.cs" />
     <Compile Include="Model\Interfaces\ICacheProvider.cs" />

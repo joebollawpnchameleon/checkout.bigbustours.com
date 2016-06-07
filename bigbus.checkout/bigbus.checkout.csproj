@@ -263,6 +263,13 @@
     <Content Include="Scripts\Vendor\slick\slick-theme.css" />
     <Content Include="Scripts\Vendor\slick\slick.css" />
     <Content Include="Scripts\Vendor\slick\slick.min.js" />
+    <None Include="Service References\Ecr1ServiceRef\BBCTickets.disco" />
+    <None Include="Service References\Ecr1ServiceRef\configuration91.svcinfo" />
+    <None Include="Service References\Ecr1ServiceRef\configuration.svcinfo" />
+    <None Include="Service References\Ecr1ServiceRef\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="SiteMaster.Master" />
     <Content Include="packages.config" />
     <Content Include="ViewVoucher.aspx" />
@@ -289,6 +296,13 @@
     <Content Include="Scripts\Vendor\slick\fonts\slick.eot" />
     <Content Include="Scripts\Vendor\slick\fonts\slick.ttf" />
     <Content Include="Scripts\Vendor\slick\fonts\slick.woff" />
+    <None Include="Service References\Ecr1ServiceRef\BBCTickets.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\Ecr1ServiceRef\BBCTickets1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\Ecr1ServiceRef\Dts.wsdl" />
     <None Include="Web References\EcrServiceRef\Api.wsdl" />
     <None Include="Web References\EcrServiceRef\Api.xsd">
       <SubType>Designer</SubType>
@@ -590,6 +604,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Service References\Ecr1ServiceRef\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="SiteMaster.Master.cs">
       <DependentUpon>SiteMaster.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -669,6 +688,9 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>bigbus_checkout_EcrWServiceRefV3_Api</CachedSettingsPropName>
     </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\Ecr1ServiceRef\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

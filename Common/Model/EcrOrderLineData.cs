@@ -12,5 +12,7 @@ namespace Common.Model
         public int NewCheckoutVersionId { get; set; }
 
         public string NewCheckoutEcrProductCode { get; set; }
+
+        public bool UseQrCode { get; set; }
     }
 }

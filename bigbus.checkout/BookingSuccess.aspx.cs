@@ -50,9 +50,9 @@ namespace bigbus.checkout
             var result = SendBookingToEcr(newOrder);
 
             //result from booking must be there.
-            if (result == null)
+            if (result.Status != EcrResponseCodes.BookingSuccess )
             {
-                JumpToOrderCreationError("Booking_failed", result.ErrorMessage);
+                JumpToOrderCreationError(GetTranslation("Booking_failed"), " Status: " + result.Status.ToString() + " Error: " + result.ErrorMessage);
                 return;
             }           
 
