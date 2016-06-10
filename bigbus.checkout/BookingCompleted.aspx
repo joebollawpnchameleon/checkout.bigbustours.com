@@ -16,6 +16,7 @@
 <CommissionJunction:CommissionJunctionTag runat="server" id="CommissionJunctionTag" />
 
     <asp:HiddenField runat="server" id="hdnUserEmail"/>
+    <asp:HiddenField runat="server" id="hdnOrderId" />
 
 <section class="ticket-options">
     <ul class="ticket-options__types">

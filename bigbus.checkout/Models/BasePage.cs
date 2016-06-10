@@ -65,7 +65,8 @@ namespace bigbus.checkout.Models
         public string PciLandingPagePath { get { return ConfigurationManager.AppSettings["PciWebsite.LandingPagePath"]; } }
         public string BasketCookieName { get { return ConfigurationManager.AppSettings["Basket.CookieName"]; } }
         public string GoogleChartUrl { get { return ConfigurationManager.AppSettings["GoogleChartUrl"]; } }
-        public string BornBaseUrl { get { return ConfigurationManager.AppSettings["BaseUrl"]; } }
+        public string BornBaseUrl { get { return ConfigurationManager.AppSettings["BornBaseUrl"]; } }
+        public string BaseUrl { get { return ConfigurationManager.AppSettings["BaseUrl"]; } }
         public string BarCodeDir { get { return ConfigurationManager.AppSettings["BarCodeDir"]; } }
         public string QrCodeDir { get { return ConfigurationManager.AppSettings["QrCodeDir"]; } }
 

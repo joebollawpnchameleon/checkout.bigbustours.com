@@ -3,15 +3,20 @@ using bigbus.checkout.Helpers;
 using bigbus.checkout.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Text;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using bigbus.checkout.Controls;
 using bigbus.checkout.Controls.Google;
 using BigBusWebsite.controls;
+using Clockwork;
 using Services.Implementation;
 
 namespace bigbus.checkout
@@ -19,7 +24,7 @@ namespace bigbus.checkout
     public partial class BookingCompleted : BasePage
     {
         private string _useremail;
-
+        private Order _order;
         private SiteMaster _bookingMaster;
         
 
@@ -35,21 +40,22 @@ namespace bigbus.checkout
         {
             _bookingMaster = (SiteMaster)Master;
            
-            var orderId = Request.QueryString["oid"];
-            if (string.IsNullOrEmpty(orderId))
+            var orderId = string.IsNullOrEmpty(Request.QueryString["oid"])? hdnOrderId.Value : Request.QueryString["oid"];
+
+            if (string.IsNullOrEmpty(orderId)) 
                 return;
 
-            var order = CheckoutService.GetFullOrder(orderId);
+            _order = CheckoutService.GetFullOrder(orderId);
 
-            if (order == null)
+            if (_order == null)
             {
                 //lbError.Text = "Invalid order request.";//*** translation needed
                 //lbError.Visible = true;
                 Log("Invalid order request orderid: " + orderId);
                 return;
             }
-            PreparePage(order);
-            TrackOrderCompleted(order);
+            PreparePage(_order);
+            TrackOrderCompleted(_order);
         }
         
 
@@ -251,125 +257,119 @@ namespace bigbus.checkout
 
         protected void SendToMobileClick(object sender, EventArgs e)
         {
-//            if (ShowMobile)
-//            {
-//                LIMobileError.Text = string.Empty;
+            if (ShowMobile)
+            {
+                LIMobileError.Text = string.Empty;
 
-//                if (string.IsNullOrWhiteSpace(Mobile.Value))
-//                {
-//                    LIMobileError.Text = "<p style=\"color:red; margin-top:0!important\">" + GetTranslation("Booking_MobileNumberError") + "</p>";
-//                }
-//                else
-//                {
-//                    var pointlessLong = long.MinValue;
+                if (string.IsNullOrWhiteSpace(Mobile.Value))
+                {
+                    LIMobileError.Text = "<p style=\"color:red; margin-top:0!important\">" + GetTranslation("Booking_MobileNumberError") + "</p>";
+                }
+                else
+                {
+                    var pointlessLong = long.MinValue;
 
-//                    if (long.TryParse(Mobile.Value, out pointlessLong))
-//                    {
-//                        UseOrderQrCode(_order);
+                    if (long.TryParse(Mobile.Value, out pointlessLong))
+                    {
+                        //UseOrderQrCode(_order);
 
-//                        var qrCodeHash = Crypto.HashPassword(_order.Centinel_ACSURL + _order.OrderNumber);
+                        var qrCodeHash = Crypto.HashPassword(_order.CentinelAcsurl + _order.OrderNumber);
 
-//                        _order.SentQrCodeToMobile = true;
-//                        _order.QrCodeUniqueHash = qrCodeHash;
-//                        _order.PersistData();
+                        _order.SentQrCodeToMobile = true;
+                        _order.QrCodeUniqueHash = qrCodeHash;
+                        CheckoutService.SaveOrder(_order);
 
-//                        var qrCodeUrl = BBURL_Secure(CurrentLanguage, Subsite, "QRCode.aspx");
+                        var qrCodeUrl = string.Format("QRCode.aspx?oid={0}&id={1}", _order.Id, Uri.EscapeDataString(qrCodeHash));
+                        
+                        if (qrCodeUrl.StartsWith("/"))
+                        {
+                            //var currentPageUrl = Response.Headers["HTTP_X_ORIGINAL_URL"];
 
-//                        qrCodeUrl +=
-//                            (qrCodeUrl.Contains("?") ? "&order=" : "?order=") +
-//                            _order.OrderNumber +
-//                            "&id=" +
-//                            Uri.EscapeDataString(qrCodeHash);
+                            //var hostPartOfUrl = currentPageUrl.Substring(0, currentPageUrl.IndexOf("/" + MicrositeId, StringComparison.Ordinal));
 
-//                        if (qrCodeUrl.StartsWith("/"))
-//                        {
-//                            var currentPageUrl = Response.Headers["HTTP_X_ORIGINAL_URL"];
+                            qrCodeUrl = BaseUrl + qrCodeUrl;
+                        }
 
-//                            var hostPartOfUrl = currentPageUrl.Substring(0, currentPageUrl.IndexOf("/" + Subsite));
+                        string tinyUrl;
 
-//                            qrCodeUrl = hostPartOfUrl + qrCodeUrl;
-//                        }
+                        using (var client = new WebClient())
+                        {
+                            var postData = new NameValueCollection() { { "url", qrCodeUrl } };
 
-//                        string tinyUrl;
+                            // client.UploadValues returns page source as byte array (byte[])
+                            // so we need to transform that into string
+                            tinyUrl =
+                                Encoding.UTF8.GetString(client.UploadValues("http://tinyurl.com/api-create.php", postData));
+                        }
 
-//                        using (var client = new WebClient())
-//                        {
-//                            var postData = new NameValueCollection() { { "url", qrCodeUrl } };
+                        var dialCode = CheckoutService.GetDiallingCode(DiallingList.SelectedItem.Value);
+                        var mobilenum = dialCode.Code.ToString();
 
-//                            // client.UploadValues returns page source as byte array (byte[])
-//                            // so we need to transform that into string
-//                            tinyUrl =
-//                                Encoding.UTF8.GetString(client.UploadValues("http://tinyurl.com/api-create.php", postData));
-//                        }
+                        if (mobilenum.Trim().Equals("44") && Mobile.Value.StartsWith("0"))
+                        {
+                            mobilenum += Mobile.Value.Trim().Substring(1);
+                        }
+                        else
+                        {
+                            mobilenum += Mobile.Value.Trim();
+                        }
 
-//                        var dialCode = GetObjectFactory().GetById<DiallingCode>(DiallingList.SelectedItem.Value);
-//                        var mobilenum = dialCode.Code.ToString();
+                        var mobiletext =
+                            @"Thank you for booking with Big Bus Tours
+                                Order number: {0}
+                                {1} tickets in total
+                                Click the link below to view your ticket
+                                {2}";
 
-//                        if (mobilenum.Trim().Equals("44") && Mobile.Value.StartsWith("0"))
-//                        {
-//                            mobilenum += Mobile.Value.Trim().Substring(1);
-//                        }
-//                        else
-//                        {
-//                            mobilenum += Mobile.Value.Trim();
-//                        }
+                        mobiletext = string.Format(mobiletext, _order.OrderNumber, _order.TotalQuantity, tinyUrl);
 
-//                        var mobiletext =
-//                            @"Thank you for booking with Big Bus Tours
-//Order number: {0}
-//{1} tickets in total
-//Click the link below to view your ticket
-//{2}";
+                        var api = new API(ConfigurationManager.AppSettings["Mobile_SMS_APIKey"]);
 
-//                        mobiletext = string.Format(mobiletext, _order.OrderNumber, _order.TotalQuantity, tinyUrl);
+                        try
+                        {
+                            var result = api.Send(new SMS { To = mobilenum, Message = mobiletext, From = "BigBusTours" });
 
-//                        var api = new API(ConfigurationManager.AppSettings["Mobile_SMS_APIKey"]);
-
-//                        try
-//                        {
-//                            var result = api.Send(new SMS { To = mobilenum, Message = mobiletext, From = "BigBusTours" });
-
-//                            if (result.Success)
-//                            {
-//                                LIMobileError.Text = "<p style=\"color:green; margin-top:0!important\">" +
-//                                                     GetTranslation("Booking_MobileSuccess") + "</p>";
-//                            }
-//                            else
-//                            {
-//                                LIMobileError.Text = "<p style=\"color:red; margin-top:0!important\">" +
-//                                                     GetTranslation("AnErrorOccuredPleaseTryAgainLater") + "</p>";
-//                                Log(string.Format("== Clockwork error. Error code: {0}, Error message: {1}",
-//                                                  result.ErrorCode,
-//                                                  result.ErrorMessage));
-//                            }
-//                        }
-//                        catch (WebException ex)
-//                        {
-//                            LIMobileError.Text = "<p style=\"color:red; margin-top:0!important\">" +
-//                                                 GetTranslation("AnErrorOccuredPleaseTryAgainLater") + "</p>";
-//                            // Web exceptions mean you couldn't reach the Clockwork server
-//                            Log(
-//                                string.Format(
-//                                    "== Web exceptions mean you couldn't reach the Clockwork server. Exception: {0}",
-//                                    ex.Message));
-//                        }
-//                        catch (Exception ex)
-//                        {
-//                            LIMobileError.Text = "<p style=\"color:red; margin-top:0!important\">" +
-//                                                 GetTranslation("Booking_MobileNumberError") + "</p>";
-//                            // Something else went wrong, the error message should help here
-//                            Log(
-//                                string.Format(
-//                                    "== Something else went wrong, the error message should help here. Exception: {0}",
-//                                    ex.Message));
-//                        }
-//                    }
-//                    else
-//                    {
-//                        LIMobileError.Text = "<p style=\"color:red; margin-top:0!important\">" + GetTranslation("Booking_MobileNumberError") + "</p>";
-//                    }
-//                }
-//            }
+                            if (result.Success)
+                            {
+                                LIMobileError.Text = "<p style=\"color:green; margin-top:0!important\">" +
+                                                     GetTranslation("Booking_MobileSuccess") + "</p>";
+                            }
+                            else
+                            {
+                                LIMobileError.Text = "<p style=\"color:red; margin-top:0!important\">" +
+                                                     GetTranslation("AnErrorOccuredPleaseTryAgainLater") + "</p>";
+                                Log(string.Format("== Clockwork error. Error code: {0}, Error message: {1}",
+                                                  result.ErrorCode,
+                                                  result.ErrorMessage));
+                            }
+                        }
+                        catch (WebException ex)
+                        {
+                            LIMobileError.Text = "<p style=\"color:red; margin-top:0!important\">" +
+                                                 GetTranslation("AnErrorOccuredPleaseTryAgainLater") + "</p>";
+                            // Web exceptions mean you couldn't reach the Clockwork server
+                            Log(
+                                string.Format(
+                                    "== Web exceptions mean you couldn't reach the Clockwork server. Exception: {0}",
+                                    ex.Message));
+                        }
+                        catch (Exception ex)
+                        {
+                            LIMobileError.Text = "<p style=\"color:red; margin-top:0!important\">" +
+                                                 GetTranslation("Booking_MobileNumberError") + "</p>";
+                            // Something else went wrong, the error message should help here
+                            Log(
+                                string.Format(
+                                    "== Something else went wrong, the error message should help here. Exception: {0}",
+                                    ex.Message));
+                        }
+                    }
+                    else
+                    {
+                        LIMobileError.Text = "<p style=\"color:red; margin-top:0!important\">" + GetTranslation("Booking_MobileNumberError") + "</p>";
+                    }
+                }
+            }
         }
 
         private void DisplayMarketingScript()
