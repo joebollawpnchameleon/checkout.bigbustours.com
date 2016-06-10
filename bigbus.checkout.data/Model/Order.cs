@@ -209,6 +209,8 @@ namespace bigbus.checkout.data.Model
         [StringLength(100)]
         public string ExternalOrderId { get; set; }
 
+        public bool FromNewCheckout { get; set; }
+
         public virtual ICollection<OrderLine> OrderLines { get; set; }
 
         public virtual User User { get; set; }

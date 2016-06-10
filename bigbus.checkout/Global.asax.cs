@@ -110,6 +110,7 @@ namespace bigbus.checkout
             builder.RegisterType<GenericDataRepository<NavigationItem>>().As<IGenericDataRepository<NavigationItem>>();
             builder.RegisterType<GenericDataRepository<NavigationItemLanguage>>().As<IGenericDataRepository<NavigationItemLanguage>>();
             builder.RegisterType<GenericDataRepository<DiallingCode>>().As<IGenericDataRepository<DiallingCode>>();
+            builder.RegisterType<GenericDataRepository<BornBasketDump>>().As<IGenericDataRepository<BornBasketDump>>();
 
             builder.RegisterType<TranslationService>().As<ITranslationService>();
             builder.RegisterType<CheckoutService>().As<ICheckoutService>();
@@ -186,7 +187,8 @@ namespace bigbus.checkout
                CheckoutService()
            ).As<ICheckoutService>();
            
-           builder.Register(c => new DbLoggerService(sessionId, c.Resolve<IGenericDataRepository<Log>>()))
+           builder.Register(c => new DbLoggerService(sessionId, c.Resolve<IGenericDataRepository<Log>>(),
+               c.Resolve<IGenericDataRepository<BornBasketDump>>()))
               .As<ILoggerService>();
 
             builder.Register(c => new TranslationService(
@@ -199,6 +201,9 @@ namespace bigbus.checkout
             builder.Register(c => new PayPalService(paypalInitStruct,
                    c.Resolve<ILoggerService>()
                    )).As<IPaypalService>();
+
+            builder.RegisterType<BarcodeService>().As<IBarcodeService>();
+            builder.RegisterType<EcrApi3ServiceHelper>().As<IEcrApi3ServiceHelper>();
 
             // provider up with your registrations.
             _containerProvider = new ContainerProvider(builder.Build());

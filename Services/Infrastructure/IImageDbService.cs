@@ -15,12 +15,16 @@ namespace Services.Infrastructure
 
         ImageMetaData GetImageMetaData(Guid guid);
 
-        string GetTicketImageUrl(string ticketImageId);
+        string GetTicketImageUrl(string ticketImageId, string path);
 
         Image GetImage(string imageId);
 
         ImageMetaData GetMetaData(Guid metaDataId);
 
         ImageMetaData GetMetaData(string metaDataId);
+
+        ImageMetaData GetImageMetaDataByName(string name);
+
+        QrImageSaveStatus GenerateQrImage(int orderNumber, byte[] imageChartBytes, string micrositeId);
     }
 }

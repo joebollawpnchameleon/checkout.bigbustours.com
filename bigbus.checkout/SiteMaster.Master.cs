@@ -18,10 +18,6 @@ namespace bigbus.checkout
         public string MicrositeId { get; set; }
 
         public string HomeUrl { get; set; }
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
-        }
+        
     }
 }

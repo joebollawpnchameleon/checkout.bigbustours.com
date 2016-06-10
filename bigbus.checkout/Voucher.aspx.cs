@@ -14,6 +14,8 @@ using bigbus.checkout.Controls;
 using bigbus.checkout.data.Model;
 using bigbus.checkout.Helpers;
 using bigbus.checkout.Models;
+using Common.Enums;
+using Common.Model;
 using Services.Implementation;
 using Services.Infrastructure;
 
@@ -22,21 +24,14 @@ namespace bigbus.checkout
     public partial class Voucher : BasePage
     {
         private Order _order;
-        private new List<OrderLine> _allOrderLines;
-      
-        private bool _isCashSale;
-        private bool _isRemittanceSale;
         private int _attractionCount;
-
+        private List<EcrOrderLineData> _orderlineData;
+ 
         public bool IsTradeTicketSale;
+        public List<VoucherTicket> MainList = new List<VoucherTicket>();
 
-        public List<VoucherTicket> MainList = new List<VoucherTicket>();               
-        
         protected void Page_Load(object sender, EventArgs e)
         {
-            //EnsureSessionCorrectlyEstablished(); // uses virtual function so logic can be overridden
-
-            //EstablishURL();
             var orderId = Request.QueryString["oid"];
 
             if (string.IsNullOrEmpty(orderId)) return;
@@ -45,14 +40,40 @@ namespace bigbus.checkout
 
             if (_order == null) return;
 
-            _allOrderLines = _order.OrderLines.ToList();
+            _orderlineData = CheckoutService.GetOrderLineDetails(orderId);
 
-            //var isPayPalTransaction = _order.PaymentMethod.Equals("PAYPAL", StringComparison.OrdinalIgnoreCase);
-            //var tourOrderLines = _allOrderLines.Where(a => a.TicketTorA == "Tour").ToList();
+            var queryVersionGroups =
+              from detail in _orderlineData
+              group detail by detail.NewCheckoutVersionId into versionGroup
+              orderby versionGroup.Key
+              select versionGroup;
 
-            _attractionCount = _allOrderLines.Count(a => 
-                a.TicketTorA.Equals("attraction", StringComparison.CurrentCultureIgnoreCase));//.ToList();
+            if (!queryVersionGroups.Any())
+            {
+                return;
+            }
 
+            foreach (var versionGroup in queryVersionGroups)
+            {
+                var ecrVersionId = versionGroup.Key;
+
+                var selectedOrderLines = _order.OrderLines.Where(a => versionGroup.ToList().Any(x =>
+                   x.OrderLineId.Equals(a.Id.ToString(), StringComparison.CurrentCultureIgnoreCase))).ToList();
+
+                if(ecrVersionId == (int)EcrVersion.Three)
+                    LoadEcr3Tickets(selectedOrderLines);
+                else if (ecrVersionId == (int) EcrVersion.One)
+                    LoadEcr1Tickets(selectedOrderLines);
+
+            }
+            
+
+        }
+
+        private void LoadEcr3Tickets(List<OrderLine> orderLines){
+
+            _attractionCount = orderLines.Count(a => 
+                a.TicketTorA.Equals("attraction", StringComparison.CurrentCultureIgnoreCase));
             
             //get all Ecr barcodes
             var barcodes = ImageDbService.GetOrderEcrBarcodes(_order.OrderNumber);
@@ -67,10 +88,8 @@ namespace bigbus.checkout
             //group orderlines by barcode images
             foreach(var barcode in barcodes.ToList())
             {
-                var imageId = barcode.ImageId; //retrieve img metadata from this
-
                 //get corresponding orderlines  *** when u save ticket id in barcodes, get our ticketid from ecr productuid
-                var tempOrderLines = _allOrderLines.Where(x => x.TicketId != null && x.TicketId.Value.ToString().Equals(barcode.TicketId, StringComparison.CurrentCultureIgnoreCase));
+                var tempOrderLines = orderLines.Where(x => x.TicketId != null && x.TicketId.Value.ToString().Equals(barcode.TicketId, StringComparison.CurrentCultureIgnoreCase));
                 
                 if(!tempOrderLines.Any())
                     continue;
@@ -95,6 +114,7 @@ namespace bigbus.checkout
                 MainList.Add(
                         new VoucherTicket
                         {
+                            UseQrCode = true,
                              OrderLines = tempOrderLines.ToList(),
                              Ticket = ticket,
                              AttractionImageData = attractionMetaData,
@@ -107,6 +127,128 @@ namespace bigbus.checkout
             PopulateVoucherTickets();
         }
 
+        private void LoadVoucherTicketWithBarcode(List<OrderLine> orderLines)
+        {
+            foreach (var orderline in orderLines)
+            {
+                var tempList = MakeVoucherTicketWithBarcode(orderline);
+                if (tempList != null && tempList.Count > 0)
+                    MainList.AddRange(tempList);
+            }
+        }
+        
+        private List<VoucherTicket> MakeVoucherTicketWithBarcode(OrderLine orderLine)
+        {
+            if (orderLine.TicketId == null)
+                return null;
+
+            var allTickets = new List<VoucherTicket>();
+            var ticket = TicketService.GetTicketById(orderLine.TicketId.Value.ToString());
+            var microsite = SiteService.GetMicroSiteById(orderLine.MicrositeId);
+
+            var validTicketName = ticket.Name.ToLower().Contains(microsite.Name.ToLower())
+                ? ticket.Name
+                : string.Concat(microsite.Name, " ", ticket.Name);
+
+            var orderlineGeneratedBarcodes = BarcodeService.GetOrderLineGeneratedBarcodes(orderLine.Id.ToString());
+
+            if (orderlineGeneratedBarcodes == null || !orderlineGeneratedBarcodes.Any())
+                return null;
+
+            foreach (var barcode in orderlineGeneratedBarcodes)
+            {
+                var barcodePath = BarCodeDir + barcode.GeneratedBarcode + ".jpg";
+                ImageService.DoesBarCodeImageExist(barcode.GeneratedBarcode, Server.MapPath(barcodePath));
+                allTickets.Add(
+                    new VoucherTicket
+                    {
+                        UseQrCode = false,
+                        OrderLines = new List<OrderLine>{orderLine},
+                        Ticket = ticket,
+                        BarCodeFixQuantity = 1,
+                        BarCodeImageUrl = barcodePath,
+                        ValidTicketName = validTicketName
+                    }
+                );
+            }
+
+            return allTickets;
+        }
+
+        private void LoadVoucherTicketWithQrcode(List<OrderLine> orderLines, Ticket ticket, MicroSite microsite)
+        {
+            var validTicketName = ticket.Name.ToLower().Contains(microsite.Name.ToLower())
+               ? ticket.Name
+               : string.Concat(microsite.Name, " ", ticket.Name);
+
+            var attractionMetaData = ticket.ImageMetaDataId != null
+                ? ImageDbService.GetMetaData(ticket.ImageMetaDataId.Value.ToString())
+                : null;
+
+            var qrCodeImageData =
+                ImageDbService.GetImageMetaDataByName(string.Format(Services.Implementation.ImageDbService.QrImageNameFormat, _order.OrderNumber,
+                    "Ecr"));
+            
+            MainList.Add(
+                    new VoucherTicket
+                    {
+                        UseQrCode = true,
+                        OrderLines = orderLines,
+                        Ticket = ticket,
+                        AttractionImageData = attractionMetaData,
+                        ImageData = qrCodeImageData, 
+                        ValidTicketName = validTicketName
+                    }
+                );
+
+        }
+
+
+        private void LoadEcr1Tickets(List<OrderLine> orderLines)
+        {
+            var ticketGroups =
+             from detail in orderLines
+             group detail by detail.TicketId into ticketGroup
+             orderby ticketGroup.Key
+             select ticketGroup;
+
+            //we need to have at least one group to proceed
+            if (!ticketGroups.Any())
+            {
+                Log("Voucher => LoadEcr1Tickets() Ticketgroup empty orderid: " + _order.Id);
+                return;
+            }
+            
+            //if we have more than 1 ticket or more than 1 site then print barcodes automatically or site not support qr code
+            if (ticketGroups.Count() > 1)
+            {
+                LoadVoucherTicketWithBarcode(orderLines);
+                return;
+            }
+
+            var firstGroup = ticketGroups.FirstOrDefault();
+
+            if (firstGroup == null || firstGroup.Key == null)
+            {
+                Log("Voucher => LoadEcr1Tickets() No group found. orderid: " + _order.Id);
+                return;
+            }
+            
+            var ticketId = firstGroup.Key.Value.ToString();
+            var ticket = TicketService.GetTicketById(ticketId);
+            var microsite = SiteService.GetMicroSiteById(ticket.MicroSiteId);
+
+            //make sure this one site supports qr otherwise, do barcodes
+            if (!microsite.UseQR)
+            {
+                LoadVoucherTicketWithBarcode(orderLines);
+                return;
+            }
+
+            LoadVoucherTicketWithQrcode(orderLines, ticket, microsite);
+
+        }
+        
         protected void PopulateVoucherTickets()
         {
             var counter = 0;
@@ -129,6 +271,7 @@ namespace bigbus.checkout
                 voucherControl.MicrositeId = MicrositeId;
                 voucherControl.ShowOrderTotal = _attractionCount > 0;
                 voucherControl.OpenDayTranslation = GetTranslation("OpenDayTicket");
+                voucherControl.QrCodeSupported = voucherTicket.UseQrCode;
 
                 plcAllVouchersContent.Controls.Add(voucherControl);
 
@@ -187,9 +330,6 @@ namespace bigbus.checkout
 
             return ret;
         }
-
-      
-
        
     }
 

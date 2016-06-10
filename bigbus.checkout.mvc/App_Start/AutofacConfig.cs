@@ -167,7 +167,7 @@ namespace bigbus.checkout.mvc.App_Start
                 CheckoutService()
             ).As<ICheckoutService>();
 
-            builder.Register(c => new DbLoggerService(sessionId, c.Resolve<IGenericDataRepository<Log>>()))
+            builder.Register(c => new DbLoggerService(sessionId, c.Resolve<IGenericDataRepository<Log>>(), c.Resolve<IGenericDataRepository<BornBasketDump>>()))
                .As<ILoggerService>();
 
             builder.Register(c => new TranslationService(

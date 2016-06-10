@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -17,6 +18,22 @@ namespace bigbus.checkout.Controls
             get { return (BasePage) this.Page; }    
         }
 
+        protected string TermsAndPrivacyLinks
+        {
+            get
+            {
+                var mainText = "I have read and agree to the {0}, and {1}";//ParentPage.GetTranslation("IhavereadandagreetotheTermsandConditions");
+                var termsText = ParentPage.GetTranslation("TermsAndConditions");
+                var privacyText =  ParentPage.GetTranslation("PrivacyPolicy");
+                var termsLink = @"<a href=""" + ConfigurationManager.AppSettings["BaseUrl"] + 
+                    @"terms-and-conditions.html?browser=true"" target=""_blank"">" + termsText + "</a>";
+                var privacyLink = @"<a href=""" + ConfigurationManager.AppSettings["BaseUrl"] +
+                                  @"privacy-policy.html?browser=true"" target=""_blank"" >" + privacyText + "</a>";
+
+                return string.Format(mainText, termsLink, privacyLink);
+
+            }
+        }
         public ICountryService CountryService { get; set; }
 
 

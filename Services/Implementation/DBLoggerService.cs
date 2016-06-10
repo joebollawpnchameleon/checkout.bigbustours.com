@@ -9,20 +9,42 @@ namespace Services.Implementation
     {
         private readonly string _sessionId;
         private readonly IGenericDataRepository<Log> _logRepository;
-        
-        public DbLoggerService(string sessionId, IGenericDataRepository<Log> logRepository)
+        private readonly IGenericDataRepository<BornBasketDump> _bornLogRepository;
+ 
+        public DbLoggerService(string sessionId, IGenericDataRepository<Log> logRepository, IGenericDataRepository<BornBasketDump> bornLogRepository)
         {
             _logRepository = logRepository;
+            _bornLogRepository = bornLogRepository;
             _sessionId = sessionId;
         }
 
         public void LogItem(string message)
         {
-            _logRepository.Add(new bigbus.checkout.data.Model.Log
+            _logRepository.Add(new Log
             {
                 Message = message,
                 CreatedOn = DateTime.Now,
                 Logger = _sessionId
+            });
+        }
+
+        public void LogItem(string message, string externalSessionId)
+        {
+            _logRepository.Add(new Log
+            {
+                Message = message,
+                CreatedOn = DateTime.Now,
+                Logger = externalSessionId
+            });
+        }
+
+        public void LogBornBasket(string json, string externalCookieValue)
+        {
+            _bornLogRepository.Add(new BornBasketDump
+            {
+                DateCreated = DateTime.Now,
+                BasketJsonDump = json,
+                ExternalCookieValue = externalCookieValue
             });
         }
     }

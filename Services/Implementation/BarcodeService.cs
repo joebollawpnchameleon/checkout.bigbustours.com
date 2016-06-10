@@ -21,14 +21,22 @@ namespace Services.Implementation
                 new SqlParameter("IsInDrEnvironment", false)//*** check the dr environment
             };
 
-            var dataSet = BarcodeDBFunctions.DataSetFromStoredProcedure("GetNextBarcode", paramList);
+            var dataSet = BarcodeDBFunctions.DataSetFromStoredProcedure("sp_Barcode_GetNextBarcode", paramList);
+            var barcodePrefix = dataSet.Tables[0].Rows[0]["BarcodePrefix"].ToString();
+            var padLength = 12 - barcodePrefix.Length;
+            var nextAvailableNumber = dataSet.Tables[0].Rows[0]["NextAvailableBarcode"].ToString().PadLeft(padLength, '0');
 
-            
-            string BarcodePrefix = dataSet.Tables[0].Rows[0]["BarcodePrefix"].ToString();
-            int PadLength = 12 - BarcodePrefix.Length;
-            string NextAvailableNumber = dataSet.Tables[0].Rows[0]["NextAvailableBarcode"].ToString().PadLeft(PadLength, '0');
-
-            return string.Concat(BarcodePrefix, NextAvailableNumber);
+            return string.Concat(barcodePrefix, nextAvailableNumber);
         }
+
+        public List<OrderLineGeneratedBarcode> GetOrderLineGeneratedBarcodes(string orderLineId)
+        {
+            var orderLinesGBarcodes =
+                OrderLineGeneratedBCRepository.GetList(
+                    x => x.OrderLineId != null &&
+                        x.OrderLineId.Value.ToString().Equals(orderLineId, StringComparison.CurrentCultureIgnoreCase));
+
+            return orderLinesGBarcodes != null ? orderLinesGBarcodes.ToList() : null;
+        } 
     }
 }

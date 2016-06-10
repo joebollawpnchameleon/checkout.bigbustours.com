@@ -21,16 +21,21 @@ namespace Services.Implementation
             {
                 case (int)EcrVersion.Two:
                     return
-                _ticketRepository.GetSingle(x => !string.IsNullOrEmpty(x.EcrProductCode)
-                    && x.EcrProductCode.Trim().Equals(sku.Trim(), StringComparison.CurrentCultureIgnoreCase));
-                case (int)EcrVersion.Three:
+                        _ticketRepository.GetSingle(x => !string.IsNullOrEmpty(x.EcrProductCode)
+                            && x.EcrProductCode.Trim().Equals(sku.Trim(), StringComparison.CurrentCultureIgnoreCase));
+                default: //by default we use NcEcrProductcode
                     return
-                _ticketRepository.GetSingle(x => !string.IsNullOrEmpty(x.NcEcrProductCode)
-                    && x.NcEcrProductCode.Trim().Equals(sku.Trim(), StringComparison.CurrentCultureIgnoreCase));
-                default:
-                    return null;
+                        _ticketRepository.GetSingle(x => !string.IsNullOrEmpty(x.NcEcrProductCode)
+                            && x.NcEcrProductCode.Trim().Equals(sku.Trim(), StringComparison.CurrentCultureIgnoreCase));
             }
             
+        }
+
+        public virtual Ticket GetTicketByEcrSysId(string ecrSysId)
+        {
+            return
+                _ticketRepository.GetSingle(x => !string.IsNullOrEmpty(x.NcEcrProductCode)
+                    && x.NcEcrProductCode.Trim().Equals(ecrSysId.Trim(), StringComparison.CurrentCultureIgnoreCase));
         }
 
         public virtual Ticket GetTicketByProductDimensionUid(string prodDimentionUid)

@@ -17,6 +17,7 @@ using System.Data;
 using Common.Model.Interfaces;
 using BigBusWebsite.controls.SharedLayout;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using bigbus.checkout.data.PlainQueries;
 using bigbus.checkout.Ecr1ServiceRef;
@@ -49,11 +50,12 @@ namespace bigbus.checkout.Models
         public IBarcodeService BarcodeService { get; set; }
         public ICacheProvider CacheProvider { get; set; }
         public INavigationService NavigationService { get; set; }
+        public IEcrApi3ServiceHelper Ecr3ServiceHelper { get;set; }
 
         #endregion
 
         private MicroSite _currentSite;
-        private readonly Random _rnd = new Random();
+        private string _externalSessionId;
 
         public string ExternalBasketCookieName { get { return ConfigurationManager.AppSettings["External.Basket.CookieName"]; } }
         public string SessionCookieName { get { return ConfigurationManager.AppSettings["Session.CookieName"]; } }
@@ -63,12 +65,17 @@ namespace bigbus.checkout.Models
         public string PciLandingPagePath { get { return ConfigurationManager.AppSettings["PciWebsite.LandingPagePath"]; } }
         public string BasketCookieName { get { return ConfigurationManager.AppSettings["Basket.CookieName"]; } }
         public string GoogleChartUrl { get { return ConfigurationManager.AppSettings["GoogleChartUrl"]; } }
+        public string BornBaseUrl { get { return ConfigurationManager.AppSettings["BaseUrl"]; } }
+        public string BarCodeDir { get { return ConfigurationManager.AppSettings["BarCodeDir"]; } }
+        public string QrCodeDir { get { return ConfigurationManager.AppSettings["QrCodeDir"]; } }
+
         public string LiveEcrEndPoint
         {
             get { return ConfigurationManager.AppSettings["LiveEcrEndPoint"]; }
         }
         public string EcrApiKey { get { return ConfigurationManager.AppSettings["EcrApiKey"]; } }
-        public int EnvironmentId { get { return (ConfigurationManager.AppSettings["Environment"] != null)? Convert.ToInt32(ConfigurationManager.AppSettings["Environment"]) : (int)Common.Enums.Environment.Local; } }
+        public int EnvironmentId { get { return (ConfigurationManager.AppSettings["Environment"] != null)? 
+            Convert.ToInt32(ConfigurationManager.AppSettings["Environment"]) : (int)Common.Enums.Environment.Local; } }
 
         public string CurrentLanguageId { get { return "eng"; } } //***replace with function
         public string MicrositeId { get { return "london"; } } //*** get from url as in function
@@ -97,6 +104,7 @@ namespace bigbus.checkout.Models
 
         protected void Page_PreInit(object sender, EventArgs e)
         {
+            _externalSessionId = AuthenticationService.GetExternalSessionId(ExternalBasketCookieName);
             var cpa = (IContainerProviderAccessor)HttpContext.Current.ApplicationInstance;
             var cp = cpa.ContainerProvider;
             cp.RequestLifetime.InjectProperties(this);
@@ -110,7 +118,7 @@ namespace bigbus.checkout.Models
 
         public void Log(string message)
         {
-            LoggerService.LogItem(message);
+            LoggerService.LogItem(message, _externalSessionId);
         }
 
         public string GetClientIpAddress()
@@ -160,29 +168,30 @@ namespace bigbus.checkout.Models
             {
                 var orderLines = order.OrderLines;
 
-                if (orderLines != null && orderLines.Count > 0)
+                if (orderLines == null || orderLines.Count <= 0) return;
+
+                foreach (var orderline in orderLines)
                 {
-                    foreach (var orderline in orderLines)
+                    var orderLineGenerateBarCodes = CheckoutService.GetOrderLineGeneratedBarcodes(orderline);
+
+                    for (var y = 0; y < orderline.TicketQuantity; y++)
                     {
-                        var orderLineGenerateBarCodes = CheckoutService.GetOrderLineGeneratedBarcodes(orderline);
+                        if (orderLineGenerateBarCodes != null && orderLineGenerateBarCodes.Count != 0) continue;
 
-                        for (var y = 0; y < orderline.TicketQuantity; y++)
+                        var ticket = (orderline.Ticket == null && orderline.TicketId != null)? 
+                            TicketService.GetTicketById(orderline.TicketId.Value.ToString())
+                            : orderline.Ticket;
+
+                        var barcode = BarcodeService.GetNextBarcode(ticket, orderline.TicketType).Substring(0, 12);
+
+                        var orderlineGeneratedBarcode = new OrderLineGeneratedBarcode
                         {
-                            if (orderLineGenerateBarCodes == null || orderLineGenerateBarCodes.Count == 0)
-                            {
-                                var barcode = BarcodeService.GetNextBarcode(orderline.Ticket, orderline.TicketType).Substring(0, 12);
+                            OrderLineId = orderline.Id,
+                            GeneratedBarcode = barcode +
+                                               CalculateBarcodeChecksum(barcode.Substring(0, 12))
+                        };
 
-                                var orderlineGeneratedBarcode = new OrderLineGeneratedBarcode();
-
-                                orderlineGeneratedBarcode.OrderLineId = orderline.Id;
-
-                                orderlineGeneratedBarcode.GeneratedBarcode =
-                                    barcode +
-                                    CalculateBarcodeChecksum(barcode.Substring(0, 12));
-
-                                CheckoutService.SaveOrderLineBarCode(orderlineGeneratedBarcode);
-                            }
-                        }
+                        CheckoutService.SaveOrderLineBarCode(orderlineGeneratedBarcode);
                     }
                 }
             }
@@ -249,9 +258,10 @@ namespace bigbus.checkout.Models
                 
                 if (ecrVersionId == (int)EcrVersion.Three)
                 {
-                    var response = SendBookingToEcr3(order, selectedOrderLines);
+                    var response = Ecr3ServiceHelper.SendBookingToEcr3(order, selectedOrderLines);
+                    
                     //check response is OK
-                    if (response == null)
+                    if (response == null || response.Status != 0)
                     {
                         return new EcrResult { ErrorMessage = "Booking failed for ECR OrderId: " + order.Id, Status = EcrResponseCodes.BookingFailure };
                     }
@@ -270,182 +280,26 @@ namespace bigbus.checkout.Models
                     CheckoutService.SaveOrder(order);
 
                     Log("Saving external barcodes");
-                    SaveBarcodes(response, order.OrderNumber);
+                    SaveBarcodes(response, order);
 
-                    return new EcrResult { Status = EcrResponseCodes.BookingSuccess };
+                    Log("BasePage => SendBookingToEcr() - Booking sent to Ecr API3");
+                    
                 }
                 else if (ecrVersionId == (int)EcrVersion.One)
                 {
-                    SendBookingToEcr1(order, selectedOrderLines);
+                    Log("BasePage SendBookingToEcr => sending booking to ECR1");
+
+                    var result = Ecr3ServiceHelper.SendBookingToEcr1(order, selectedOrderLines, versionGroup.ToList());
+
+                    Log("BasePage SendBookingToEcr => booking send to ECR 1 result:" + result);
+
+                    if(!result)
+                        Log(Ecr3ServiceHelper.GetLastBookingErrors());
                 }
 
             }
            
-            return new EcrResult { Status = EcrResponseCodes.BookingFailure };
-        }
-
-        protected BookingResponse SendBookingToEcr3(Order order, List<OrderLine> orderLineData) {
-
-            var availability = EcrServiceHelper.GetAvailabilityFromOrderLines(orderLineData);
-
-            var availabilityResponse = EcrService.GetAvailability(availability);
-
-            if(availabilityResponse == null) 
-            {
-                Log("Availability failed for OrderId: " + order.Id);
-                return null;
-            }
-
-            if (string.IsNullOrEmpty(availabilityResponse.TransactionReference))
-            {
-                Log("Availability response returned no transaction ref OrderId: " + order.Id + 
-                    System.Environment.NewLine + " error: " + availabilityResponse.ErrorDescription);
-                return null;
-            }
-
-            var bookingTransactions = EcrServiceHelper.GetBookingTransactionDetails(orderLineData, order.Currency.ISOCode);
-
-            var response = EcrService.SubmitBooking(order.OrderNumber, availabilityResponse, bookingTransactions);
-
-            if (response != null && response.Status == (int) EcrResponseStatus.Success) return response;
-
-            Log("Send to Ecr Failed with error " + (response == null ? "Booking process failed " : response.ErrorDescription));
-            return null;
-        }
-
-        protected void SendBookingToEcr1(Order order, List<OrderLine> selectedOrderLines)
-        {
-            if (order == null)
-            {
-                Log("Send to Ecr1 failed because of empty order ");
-                return;
-            }
-
-            Log("Send to Ecr1 started. SendBookingToEcr1() - OrderId:" + order.Id);
-
-            if (string.IsNullOrWhiteSpace(order.AuthCodeNumber))
-            {
-                lock (_rnd)
-                {
-                    Thread.Sleep(20);
-                    var num = string.Empty;
-
-                    for (var i = 0; i < 10; i++)
-                    {
-                        num += _rnd.Next(0, 9);
-                    }
-
-                    num = num.Substring(0, 10);
-
-                    order.AuthCodeNumber = num;
-                }
-            }
-
-            var productCode = string.Empty;
-
-            var ticketDate = DateUtil.NullDate;
-
-            foreach (var orderLine in order.OrderLines)
-            {
-                var barcodes = CheckoutService.GetOrderLineGeneratedBarcodes(orderLine);
-
-                foreach (var orderLineGeneratedBarcode in barcodes)
-                {
-                    productCode += orderLineGeneratedBarcode.GeneratedBarcode + "01";
-
-                    var lineprice = Convert.ToInt32(orderLine.TicketCost * 100);
-
-                    productCode += lineprice.ToString("000000"); //The "lineprice" string needs to be at least 6 characters long
-                }
-
-                if (ticketDate != DateUtil.NullDate &&
-                    orderLine.TicketDate != DateUtil.NullDate &&
-                    orderLine.TicketDate != DateTime.MinValue)
-                {
-                    if (orderLine.TicketDate != null) ticketDate = orderLine.TicketDate.Value;
-                }
-                
-            }
-
-            var orderTotal = Convert.ToInt32(order.Total * 100);
-            var sixDigitOrderTotalString = orderTotal.ToString("000000"); // Again ensure that the string is at least 6 characters long
-            var tenDigitOrderNumber = order.OrderNumber.ToString("0000000000"); // This time we need to ensure the string is at least 10 characters long
-            var qrCurrencyCode = order.Currency.QrId.ToString("00"); // Ensure it's at least two characters long
-
-            var qrCodeDataString =
-                tenDigitOrderNumber +
-                order.AuthCodeNumber +
-                qrCurrencyCode +
-                sixDigitOrderTotalString +
-                ticketDate.ToString("ddMMyyyy") +
-                productCode;
-
-                //var uptodateOrder = GetObjectFactory().GetById<Order>(theOrder.Id);
-            var dtsClient = new DtsClient();
-            
-            bool v2Enabled;
-
-            try
-            {
-                v2Enabled = CurrentSite.ECRVersion2Enabled;
-            }
-            catch (Exception ex)
-            {
-                v2Enabled = false;
-                Log("Error for ECR Version 2 Enabled " + CurrentSite.Id + System.Environment.NewLine + ex.Message);
-            }
-
-            try
-            {
-                var authcodeForEcr = order.AuthCodeNumber[4] +order.AuthCodeNumber[1] +order.AuthCodeNumber[8] +order.AuthCodeNumber[5];
-
-                bool result;
-
-                Log("For ECR temp log" + ConfigurationManager.AppSettings["EcrApiV1UseMethodVersion"] + " v2 enabled " + v2Enabled);
-
-                if ((ConfigurationManager.AppSettings["EcrApiV1UseMethodVersion"] != "1") && v2Enabled)
-                {
-                    var agentref = string.IsNullOrWhiteSpace(order.AgentRef)
-                        ? "BigBusToursDotComWebSales"
-                        : order.AgentRef;
-                    Log("ECR version 2 - putex with agent ref" + agentref + "Ordernumber" + order.OrderNumber);
-                    result =
-                        dtsClient.PutEx(
-                            order.OrderNumber,
-                            Convert.ToInt32(authcodeForEcr),
-                            productCode,
-                            orderTotal,
-                            order.DateCreated,
-                            ticketDate,
-                            string.IsNullOrWhiteSpace(order.AgentRef)
-                                ? "BigBusToursDotComWebSales"
-                                : order.AgentRef);
-
-                }
-                else
-                {
-                    Log("ECR version 1 -old version" + order.OrderNumber);
-
-                    result =
-                        dtsClient.Put(
-                            order.OrderNumber,
-                            Convert.ToInt32(authcodeForEcr),
-                            productCode,
-                            orderTotal,
-                            order.DateCreated,
-                            ticketDate);
-                }
-
-                order.CentinelEci = result.ToString();
-            }
-            catch (Exception exception)
-            {
-                Log("Send to Ecr V1 Error: " + exception.Message);
-                return;
-            }
-
-            order.CentinelAcsurl = qrCodeDataString;
-            CheckoutService.SaveOrder(order);
+            return new EcrResult { Status = EcrResponseCodes.BookingSuccess };
         }
 
         protected void ClearCheckoutCookies()
@@ -455,7 +309,7 @@ namespace bigbus.checkout.Models
             //put session in complete mode
         }
 
-        public void SaveBarcodes(BookingResponse response, int orderNumber)
+        public void SaveBarcodes(BookingResponse response,Order order)
         {
             try
             {
@@ -470,13 +324,29 @@ namespace bigbus.checkout.Models
                     var ticket =
                         TicketService.GetTicketByProductDimensionUid(barcode.BarcodeDetails[0].ProductDimensionUID);
 
-                    var imageSaveStatus = ImageDbService.GenerateQrImage(orderNumber, ticket.Id.ToString(),
+                    var imageSaveStatus = ImageDbService.GenerateQrImage(order.OrderNumber, ticket.Id.ToString(),
                         imageBytes, MicrositeId);
                 }
+
+                //***also check for ecr1 if there is order ascurl and save old qrcode
+                if (!string.IsNullOrEmpty(order.CentinelAcsurl))
+                {
+                    var chartUrl = string.Format(GoogleChartUrl, order.CentinelAcsurl);
+
+                    var imageBytes = ImageService.DownloadImageFromUrl(chartUrl);
+                    
+                    var imageSaveStatus = ImageDbService.GenerateQrImage(order.OrderNumber,imageBytes, MicrositeId);
+
+                    if (imageSaveStatus != QrImageSaveStatus.Success && imageSaveStatus != QrImageSaveStatus.ImageDataExist)
+                    {
+                        Log("Image create failed for order " + order.OrderNumber);
+                    }
+                }
+
             }
             catch (Exception ex)
             {
-                Log("SaveBarcodes() Failed Ordernumber: " + orderNumber + System.Environment.NewLine + ex.Message);
+                Log("SaveBarcodes() Failed Ordernumber: " + order.OrderNumber + System.Environment.NewLine + ex.Message);
             }
         }
 
@@ -509,6 +379,7 @@ namespace bigbus.checkout.Models
                 ViewAndPrintTicketLink = eVoucherLink,
                 UserFullName = order.UserName,
                 DateOfOrder = LocalizationService.GetLocalDateTime(MicrositeId).ToShortDateString(), //*** format to local date
+                TicketDetails = FormatOrderDetails(order),
                 OrderTotal = currency.Symbol + order.Total,
                 TicketQuantity = order.TotalQuantity.ToString(),
                 TermsAndConditionsLink = bornUrlRoot + ConfigurationManager.AppSettings["TermAndCo.Url"],
@@ -525,6 +396,32 @@ namespace bigbus.checkout.Models
             var result = NotificationService.CreateOrderConfirmationEmail(request);
 
             Log(result);
+        }
+
+        private string FormatOrderDetails(Order order)
+        {
+            var orderLines = order.OrderLines;
+            if (orderLines == null)
+            {
+                Log("No order lines for orderid: " + order.Id);
+                return string.Empty;
+            }
+
+            var returnString = new StringBuilder();
+            var expectedTravelDate = (order.User.ExpectedTravelDate != null)
+                ? order.User.ExpectedTravelDate.Value.ToString("ddmmyy")
+                : string.Empty;
+
+            foreach (var line in orderLines)
+            {
+                line.Ticket = line.Ticket ?? TicketService.GetTicketById(line.TicketId.ToString());
+                returnString.AppendLine(line.Ticket.Name + " - " + line.TicketQuantity + " " + line.TicketType + " ticket(s) - ");
+            }
+
+            returnString.AppendLine(TranslationService.TranslateTerm("ExpectedTourDate", CurrentLanguageId) + ": " +
+                                    expectedTravelDate);
+
+            return returnString.ToString();
         }
 
         private string MakeSubject(int orderNumber)
@@ -592,7 +489,7 @@ namespace bigbus.checkout.Models
         {
             ucBasketDisplay.AddMoreUrl = ConfigurationManager.AppSettings["BornAddMoreTicketUrl"];
             ucBasketDisplay.ParentPage = this;
-            ucBasketDisplay.ShowActionRow = true;
+           
             ucBasketDisplay.TotalString = currencySymbol + basket.Total;
 
             var itemList = basket.BasketLines.Select(item => new BasketDisplayVm
@@ -637,7 +534,7 @@ namespace bigbus.checkout.Models
             master.CurrentLanguage = TranslationService.GetLanguage(CurrentLanguageId);
             master.IsMobileSession = false;
             master.MicrositeId = MicrositeId;
-            master.HomeUrl = ConfigurationManager.AppSettings["BornHomeTicketUrl"];
+            master.HomeUrl = BornBaseUrl + ConfigurationManager.AppSettings["BornHomeTicketUrl"];
         }
 
         public void RedirectToHomePage()

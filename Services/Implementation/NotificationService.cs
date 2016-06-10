@@ -57,6 +57,7 @@ namespace Services.Implementation
                 .Replace("[City_Name]", request.CityName)
                 .Replace("[Order_Number]", request.OrderNumber)
                 .Replace("[@View_And_print_ticket@]", request.ViewAndPrintTicketLink)
+                .Replace("Ticket_Details", request.TicketDetails)
                 .Replace("[User_Full_Name]", request.UserFullName)
                 .Replace("[Date_Of_Order]", request.DateOfOrder)
                 .Replace("[Order_Total]", request.OrderTotal)

@@ -13,6 +13,15 @@ namespace bigbus.checkout {
     public partial class BookingCompleted {
         
         /// <summary>
+        /// ltlOrderNumber control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltlOrderNumber;
+        
+        /// <summary>
         /// CommissionJunctionTag control.
         /// </summary>
         /// <remarks>
@@ -29,15 +38,6 @@ namespace bigbus.checkout {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hdnUserEmail;
-        
-        /// <summary>
-        /// ltlOrderNumber control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal ltlOrderNumber;
         
         /// <summary>
         /// eVoucherLink control.
@@ -112,15 +112,6 @@ namespace bigbus.checkout {
         protected global::System.Web.UI.WebControls.CheckBox chkReceiveNews;
         
         /// <summary>
-        /// btnFinish control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnFinish;
-        
-        /// <summary>
         /// DisplaySurveyLink control.
         /// </summary>
         /// <remarks>
@@ -137,6 +128,15 @@ namespace bigbus.checkout {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkSurveyMonkey;
+        
+        /// <summary>
+        /// btnFinish control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnFinish;
         
         /// <summary>
         /// marketingscripts control.

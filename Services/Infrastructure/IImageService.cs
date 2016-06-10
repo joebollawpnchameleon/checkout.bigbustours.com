@@ -9,5 +9,7 @@ namespace Services.Infrastructure
        Image GetImageFromBytes(byte[] originalBytes);
 
         string GetImageExtension(Image image);
+
+        bool DoesBarCodeImageExist(string barcode, string fullPath);
     }
 }

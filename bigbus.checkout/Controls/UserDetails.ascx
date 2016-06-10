@@ -50,10 +50,7 @@
                 <label>
                    <%= ParentPage.GetTranslation("PleaseIncludeOnMarketingEmails") %>
                 </label>
-                
-               <%-- <p>
-                    <%= "We will send you a confirmation email Please include me in marketing emails" %><!-- translation needed -->
-                </p>--%>
+               
             </p>
              <div class="form-row">
                 <label for="<%= txtAddress2.ClientID%>"><%= ParentPage.GetTranslation("ExpectedTourDate") %></label>
@@ -112,12 +109,8 @@
             <p class="form__checkbox">
                 <asp:CheckBox id="ckTermsAndConditions" CssClass="required" runat="server" />
                 <label for="<%=ckTermsAndConditions.ClientID %>">
-                    <%= ParentPage.GetTranslation("IhavereadandagreetotheTermsandConditions")%><abbr title="required">*</abbr>
+                    <%= TermsAndPrivacyLinks %><abbr title="required"> *</abbr>
                 </label>
-                <p>
-                    <a href="<%= ConfigurationManager.AppSettings["BaseUrl"] %>terms-and-conditions.html?browser=true" target="_blank" ><%=ParentPage.GetTranslation("TermsAndConditions")%> </a>&nbsp;
-                    <a href="<%= ConfigurationManager.AppSettings["BaseUrl"] %>privacy-policy.html?browser=true" target="_blank" ><%=ParentPage.GetTranslation("PrivacyPolicy")%> </a>
-                </p>
                 
                 <asp:CustomValidator id="cstVTerms" ValidationGroup="CreditCardCheckout" runat="server"  OnServerValidate="ValidateTermsAndConditions" />
 

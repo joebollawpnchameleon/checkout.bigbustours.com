@@ -6,6 +6,8 @@ namespace Services.Infrastructure
     {
         Ticket GetTicketBySku(string sku, int ecrVersionId);
 
+        Ticket GetTicketByEcrSysId(string ecrSysId);
+
         Ticket GetTicketById(string id);
 
         Ticket GetTicketByProductDimensionUid(string prodDimentionUid);

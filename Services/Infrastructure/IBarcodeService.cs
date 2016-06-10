@@ -10,5 +10,7 @@ namespace Services.Infrastructure
     public interface IBarcodeService
     {
         string GetNextBarcode(Ticket ticket, string orderLineTicketType);
+
+        List<OrderLineGeneratedBarcode> GetOrderLineGeneratedBarcodes(string orderLineId);
     }
 }

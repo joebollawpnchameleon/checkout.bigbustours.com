@@ -7,6 +7,7 @@ namespace bigbus.checkout.Models
 {
     public class VoucherTicket
     {
+        
         public Ticket Ticket { get; set; }
 
         public string ValidTicketName { get; set; }
@@ -16,6 +17,12 @@ namespace bigbus.checkout.Models
         public ImageMetaData ImageData { get; set; }
 
         public ImageMetaData AttractionImageData { get; set; }
+
+        public string BarCodeImageUrl { get; set; }
+
+        public int BarCodeFixQuantity { get; set; }
+
+        public bool UseQrCode { get; set; }
 
         public bool IsAttraction 
         { 

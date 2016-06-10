@@ -34,7 +34,7 @@ namespace bigbus.checkout
            
             try
             {
-                var url = string.Concat(ResolveUrl("~/Voucher.aspx?oid="), orderId);
+                var url = string.Concat(ResolveUrl("~/voucher.aspx?oid="), orderId);
                 
                 var buffer = PdfRendererService.GetBytesFromUrl(url, string.Format("Ticket #{0}", order.OrderNumber));
                 

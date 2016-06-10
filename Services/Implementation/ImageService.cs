@@ -5,10 +5,11 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System;
 using System.Drawing.Drawing2D;
+using System.IO;
 
 namespace Services.Implementation
 {
-    public class ImageService : IImageService
+    public class ImageService : BaseService, IImageService
     {
         public virtual byte[] DownloadImageFromUrl(string url)
         {
@@ -275,5 +276,36 @@ namespace Services.Implementation
 
         }
 
+        public bool DoesBarCodeImageExist(string barcode, string fullPath)
+        {
+            var fi = new FileInfo(fullPath);
+
+            if (fi.Exists)return true;
+
+            try
+            {
+                var generatedBarcodeBitmap = new Bitmap(105, 65);
+
+                //create a new graphic using the bitmap
+                var barcodeGraphic = Graphics.FromImage(generatedBarcodeBitmap);
+
+                //ensure that the background is white
+                barcodeGraphic.Clear(Color.White);
+                //draw the barcode image on the graphic
+                barcodeGraphic.DrawImage(
+                    Zen.Barcode.BarcodeDrawFactory.Code128WithChecksum.Draw(barcode.Substring(0, 12), 40), 5, 5);
+                barcodeGraphic.Flush();
+
+
+                generatedBarcodeBitmap.Save(fi.FullName, ImageFormat.Jpeg);
+                generatedBarcodeBitmap.Dispose();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                LoggerService.LogItem("Barcode generation failed for: " + fullPath + " : " + ex.Message);
+                return false;
+            }
+        }
     }
 }

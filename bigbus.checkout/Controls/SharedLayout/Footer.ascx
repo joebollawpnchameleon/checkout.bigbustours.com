@@ -7,10 +7,10 @@
         <ItemTemplate>
             <li><a href="<%# Eval("URL") %>" target="_blank"><%# Eval("Text") %></a></li>
         </ItemTemplate>
-        <SeparatorTemplate>
-            <span> | </span>
-        </SeparatorTemplate>
         <FooterTemplate>
+            <li>
+                &copy; Big Bus Tours Ltd
+            </li>
             </ul>
         </FooterTemplate>
     </asp:Repeater>

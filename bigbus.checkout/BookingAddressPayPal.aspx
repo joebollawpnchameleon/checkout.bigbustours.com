@@ -13,16 +13,23 @@
     </header>
 
     <section class="basket">
-        <div id="basket__header">
-        <%= GetTranslation("Total") + ":" + string.Format("<span class=\"red\">{0}</span>", TotalSummary) %>     &nbsp;
-        <span class="action"><%= GetTranslation("View_Basket") %></span>
-         <NCK:BasketDisplay id="ucBasketDisplay" runat="server"/>
+        
+        <div class="basket__header">
+            <p class="basket__total"><span class="title"><%= GetTranslation("Total") + ":" +  TotalSummary %>   </span></p>
+            <p><a class="basket__toggle js-toggle-basket" href="#"><%=GetTranslation("ViewBasket")%></a></p>
         </div>
+        <NCK:BasketDisplay id="ucBasketDisplay" ShowActionRow="False" runat="server"/>
+        
+    </section>
+    
+     <section class="last-step">
+        <h2><%=GetTranslation("PaypalLastStepAlmostDone") %></h2>
+        <p><%=GetTranslation("PaypalLastStepReviewAlert")%></p>
     </section>
 
     <section class="contact-details">
         <div class="contact-details__header">
-            
+            <p class="contact-details__payment-method">Payment method<img src="/Content/images/Design/paypal-blue.png" alt="PayPal"></p>
          </div>
          
         <div class="form contact-details__form">
@@ -71,4 +78,5 @@
         }
       
     </script>
+    <script src="/Scripts/local/basket.js"></script>
 </asp:Content>

@@ -13,11 +13,11 @@
     </header>
 
     <section class="basket">
-        <div id="basket__header">
-            <p><span class="title"><%= GetTranslation("Total") + ":" + string.Format("<span class=\"red\">{0}</span>", TotalSummary) %>   </span></p>
+        <div class="basket__header">
+            <p class="basket__total"><span class="title"><%= GetTranslation("Total") + ":" +  TotalSummary %>   </span></p>
             <p><a class="basket__toggle js-toggle-basket" href="#"><%=GetTranslation("ViewBasket")%></a></p>
         </div>
-        <NCK:BasketDisplay id="ucBasketDisplay" runat="server"/>   
+        <NCK:BasketDisplay id="ucBasketDisplay" ShowActionRow="true" runat="server"/>   
     </section>
     
     <section class="contact-details">
@@ -44,9 +44,6 @@
                         <span><%=GetTranslation("Back")%></span>
                     </asp:LinkButton>
 
-                    <%--<a class="form__back button button_grey button_back" href="<%= GenerateBasketPageUrl() %>">
-                        <span><%=GetTranslation("Back")%></span>
-                    </a>--%>
                     <asp:LinkButton ID="btnContinueCheckout" ValidationGroup="CreditCardCheckout"  runat="server" OnClientClick="TrackUserSubscription();" OnClick="CheckoutWithCreditCard" CssClass="form__continue button button_red button_forward">
                         <span id="spnContinueText" runat="server" class="right"><%= GetTranslation("ContinueToSecurePayment") %></span>
                     </asp:LinkButton>
@@ -59,14 +56,7 @@
                     <li><img src="/Content/images/paymentMethods/mastercard-securecode.png" alt="Mastercard Securecode" /></li>
                 </ul>
             </div>
-
-           <%-- <div id="dvActions" runat="server">
-                <asp:Button runat="server" text="Back" OnClick="ContinueShopping" id="btnCancel"/>
-                &nbsp;
-                <asp:Button runat="server" ValidationGroup="CreditCardCheckout" text="Checkout With Credit Card" OnClientClick="TrackUserSubscription();" OnClick="CheckoutWithCreditCard" id="btnContinueCheckout"/>
-                &nbsp;
-         
-            </div>--%>
+            
 
     </div>
 </section>
@@ -143,6 +133,6 @@
     <script src="/Scripts/vendor/jquery-ui/jquery-ui.min.js"></script>
     <script src="/Scripts/vendor/jquery-ui/ui/core.min.js"></script>
     <script src="/Scripts/vendor/jquery-ui/ui/datepicker.min.js"></script>
-   <%-- <script src="/Scripts/local/basket.js"></script>--%>
+    <script src="/Scripts/local/basket.js"></script>
     <%= GetQuovadisScripts() %>
 </asp:Content>

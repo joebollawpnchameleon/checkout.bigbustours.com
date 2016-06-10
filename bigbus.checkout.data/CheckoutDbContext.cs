@@ -24,6 +24,8 @@ namespace bigbus.checkout.data
         }
 
         #region Models Declaration 
+
+        public virtual DbSet<BornBasketDump> BornBasketDumps { get; set; }
         public virtual DbSet<DiallingCode> DiallingCodes { get; set; }
         public virtual DbSet<Navigation> Navigations { get; set; }
         public virtual DbSet<NavigationItem> NavigationItems { get; set; }

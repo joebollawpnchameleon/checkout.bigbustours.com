@@ -139,6 +139,10 @@
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Zen.Barcode.Core, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Zen.Barcode.Core.Code128.3.1.0\lib\net45\Zen.Barcode.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="android-chrome-144x144.png" />
@@ -165,6 +169,7 @@
     <Content Include="Content\css\style-ie.css" />
     <Content Include="Content\css\style.css" />
     <Content Include="Content\Images\Design\amex-card.png" />
+    <Content Include="Content\Images\Design\app-store.png" />
     <Content Include="Content\Images\Design\arrow-down.png" />
     <Content Include="Content\Images\Design\arrow-left-white.png" />
     <Content Include="Content\Images\Design\arrow-left.png" />
@@ -178,12 +183,22 @@
     <Content Include="Content\Images\Design\barcode.png" />
     <Content Include="Content\Images\Design\big-bus-logo.png" />
     <Content Include="Content\Images\Design\calendar.png" />
+    <Content Include="Content\Images\Design\download-app.png" />
+    <Content Include="Content\Images\Design\enjoy-tour.png" />
+    <Content Include="Content\Images\Design\google-play.png" />
+    <Content Include="Content\Images\Design\information.png" />
+    <Content Include="Content\Images\Design\iphone.png" />
     <Content Include="Content\Images\Design\logo-bigbus.png" />
     <Content Include="Content\Images\Design\logo-other.png" />
     <Content Include="Content\Images\Design\mastercard-card.png" />
+    <Content Include="Content\Images\Design\mobile.jpg" />
+    <Content Include="Content\Images\Design\mobile.png" />
     <Content Include="Content\Images\Design\padlock.png" />
+    <Content Include="Content\Images\Design\paypal-blue.png" />
     <Content Include="Content\Images\Design\paypal-card.png" />
     <Content Include="Content\Images\Design\paypal.png" />
+    <Content Include="Content\Images\Design\print-ticket.png" />
+    <Content Include="Content\Images\Design\printer.png" />
     <Content Include="Content\Images\Design\quovadis-card.png" />
     <Content Include="Content\Images\Design\quovadis_110x46.gif" />
     <Content Include="Content\Images\Design\ticket_empty.png" />
@@ -240,8 +255,18 @@
     <Content Include="QrCodeImageHandler.ashx" />
     <Content Include="manifest.json" />
     <Content Include="BlankTemplate.Master" />
+    <Content Include="Content\css\fonts\1463173\07f49ef6-b555-4cb8-b608-683245406c8b.eot" />
+    <Content Include="Content\css\fonts\1463173\6c48c500-4059-4587-9ee9-aa0a02373d09.woff" />
+    <Content Include="Content\css\fonts\1463173\9814abef-5bff-4971-b420-85180ce0dd67.ttf" />
+    <Content Include="Content\css\fonts\1463173\c18b9521-c45d-43a7-9ea6-4b378501bce6.woff2" />
+    <Content Include="Content\css\fonts\1463197\64dae099-3eaa-4356-a430-6897ecd4b27f.ttf" />
+    <Content Include="Content\css\fonts\1463197\b8273ecc-33a8-4a25-85d3-be95a201aa43.eot" />
+    <Content Include="Content\css\fonts\1463197\ed9a6b8e-a8d2-4ef1-9d6c-1ea2f17c6666.woff2" />
+    <Content Include="Content\css\fonts\1463197\fd7baf07-b1db-48b6-a589-7998bdde370c.woff" />
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Properties\PublishProfiles\UAT.pubxml" />
+    <Content Include="GenericImageHandler.ashx" />
+    <Content Include="BarCodeImageHandler.ashx" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -250,6 +275,9 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\local\basket.js" />
+    <Content Include="Scripts\local\main.js" />
+    <Content Include="Scripts\local\payment.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\Vendor\jquery-ui\jquery-ui.min.js" />
     <Content Include="Scripts\Vendor\jquery-ui\ui\core.min.js" />
@@ -583,12 +611,19 @@
     </Compile>
     <Compile Include="Helpers\DateUtil.cs" />
     <Compile Include="Helpers\EcrService.cs" />
-    <Compile Include="Helpers\EcrServiceHelper.cs" />
+    <Compile Include="Helpers\EcrApi3ServiceHelper.cs" />
+    <Compile Include="Helpers\IEcrApi3ServiceHelper.cs" />
     <Compile Include="Helpers\IEcrService.cs" />
     <Compile Include="Helpers\IntileryTagHelper.cs" />
     <Compile Include="Helpers\LanguageHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Models\BasketDisplayVM.cs" />
+    <Compile Include="GenericImageHandler.ashx.cs">
+      <DependentUpon>GenericImageHandler.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="BarCodeImageHandler.ashx.cs">
+      <DependentUpon>BarCodeImageHandler.ashx</DependentUpon>
+    </Compile>
     <Compile Include="QrCodeImageHandler.ashx.cs">
       <DependentUpon>QrCodeImageHandler.ashx</DependentUpon>
     </Compile>

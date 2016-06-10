@@ -27,13 +27,14 @@ namespace Services.Implementation
             _apiPath = apiPath;
         }
         
+        //*** make sure you padd cookievalue here.
         public BornBasket GetExternalBasketByCookie(string cookieValue)
         {
             BornBasket basket = null;
 
             try
             {
-                LoggerService.LogItem("Retrieving basket for external sessionid: " + cookieValue);
+                LoggerService.LogItem("Retrieving basket for external sessionid: " + cookieValue, cookieValue);
 
                 var client = new HttpClient();
                 var task = client.GetAsync(_fullUrl)
@@ -42,6 +43,9 @@ namespace Services.Implementation
                       var response = taskwithresponse.Result;
                       var jsonString = response.Content.ReadAsStringAsync();
                       jsonString.Wait();
+
+                      LoggerService.LogBornBasket(jsonString.Result, cookieValue);//log this to db.
+
                       basket = JsonConvert.DeserializeObject<BornBasket>(jsonString.Result);
 
                   });
@@ -52,7 +56,7 @@ namespace Services.Implementation
             catch (Exception ex)
             {
                 //log exception here.
-                LoggerService.LogItem("External basket retrieval failed: external sessionid "  + cookieValue + Environment.NewLine + ex.Message);
+                LoggerService.LogItem("External basket retrieval failed: external sessionid "  + cookieValue + Environment.NewLine + ex.Message, cookieValue);
             }
 
             return basket;

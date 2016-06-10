@@ -21,6 +21,7 @@ namespace bigbus.checkout.Controls
         public string MicrositeId { get; set; }
         public string OpenDayTranslation { get; set; }
         public bool ShowOrderTotal { get; set; }
+        public bool QrCodeSupported { get; set; }
 
         protected string TicketName { get; set; }
         protected string LeadName { get; set; }
@@ -43,6 +44,15 @@ namespace bigbus.checkout.Controls
 
         private Ticket _ticket;
 
+        public string HandlerUrl
+        {
+            get
+            {
+                return QrCodeSupported
+                    ? ResolveUrl("~/QrCodeImageHandler.ashx")
+                    : ResolveUrl("~/BarCodeImageHandler.ashx");
+            }
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             if (VoucherTicket != null && Order != null)
@@ -83,7 +93,7 @@ namespace bigbus.checkout.Controls
             {
                 imgAttraction.Visible = true;
                 imgAttraction.Alt = "";
-                imgAttraction.Src = ResolveUrl("~/QrCodeImageHandler.ashx?w=124&h=102&extension=") +
+                imgAttraction.Src = ResolveUrl("~/GenericImageHandler.ashx?w=124&h=102&extension=") +
                                     VoucherTicket.AttractionImageData.Type
                                     + "&micrositeid=" + MicrositeId + "&imageid=" +
                                     VoucherTicket.AttractionImageData.ImageId;

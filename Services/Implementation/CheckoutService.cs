@@ -14,10 +14,6 @@ namespace Services.Implementation
 {
     public class CheckoutService : BaseService, ICheckoutService
     {
-        public CheckoutService(): base()
-        {
-        }
-        
         public virtual Order CreateOrder(Session session, Basket basket, pci.BasketStatus basketStatus, string clientIpAddress, string languageId, string micrositeId)
         {
             try
@@ -47,7 +43,8 @@ namespace Services.Implementation
                     SessionId = session.Id,
                     TotalQuantity = basket.BasketLines.Sum(x => x.TicketQuantity),
                     IsMobileAppOrder = false, //check how this is populated on old system.
-                    DateCreated = LocalizationService.GetLocalDateTime(micrositeId)
+                    DateCreated = LocalizationService.GetLocalDateTime(micrositeId),
+                    FromNewCheckout = true
                 };
 
                 //populate order lines with existing baskets.
@@ -98,7 +95,8 @@ namespace Services.Implementation
                     DateCreated = LocalizationService.GetLocalDateTime(micrositeId),
                     PayPalOrderId = session.PayPalOrderId,
                     PayPalPayerId = session.PayPalPayerId,
-                    PayPalToken = session.PayPalToken
+                    PayPalToken = session.PayPalToken,
+                    FromNewCheckout = true
                 };
 
                 //populate order lines with existing baskets.
@@ -199,7 +197,7 @@ namespace Services.Implementation
             {
                 orderLine.AttractionName = basketLineTicket.Name;
             }
-
+           
             return orderLine;
         }
 
@@ -282,7 +280,7 @@ namespace Services.Implementation
             if (orderLineData == null || orderLineData.Rows == null || orderLineData.Rows.Count <= 0)
                 return returnedItems;
 
-            returnedItems.AddRange(from DataRow row in orderLineData.Rows where Convert.ToBoolean(row["UseQr"])
+            returnedItems.AddRange(from DataRow row in orderLineData.Rows
                 select new EcrOrderLineData
                 {
                     MicrositeId = row["Microsite_Id"].ToString(), 

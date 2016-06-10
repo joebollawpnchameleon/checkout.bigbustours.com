@@ -6,56 +6,8 @@ using Services.Implementation;
 
 namespace bigbus.checkout
 {
-    /// <summary>
-    /// Summary description for QCodeImageHandler
-    /// </summary>
-    //public class QrCodeImageHandler : IHttpHandler
-    //{
-    //    public void ProcessRequest(HttpContext context)
-    //    {
-    //        try
-    //        {
-    //            var r = context.Response;
-    //            var imageId = context.Request.QueryString["imageid"];
- 
-    //            r.ContentType = "image/png";
-    //            //
-    //            // Write the requested image
-    //            //
-    //            string file = context.Request.QueryString["file"];
-
-    //            if (file == "logo")
-    //            {
-    //                r.WriteFile(@"C:\Projects\checkout.bigbus.com\bigbus.checkout\Content\Images\Design\Logo-other.png");
-    //            }
-    //            else
-    //            {
-    //                r.WriteFile("Flower1.png");
-    //            }
-    //        }
-    //        catch (Exception ex)
-    //        {
-
-    //        }
-    //    }
-
-    //    public bool IsReusable
-    //    {
-    //        get
-    //        {
-    //            return false;
-    //        }
-    //    }
-    //}
-
-
     public class QrCodeImageHandler : IHttpHandler
     {
-        /// <summary>
-        ///
-        /// </summary>
-        private static readonly string CachePath = ConfigurationManager.AppSettings["FileUploadPath"];
-
         /// <summary>
         ///
         /// </summary>
@@ -79,7 +31,7 @@ namespace bigbus.checkout
             var imageid = context.Request.QueryString["imageid"];
             var imageExtension = context.Request.QueryString["extension"];
             var microsite = context.Request.QueryString["micrositeid"];
-            var rootFolder = ConfigurationManager.AppSettings["FileUploadPath"];
+            var rootFolder = ConfigurationManager.AppSettings["QrCodeDir"];
 
             try
             {
@@ -112,7 +64,7 @@ namespace bigbus.checkout
                 //ignore
             }
           
-            var findPath = string.Format("~/{0}/{1}/{2}", rootFolder, microsite, imageid + "." + imageExtension);
+            var findPath = string.Format("~{0}{1}/{2}", rootFolder, microsite, imageid + "." + imageExtension);
 
             var fi = new FileInfo(context.Server.MapPath(findPath));
 
@@ -182,8 +134,8 @@ namespace bigbus.checkout
                             else
                                 newi = ImageService.ScaleImageToWidth(i, square);
 
-                            int cx = (newi.Width / 2) - (square / 2);
-                            int cy = (newi.Height / 2) - (square / 2);
+                            int cx = (newi.Width/2) - (square/2);
+                            int cy = (newi.Height/2) - (square/2);
                             newi = ImageService.CropImage(newi, cx, cy, square, square);
                             newi.Save(newstream, i.RawFormat);
                         }
@@ -197,7 +149,10 @@ namespace bigbus.checkout
                         newi.Dispose();
                         i.Dispose();
                     }
-                    catch { }
+                    catch
+                    {
+                        //ignore
+                    }
 
                     if (newstream != null)
                     {

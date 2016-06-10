@@ -14,6 +14,7 @@ namespace Common.Model
         public string UserFullName{get;set;}
         public string DateOfOrder{get;set;}
         public string OrderTotal{get;set;}
+        public string TicketDetails { get; set; }
         public string TicketQuantity{get;set;}
         public string TermsAndConditionsLink{get;set;}
         public string PrivacyPolicyLink{get;set;}

@@ -5,6 +5,7 @@ using bigbus.checkout.data.Model;
 using Common.Model;
 using Services.Infrastructure;
 using bigbus.checkout.data.Repositories.Infrastructure;
+using Common.Enums;
 using Common.Model.PayPal;
 using pci = Common.Model.Pci;
 
@@ -61,9 +62,7 @@ namespace Services.Implementation
             //validate all tickets in basket
             foreach (var basketItem in brnBasket.BasketItems)
             {
-                //*** change validation based on Ecr Version of the site.
-                var site = _siteService.GetMicroSiteById(basketItem.Microsite);
-                var ticket = _ticketService.GetTicketBySku(basketItem.Sku, site.NewCKEcrVersionId);
+                var ticket = _ticketService.GetTicketByEcrSysId(basketItem.Sku);
 
                 if (ticket == null)
                 {
@@ -118,7 +117,6 @@ namespace Services.Implementation
                         LineTotal = item.Total,
                         EcrProductDimensionId = item.ProductDimensionUid
                     });
-                    
             }
            
             _repository.Add(basket);

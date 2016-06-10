@@ -10,7 +10,7 @@ using bigbus.checkout.data.Repositories.Implementation;
 
 namespace Services.Implementation
 {
-    public class ImageDbService : IImageDbService
+    public class ImageDbService : BaseService, IImageDbService
     {
         private readonly IGenericDataRepository<Image> _imageRepository;
         private readonly IGenericDataRepository<ImageFolder> _folderRepository;
@@ -18,7 +18,8 @@ namespace Services.Implementation
         private readonly IGenericDataRepository<EcrOrderLineBarcode> _ecrBarcodeRepository;
         private readonly IImageService _imageService;
         private const string QrFolderName = "QRCodes";
-        private const string QrImageNameFormat = "QR-{0}-{1}";
+
+        public static string QrImageNameFormat = "QR-{0}-{1}";
 
         public ImageDbService(IImageService imageService, IGenericDataRepository<ImageFolder> folderRepository,
             IGenericDataRepository<Image> imageRepository, IGenericDataRepository<ImageMetaData> metaDataRepository,
@@ -86,6 +87,38 @@ namespace Services.Implementation
 
             _ecrBarcodeRepository.Add(barcode);
 
+            return QrImageSaveStatus.Success;
+        }
+
+        public QrImageSaveStatus GenerateQrImage(int orderNumber, byte[] imageChartBytes, string micrositeId)
+        {
+            var folder = EnsureImageFolderExists(micrositeId);
+
+            //check qrcodes folder, if it doesn't exist, create it.
+            var qrFolder = EnsureImageFolderExistsWithParent(QrFolderName, folder.Id);
+
+            //create image first
+            var newImageMetaData = SaveImage(imageChartBytes);
+
+            //*** persist barcode image physically
+
+            //then create meta data
+            if (newImageMetaData == null || newImageMetaData.ImageId == null)
+            {
+                Log(string.Format("Image Create failed ordernumber {0} metadata.", orderNumber));
+                return QrImageSaveStatus.ImageDataCreationFailed;
+            }
+
+            var imageName = string.Format(QrImageNameFormat, orderNumber, "Ecr");
+            newImageMetaData.AltText = imageName;
+            newImageMetaData.ImageFolderId = qrFolder.Id;
+            newImageMetaData.Tags = string.Empty;
+            newImageMetaData.Name = imageName;
+            newImageMetaData.DateCreated = DateTime.Now;
+            newImageMetaData.Id = new Guid();
+
+            _metaDataRepository.Add(newImageMetaData);
+            
             return QrImageSaveStatus.Success;
         }
                 
@@ -158,12 +191,17 @@ namespace Services.Implementation
             return _metaDataRepository.GetSingle(x => x.ImageId != null && x.ImageId.Equals(imageGuid));
         }
 
+        public virtual ImageMetaData GetImageMetaDataByName(string name)
+        {
+            return _metaDataRepository.GetSingle(x => x.Name.Equals(name,StringComparison.CurrentCultureIgnoreCase));
+        }
+
         public virtual ImageMetaData GetImageMetaData(string imageId)
         {
             return _metaDataRepository.GetSingle(x => x.ImageId != null && x.ImageId.ToString().Equals(imageId));
         }
 
-        public virtual string GetTicketImageUrl(string ticketImageId)
+        public virtual string GetTicketImageUrl(string ticketImageId, string path)
         {
             if (string.IsNullOrEmpty(ticketImageId))
                 return string.Empty;
@@ -172,7 +210,7 @@ namespace Services.Implementation
             
             return
                 imageMetaData != null ?
-                    "/UploadedImages/" + imageMetaData.ImageId + "." + imageMetaData.Type + "?h=102&w=124" :
+                    path + imageMetaData.ImageId + "." + imageMetaData.Type + "?h=102&w=124" :
                     string.Empty;
         }
 
