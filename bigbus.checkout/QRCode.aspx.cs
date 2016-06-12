@@ -14,8 +14,8 @@ namespace bigbus.checkout
     {
         private void GenerateQrCodeForTimedAttractions(Order order, string orderExternalOrderId)
         {
-            try
-            {
+            //try
+            //{
                 //var externalBarcodes = EVoucherCreationHelper.GetOrderExternalBarcodes(this, orderExternalOrderId);
 
                 //if (externalBarcodes == null || externalBarcodes.Count < 1)
@@ -24,7 +24,7 @@ namespace bigbus.checkout
                 //var helper = new EVoucherCreationHelper(this, order);
                 //var firstCode = externalBarcodes.FirstOrDefault();
 
-                //dvTimeAttractions.Controls.Add(new Label{Text = firstCode.EventDate.Trim().Split()[0] + " at " + firstCode.EventTime + "<br/>"});
+                //dvTimeAttractions.Controls.Add(new Label { Text = firstCode.EventDate.Trim().Split()[0] + " at " + firstCode.EventTime + "<br/>" });
 
                 //foreach (var externalBarcode in externalBarcodes)
                 //{
@@ -40,21 +40,39 @@ namespace bigbus.checkout
 
                 //    var qrImage = new System.Web.UI.WebControls.Image
                 //    {
-                //       AlternateText = externalBarcode.Barcode,
-                //       ImageUrl = qrCodeFile
+                //        AlternateText = externalBarcode.Barcode,
+                //        ImageUrl = qrCodeFile
                 //    };
-                    
-                //    qrImage.Style.Add("width", "80%");
-                //    //dvTimeAttractions.Controls.Add(label);
-                //    //dvTimeAttractions.Controls.Add(qrImage);
 
-                //}
-            }
-            catch (Exception ex)
-            {
-                Log("Failed to generate qr codes on mobile ticket for order: " + orderExternalOrderId);
-            }
+                //    qrImage.Style.Add("width", "80%");
+                    //dvTimeAttractions.Controls.Add(label);
+                    //dvTimeAttractions.Controls.Add(qrImage);
+
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log("Failed to generate qr codes on mobile ticket for order: " + orderExternalOrderId);
+            //}
         }
+
+        //public static List<ExternalOrderBarcode> GetOrderExternalBarcodes(BasePage page, string orderExternalOrderId)
+        //{
+        //    try
+        //    {
+        //        return
+        //            page.GetObjectFactory()
+        //                .GetListOf<ExternalOrder_Barcodes>("*ExternalOrder_Barcode(ExternalOrderId = $p0$)",
+        //                    orderExternalOrderId)
+        //                .ToList();
+        //    }
+        //    catch
+        //    {
+        //        page.Log("External Barcode retrieval failed. for orderid " + orderExternalOrderId);
+        //    }
+
+        //    return null;
+        //}
 
         protected void Page_Load(object sender, EventArgs eventArgs)
         {
