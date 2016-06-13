@@ -1,0 +1,44 @@
+
+Big Bus Tours booking confirmation (Order number: 209394)
+
+NB: To view the e-voucher you will need Adobe Acrobat Reader Version 7.0 or above. If you do not currently have this installed you can download a copy here BEFORE printing: http://www.adobe.com/products/acrobat/
+
+To view your e-voucher, which you have to print out and bring along with you on your trip, go to the following link in your web browser:
+http://eng.localdev.com:49780/newyork/viewevoucher.aspx?Id=2338fa7b-fbc4-4054-b7e2-30fba06273ed&name=file.pdf
+
+Order details: 
+Order number: 209394
+Date order placed: 04 Jan 2016
+Total cost of order: US$ 57
+Total tickets purchased: 1
+
+Last four digits of Credit Card: 0000
+Name: jankiTest chotai
+User email address: janki.chotai@wpnchameleon.co.uk
+
+User address: test
+test
+test123
+United Kingdom
+
+
+Ticket details: 
+Deluxe - 2 Day Ticket - 1 Adult tickets
+Ticket date: 05 Jan 2016
+
+Thank you for choosing Big Bus Tours. Enjoy your trip
+
+
+If you have any queries please feel free to contact Big Bus Tours using the following details:: 
+
+Big Bus New York Information Center
+Inside BB King Blues Club and Grill
+237 West 42nd Street
+New York, NY 10036
+Telephone : (1) 212 685 8687
+Email: infony@bigbustours.com
+
+One World Observatory is now open, don't miss your chance to SEE FOREVER™! Tickets are limited, it is highly recommended to purchase tickets in advance.
+https://oneworldobservatory.com/tickets/?promocode=BBOWO
+
+tp_shop: bigbustours-newyork.com 

@@ -1,0 +1,43 @@
+										{View_On_Browser}
+[Header_Image_By_CityAndLanguage]
+
+Dear [user_name],
+
+{Thank_you_Message}
+
+{Your_Order_Number}:[order_number]
+
+(View_Your_Ticket)
+
+
+{Your_Order_Details}
+
+{Ticket_Details}
+
+[ticket_details]
+
+{Name}:[name]
+{Order_Number}:[order_number]
+{Date_Order_Placed}:[order_date]
+{Total_Cost_Of_Order}:[order_cost]
+{Total_Ticket_Purchased}:[total_tickets]
+
+{Your_Purchase_SubjectTo}(Terms_And_Conditions){and}(Privacy_Policy)
+
+
+1.(Print_Your_Ticket) 2.(Download_Our_App) 3.(Enjoy_The_tour)
+{Print_Your_Ticket_Text}
+{Download_Your_App_Text}
+{Enjoy_The_tour_Text}
+
+
+{SMS_Ticket_Title}
+{SMS_Ticket_Text}
+
+
+{Contact}
+{Contact_Intro}
+[Contact_Info]
+
+
+[BB_Footer_By_CityAndLanguage]

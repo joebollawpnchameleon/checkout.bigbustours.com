@@ -116,6 +116,7 @@
     <Compile Include="Implementation\CountryService.cs" />
     <Compile Include="Implementation\CurrencyService.cs" />
     <Compile Include="Implementation\DBLoggerService.cs" />
+    <Compile Include="Implementation\EmailService.cs" />
     <Compile Include="Implementation\ImageDbService.cs" />
     <Compile Include="Implementation\ImageService.cs" />
     <Compile Include="Implementation\LocalizationService.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="Infrastructure\ICommonPciService.cs" />
     <Compile Include="Infrastructure\ICountryService.cs" />
     <Compile Include="Infrastructure\ICurrencyService.cs" />
+    <Compile Include="Infrastructure\IEmailService.cs" />
     <Compile Include="Infrastructure\IImageDbService.cs" />
     <Compile Include="Infrastructure\IImageService.cs" />
     <Compile Include="Infrastructure\ILocalizationService.cs" />

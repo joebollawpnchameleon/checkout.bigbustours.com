@@ -53,7 +53,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -75,11 +77,25 @@
     <Compile Include="UnitTests\ServiceTests\BasketServiceTest.cs" />
     <Compile Include="UnitTests\ServiceTests\CheckoutServiceTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitTests\ServiceTests\EmailSenderTest.cs" />
+    <Compile Include="UnitTests\ServiceTests\NotificationServiceTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\bigbus.checkout.data\bigbus.checkout.data.csproj">
+      <Project>{f6f52659-8ca0-422c-86bd-e4e3c36c3643}</Project>
+      <Name>bigbus.checkout.data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\bigbus.checkout\bigbus.checkout.csproj">
       <Project>{47A7ECA8-E025-485B-B297-F3576625CC22}</Project>
       <Name>bigbus.checkout</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{48cb3218-6258-4c7e-94b6-dd00237d9a1d}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Services\Services.csproj">
+      <Project>{7a109c22-9a3a-459d-9b2d-9834b35776b8}</Project>
+      <Name>Services</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +105,9 @@
   <ItemGroup>
     <Folder Include="IntegrationTests\" />
     <Folder Include="UnitTests\RepositoryTests\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestFiles\eng-standard.html" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

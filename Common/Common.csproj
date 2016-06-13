@@ -67,6 +67,7 @@
     <Compile Include="Model\Customer.cs" />
     <Compile Include="Model\CustomerSession.cs" />
     <Compile Include="Model\EcrOrderLineData.cs" />
+    <Compile Include="Model\EmailStruct.cs" />
     <Compile Include="Model\FrontEndNavigationItem.cs" />
     <Compile Include="Model\GenericHttpCacheProvider.cs" />
     <Compile Include="Model\Interfaces\ICacheProvider.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Model\Pci\PciModels.cs" />
     <Compile Include="Model\Pci\Status.cs" />
     <Compile Include="Model\ReturnStructure.cs" />
+    <Compile Include="Model\SmtpSettings.cs" />
     <Compile Include="Model\TimeZoneComparer.cs" />
     <Compile Include="Model\TimeZoneInformation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
