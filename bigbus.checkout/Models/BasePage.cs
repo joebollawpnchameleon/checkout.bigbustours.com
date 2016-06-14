@@ -69,7 +69,7 @@ namespace bigbus.checkout.Models
         public string BaseUrl { get { return ConfigurationManager.AppSettings["BaseUrl"]; } }
         public string BarCodeDir { get { return ConfigurationManager.AppSettings["BarCodeDir"]; } }
         public string QrCodeDir { get { return ConfigurationManager.AppSettings["QrCodeDir"]; } }
-
+        public string EmailTemplatePath { get { return ConfigurationManager.AppSettings["EmailTemplatePath"]; } }
         public string LiveEcrEndPoint
         {
             get { return ConfigurationManager.AppSettings["LiveEcrEndPoint"]; }
@@ -351,6 +351,44 @@ namespace bigbus.checkout.Models
             }
         }
 
+        private bool GetTemplate(OrderConfirmationEmailRequest request)
+        {
+            var siteTemlate = NotificationService.GetSiteEmailTemplate(MicrositeId, CurrentLanguageId);
+
+            if (siteTemlate == null)
+            {
+                Log("Site template not found BasePage => GetTemplate() id:" + _externalSessionId);
+                return false;
+            }
+
+            //populate trip advisor and trust pilot variables
+            request.TripAdvisorLink = siteTemlate.TripAdvisorLink;
+            request.TrustPilotLink = siteTemlate.TrustPilotLink;
+
+            //attempt to get related email template
+            var template = NotificationService.GetEmailTemplate(siteTemlate.EmailTemplateId.ToString());
+
+            if(template == null)
+            {
+                Log("Email template not found BasePage => GetTemplate() id:" + siteTemlate.EmailTemplateId);
+                return false;
+            }
+
+            var htmlFilePath = Server.MapPath(EmailTemplatePath + template.ContentFile);
+
+            using (var reader = File.OpenText(htmlFilePath)) // Path to your 
+            {
+                request.HtmlBody = reader.ReadToEnd();
+            }
+
+            if (string.IsNullOrEmpty(request.HtmlBody) || request.HtmlBody.Length < 200)
+            {
+                Log("Email template return invalid body BasePage => GetTemplate() id:" + siteTemlate.EmailTemplateId);
+                return false;
+            }
+            return true;
+        }
+
         public void SendOrderConfirmationEmail(Order order, Session session)
         {
             if (order == null)
@@ -362,7 +400,6 @@ namespace bigbus.checkout.Models
             var defaultRootUrl = ConfigurationManager.AppSettings["BaseUrl"];
             var eVoucherLink = (string.IsNullOrEmpty(rootUrl) ? defaultRootUrl : rootUrl) + "/" +
                                string.Format(ConfigurationManager.AppSettings["View.Voucher"], order.Id);
-
             var bornUrlRoot = string.Format(ConfigurationManager.AppSettings["BornBaseInsecureUrl"], CurrentLanguageId,
                 MicrositeId);
 
@@ -393,6 +430,11 @@ namespace bigbus.checkout.Models
                 CityNumber = ConfigurationManager.AppSettings[string.Format("{0}_Telephone", MicrositeId)],
                 CityEmail = ConfigurationManager.AppSettings[string.Format("{0}_Email", MicrositeId)]
             };
+
+            var templateSuccessful = GetTemplate(request);
+
+            if (!templateSuccessful)
+                return;
 
             var result = NotificationService.CreateOrderConfirmationEmail(request);
 

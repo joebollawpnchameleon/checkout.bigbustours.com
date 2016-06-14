@@ -15,7 +15,7 @@ namespace bigbus.checkout.data.Model
 
         public string Name { get; set; }
 
-        public string Body { get; set; }
+        public string ContentFile { get; set; }
 
         public string Title { get; set; }
 

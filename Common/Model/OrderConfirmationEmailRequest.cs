@@ -27,5 +27,6 @@ namespace Common.Model
         public string TripAdvisorLink { get; set; }
         public string CityNumber{get;set;}
         public string CityEmail{get;set;}
+        public string HtmlBody { get; set; }
     }
 }

@@ -327,6 +327,7 @@
     </None>
     <Content Include="SiteMaster.Master" />
     <Content Include="packages.config" />
+    <Content Include="TestingBeforeLive\EmailTestSend.aspx" />
     <Content Include="ViewVoucher.aspx" />
     <Content Include="Voucher.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -684,6 +685,13 @@
     </Compile>
     <Compile Include="SiteMaster.Master.designer.cs">
       <DependentUpon>SiteMaster.Master</DependentUpon>
+    </Compile>
+    <Compile Include="TestingBeforeLive\EmailTestSend.aspx.cs">
+      <DependentUpon>EmailTestSend.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="TestingBeforeLive\EmailTestSend.aspx.designer.cs">
+      <DependentUpon>EmailTestSend.aspx</DependentUpon>
     </Compile>
     <Compile Include="ViewVoucher.aspx.cs">
       <DependentUpon>ViewVoucher.aspx</DependentUpon>

@@ -14,26 +14,32 @@ namespace Services.Implementation
             return true;
         }
 
+        #region testing only
+        public Email GetEmail(string toAddress)
+        {
+            return
+                EmailRepository.GetSingle(
+                    x => x.ToAddresses.Equals(toAddress, StringComparison.CurrentCultureIgnoreCase));
+        }
+        #endregion
+
+        public virtual EmailTemplate GetEmailTemplate(string templateId)
+        {
+            return EmailTemplateRepository.GetSingle(x => x.Id.ToString().Equals(templateId, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public virtual MicrositeEmailTemplate GetSiteEmailTemplate(string micrositeId, string languageId)
+        {
+            return MicrositeEmailRepository.GetSingle(x =>
+                  x.MicrositeId.Equals(micrositeId, StringComparison.CurrentCultureIgnoreCase)
+                  && x.LanguageId.Equals(languageId, StringComparison.CurrentCultureIgnoreCase));    
+        }
+
         public virtual string CreateOrderConfirmationEmail(OrderConfirmationEmailRequest request)
         {
-            var siteTemlate = MicrositeEmailRepository.GetSingle(x =>
-                    x.MicrositeId.Equals(request.CityName, StringComparison.CurrentCultureIgnoreCase)
-                    && x.LanguageId.Equals(request.LanguageId, StringComparison.CurrentCultureIgnoreCase));
-
-            if (siteTemlate == null)
-                return "Microsite Email template not found!";
-
-            request.TripAdvisorLink = siteTemlate.TripAdvisorLink;
-            request.TrustPilotLink = siteTemlate.TrustPilotLink;
-
-            var template = EmailTemplateRepository.GetSingle(x => x.Id.Equals(siteTemlate.EmailTemplateId));
-
-            if (template == null)
-                return "Email template not found!";
-
             var email = new Email
             {
-                 HTMLBody = FillEmailVariables(template.Body, request),
+                 HTMLBody = FillEmailVariables(request),
                  DateCreated = DateTime.Now,
                  Subject = request.EmailSubject,
                  FromAddress = request.SenderEmail,
@@ -48,11 +54,12 @@ namespace Services.Implementation
         }
         
 
-        public static string FillEmailVariables(string emailContent, OrderConfirmationEmailRequest request)
+        public static string FillEmailVariables(OrderConfirmationEmailRequest request)
         {
-            var sbTemp = new StringBuilder(emailContent);
+            var sbTemp = new StringBuilder(request.HtmlBody);
 
             sbTemp
+                .Replace("[Email_Subject]", request.EmailSubject)
                 .Replace("[Customer_First_Name]", request.ReceiverFirstname)
                 .Replace("[City_Name]", request.CityName)
                 .Replace("[Order_Number]", request.OrderNumber)
