@@ -13,6 +13,8 @@
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
+        public string OrderId { get; set; }
+
         [StringLength(100)]
         public string FromAddress { get; set; }
 

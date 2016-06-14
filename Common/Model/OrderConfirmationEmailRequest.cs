@@ -10,7 +10,9 @@ namespace Common.Model
         public string CityName { get; set; }
         public string LanguageId { get; set; }
         public string OrderNumber{get;set;}
+        public string OrderId { get; set; }
         public string ViewAndPrintTicketLink{get;set;}
+        public string ViewInBrowserLink { get; set; }
         public string UserFullName{get;set;}
         public string DateOfOrder{get;set;}
         public string OrderTotal{get;set;}

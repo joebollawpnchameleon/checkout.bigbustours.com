@@ -23,6 +23,16 @@ namespace Services.Implementation
         }
         #endregion
 
+        public Email GetEmailById(string emailId)
+        {
+            return EmailRepository.GetSingle(x => x.Id.ToString().Equals(emailId, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public Email GetEmailByOrderId(string orderId)
+        {
+            return EmailRepository.GetSingle(x => x.OrderId.Equals(orderId, StringComparison.CurrentCultureIgnoreCase));
+        }
+
         public virtual EmailTemplate GetEmailTemplate(string templateId)
         {
             return EmailTemplateRepository.GetSingle(x => x.Id.ToString().Equals(templateId, StringComparison.CurrentCultureIgnoreCase));
@@ -45,7 +55,8 @@ namespace Services.Implementation
                  FromAddress = request.SenderEmail,
                  ToAddresses = request.ReceiverEmail,
                  PriorityLevel = 3,
-                 ReadyToSend = true
+                 ReadyToSend = true,
+                 OrderId = request.OrderId
             };
 
             EmailRepository.Add(email);
@@ -59,6 +70,7 @@ namespace Services.Implementation
             var sbTemp = new StringBuilder(request.HtmlBody);
 
             sbTemp
+                .Replace("[@View_In_Browser@]", request.ViewInBrowserLink)
                 .Replace("[Email_Subject]", request.EmailSubject)
                 .Replace("[Customer_First_Name]", request.ReceiverFirstname)
                 .Replace("[City_Name]", request.CityName)

@@ -17,6 +17,10 @@ namespace Services.Infrastructure
 
         #endregion
 
+        Email GetEmailById(string emailId);
+
+        Email GetEmailByOrderId(string orderId);
+
         bool CreateHtmlEmail();
 
         string CreateOrderConfirmationEmail(OrderConfirmationEmailRequest request);

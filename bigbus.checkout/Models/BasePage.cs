@@ -428,7 +428,8 @@ namespace bigbus.checkout.Models
                 AppStoreLink = MakeAppleDownloadUrl(),
                 GooglePlayLink = MakeGooglePlayDownloadUrl(),
                 CityNumber = ConfigurationManager.AppSettings[string.Format("{0}_Telephone", MicrositeId)],
-                CityEmail = ConfigurationManager.AppSettings[string.Format("{0}_Email", MicrositeId)]
+                CityEmail = ConfigurationManager.AppSettings[string.Format("{0}_Email", MicrositeId)],
+                ViewInBrowserLink = BaseUrl + "ViewEmail.aspx?oid=" + order.Id
             };
 
             var templateSuccessful = GetTemplate(request);

@@ -328,6 +328,7 @@
     <Content Include="SiteMaster.Master" />
     <Content Include="packages.config" />
     <Content Include="TestingBeforeLive\EmailTestSend.aspx" />
+    <Content Include="ViewEmail.aspx" />
     <Content Include="ViewVoucher.aspx" />
     <Content Include="Voucher.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -692,6 +693,13 @@
     </Compile>
     <Compile Include="TestingBeforeLive\EmailTestSend.aspx.designer.cs">
       <DependentUpon>EmailTestSend.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ViewEmail.aspx.cs">
+      <DependentUpon>ViewEmail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ViewEmail.aspx.designer.cs">
+      <DependentUpon>ViewEmail.aspx</DependentUpon>
     </Compile>
     <Compile Include="ViewVoucher.aspx.cs">
       <DependentUpon>ViewVoucher.aspx</DependentUpon>
