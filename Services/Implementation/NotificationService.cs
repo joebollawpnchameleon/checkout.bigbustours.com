@@ -70,13 +70,15 @@ namespace Services.Implementation
             var sbTemp = new StringBuilder(request.HtmlBody);
 
             sbTemp
+                .Replace("[@App_Store@]", request.AppStoreLink)
+                .Replace("[@Google_Play@]", request.GooglePlayLink)
                 .Replace("[@View_In_Browser@]", request.ViewInBrowserLink)
                 .Replace("[Email_Subject]", request.EmailSubject)
                 .Replace("[Customer_First_Name]", request.ReceiverFirstname)
                 .Replace("[City_Name]", request.CityName)
                 .Replace("[Order_Number]", request.OrderNumber)
                 .Replace("[@View_And_print_ticket@]", request.ViewAndPrintTicketLink)
-                .Replace("Ticket_Details", request.TicketDetails)
+                .Replace("[Ticket_Details]", request.TicketDetails)
                 .Replace("[User_Full_Name]", request.UserFullName)
                 .Replace("[Date_Of_Order]", request.DateOfOrder)
                 .Replace("[Order_Total]", request.OrderTotal)

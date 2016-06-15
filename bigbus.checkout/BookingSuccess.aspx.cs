@@ -60,7 +60,7 @@ namespace bigbus.checkout
             ClearCheckoutCookies();
 
             //Prepare email notifications
-            SendOrderConfirmationEmail(newOrder, _session);
+            CreateOrderConfirmationEmail(newOrder);
 
             //Redirect user to order confirmation page or error
             Response.Redirect(string.Format("~/BookingCompleted.aspx?oid={0}", newOrder.Id), false);

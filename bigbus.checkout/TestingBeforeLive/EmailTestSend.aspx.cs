@@ -39,7 +39,7 @@ namespace bigbus.checkout.TestingBeforeLive
             
         }
        
-        protected void SendTopEmail(object sender, EventArgs e)
+        protected void SendTopEmailTest(object sender, EventArgs e)
         {
             var email = NotificationService.GetEmail("joe.bolla@wpnchameleon.co.uk");
             var result = EmailService.SendEmailHTML(email.ToAddresses, "Test User", email.FromAddress, "BB Admin Test",
@@ -47,6 +47,13 @@ namespace bigbus.checkout.TestingBeforeLive
 
             lbdResult.Text = result.ToString();
             lbdResult.ForeColor = result ? Color.Blue : Color.Red;
+        }
+
+        protected void CreateOrderConfirmationEmailTest(object sender, EventArgs e)
+        {
+            var order = CheckoutService.GetFullOrder("3E397EA0-CB22-46B4-84A0-7AA31CF0F29E");
+
+            CreateOrderConfirmationEmail(order);
         }
     }
 }

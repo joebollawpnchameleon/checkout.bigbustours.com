@@ -99,7 +99,7 @@ namespace bigbus.checkout
                 ClearCheckoutCookies();
 
                 //Prepare email notifications
-                SendOrderConfirmationEmail(order, _session);
+                CreateOrderConfirmationEmail(order);
 
                 bCheckoutCompleted = true;
             }

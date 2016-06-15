@@ -14,9 +14,8 @@ namespace bigbus.checkout.Tests.UnitTests.ServiceTests
     [TestClass]
     public class EmailSenderTest
     {
-        private SmtpSettings _settings;
-        private IEmailService _service;
-        private string _mailPickupDir;
+        private readonly IEmailService _service;
+
         private string LocalPath
         {
             get
@@ -27,22 +26,22 @@ namespace bigbus.checkout.Tests.UnitTests.ServiceTests
 
         public EmailSenderTest()
         {
-            _settings = new SmtpSettings
+            var settings = new SmtpSettings
             {
                 UserName = ConfigurationManager.AppSettings["SMTPUsername"],
                 Password = ConfigurationManager.AppSettings["SMTPPass"],
                 SMTPServer = ConfigurationManager.AppSettings["SMTPServerName"]
             };
 
-            _mailPickupDir = ConfigurationManager.AppSettings["MailPickupDir"];
-            _service = string.IsNullOrEmpty(_mailPickupDir)? new EmailService(_settings) : new EmailService(_settings, _mailPickupDir);
+            var mailPickupDir = ConfigurationManager.AppSettings["MailPickupDir"];
+            _service = string.IsNullOrEmpty(mailPickupDir)? new EmailService(settings) : new EmailService(settings, mailPickupDir);
         }
 
         [TestMethod]
         public void CanSendHtmlEmail()
         {            
             var htmlFilePath = Path.Combine(LocalPath.Replace(@"\bin\Debug", ""), "TestFiles", "eng-standard.html");
-            var body = string.Empty;
+            string body;
 
             using (var reader = File.OpenText(htmlFilePath)) // Path to your 
             {            

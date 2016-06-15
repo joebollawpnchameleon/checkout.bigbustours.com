@@ -235,6 +235,8 @@ namespace Services.Implementation
 
                 order.Currency = CurrencyRepository.GetSingle(x => x.Id.Equals(order.CurrencyId));
 
+                order.User = UserRepository.GetSingle(x => x.Id.Equals(order.UserId));
+
                 return order;
             }
             catch (Exception ex)

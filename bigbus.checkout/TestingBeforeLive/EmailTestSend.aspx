@@ -9,9 +9,13 @@
     
     <p>
         Send Top Email
-        <asp:Button runat="server" Text="Send Top Email" OnClick="SendTopEmail"/>
+        <asp:Button runat="server" Text="Send Top Email" OnClick="SendTopEmailTest"/>
         
         <asp:Label runat="server" id="lbdResult"></asp:Label>
+    </p>
+    
+    <p>
+        Test Order ConfirmationEmail <asp:Button runat="server" Text="Create email" OnClick="CreateOrderConfirmationEmailTest"/>
     </p>
 </asp:Content>
 <asp:Content ID="Content5" ContentPlaceHolderID="cphFooterScriptAndStylesheets" runat="server">

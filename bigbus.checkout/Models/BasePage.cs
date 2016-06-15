@@ -389,7 +389,7 @@ namespace bigbus.checkout.Models
             return true;
         }
 
-        public void SendOrderConfirmationEmail(Order order, Session session)
+        public void CreateOrderConfirmationEmail(Order order)
         {
             if (order == null)
                 return;
@@ -403,7 +403,7 @@ namespace bigbus.checkout.Models
             var bornUrlRoot = string.Format(ConfigurationManager.AppSettings["BornBaseInsecureUrl"], CurrentLanguageId,
                 MicrositeId);
 
-            var currency = CurrencyService.GetCurrencyById(session.CurrencyId);
+            var currency = CurrencyService.GetCurrencyById(order.CurrencyId.ToString());
 
             var request = new OrderConfirmationEmailRequest
             {
@@ -414,9 +414,10 @@ namespace bigbus.checkout.Models
                 CityName = MicrositeId,
                 LanguageId = CurrentLanguageId,
                 OrderNumber = order.OrderNumber.ToString(),
+                OrderId = order.Id.ToString(),
                 ViewAndPrintTicketLink = eVoucherLink,
                 UserFullName = order.UserName,
-                DateOfOrder = LocalizationService.GetLocalDateTime(MicrositeId).ToShortDateString(), //*** format to local date
+                DateOfOrder = LocalizationService.GetLocalDateTime(MicrositeId).ToString("dd MMM yyyy"), //*** format to local date
                 TicketDetails = FormatOrderDetails(order),
                 OrderTotal = currency.Symbol + order.Total,
                 TicketQuantity = order.TotalQuantity.ToString(),
@@ -439,7 +440,8 @@ namespace bigbus.checkout.Models
 
             var result = NotificationService.CreateOrderConfirmationEmail(request);
 
-            Log(result);
+            if (!string.IsNullOrEmpty(result))
+              Log(result);
         }
 
         private string FormatOrderDetails(Order order)
@@ -459,7 +461,7 @@ namespace bigbus.checkout.Models
             foreach (var line in orderLines)
             {
                 line.Ticket = line.Ticket ?? TicketService.GetTicketById(line.TicketId.ToString());
-                returnString.AppendLine(line.Ticket.Name + " - " + line.TicketQuantity + " " + line.TicketType + " ticket(s) - ");
+                returnString.AppendLine(line.Ticket.Name + " - " + line.TicketQuantity + " " + line.TicketType + " ticket(s)<br/>");
             }
 
             returnString.AppendLine(TranslationService.TranslateTerm("ExpectedTourDate", CurrentLanguageId) + ": " +
