@@ -78,6 +78,7 @@
     <Compile Include="Model\PhraseLanguage.cs" />
     <Compile Include="Model\Session.cs" />
     <Compile Include="Model\Ticket.cs" />
+    <Compile Include="Model\TicketEcrDimension.cs" />
     <Compile Include="Model\TransactionAddressPaypal.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="PlainQueries\QueryFunctions.cs" />

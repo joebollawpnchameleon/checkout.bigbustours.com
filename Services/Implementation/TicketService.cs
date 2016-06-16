@@ -6,7 +6,7 @@ using Services.Infrastructure;
 
 namespace Services.Implementation
 {
-    public class TicketService : ITicketService
+    public class TicketService : BaseService, ITicketService
     {
         private readonly IGenericDataRepository<Ticket> _ticketRepository;
  
@@ -40,9 +40,12 @@ namespace Services.Implementation
 
         public virtual Ticket GetTicketByProductDimensionUid(string prodDimentionUid)
         {
-            return
-                _ticketRepository.GetSingle(x => !string.IsNullOrEmpty(x.EcrProductDimensionId)
-                    && x.EcrProductDimensionId.Trim().Equals(prodDimentionUid.Trim(), StringComparison.CurrentCultureIgnoreCase));
+            var ecrTicketDimension = EcrProductDimensionRepository.GetSingle(x => x.Id.ToString().Equals(prodDimentionUid, StringComparison.CurrentCultureIgnoreCase));
+
+            if (ecrTicketDimension == null)
+                return null;
+            
+            return GetTicketById(ecrTicketDimension.TicketId);
         }
 
         public virtual Ticket GetTicketById(string id)

@@ -111,6 +111,7 @@ namespace bigbus.checkout
             builder.RegisterType<GenericDataRepository<NavigationItemLanguage>>().As<IGenericDataRepository<NavigationItemLanguage>>();
             builder.RegisterType<GenericDataRepository<DiallingCode>>().As<IGenericDataRepository<DiallingCode>>();
             builder.RegisterType<GenericDataRepository<BornBasketDump>>().As<IGenericDataRepository<BornBasketDump>>();
+            builder.RegisterType<GenericDataRepository<TicketEcrDimension>>().As<IGenericDataRepository<TicketEcrDimension>>();
 
             builder.RegisterType<TranslationService>().As<ITranslationService>();
             builder.RegisterType<CheckoutService>().As<ICheckoutService>();

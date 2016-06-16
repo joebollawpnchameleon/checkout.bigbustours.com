@@ -113,10 +113,7 @@ namespace bigbus.checkout.data.Model
 
         [StringLength(30)]
         public string EcrProductDuration { get; set; }
-
-        [StringLength(100)]
-        public string EcrProductDimensionId { get; set; }
-
+        
         public bool RAdultTicketEnabled { get; set; }
 
         public bool RChildTicketEnabled { get; set; }
