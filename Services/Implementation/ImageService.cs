@@ -284,7 +284,7 @@ namespace Services.Implementation
 
             try
             {
-                var generatedBarcodeBitmap = new Bitmap(105, 65);
+                var generatedBarcodeBitmap = new Bitmap(105, 65);                
 
                 //create a new graphic using the bitmap
                 var barcodeGraphic = Graphics.FromImage(generatedBarcodeBitmap);
@@ -293,7 +293,10 @@ namespace Services.Implementation
                 barcodeGraphic.Clear(Color.White);
                 //draw the barcode image on the graphic
                 barcodeGraphic.DrawImage(
-                    Zen.Barcode.BarcodeDrawFactory.Code128WithChecksum.Draw(barcode.Substring(0, 12), 40), 5, 5);
+                       Zen.Barcode.BarcodeDrawFactory.CodeEan13WithChecksum.Draw(barcode.Substring(0, 12), 40), 5, 5);
+               
+                //barcodeGraphic.DrawImage(
+                //    Zen.Barcode.BarcodeDrawFactory.Code128WithChecksum.Draw(barcode.Substring(0, 12), 40), 5, 5);
                 barcodeGraphic.Flush();
 
 

@@ -37,7 +37,10 @@ namespace bigbus.checkout
             //var name = imageFolder.FolderName;
 
             var basket = BasketService.GetLatestBasket();
-            txtCookieValue.Text = IncreaseCookieValue(basket.ExternalCookieValue);
+            if (basket != null)
+                txtCookieValue.Text = IncreaseCookieValue(basket.ExternalCookieValue);
+            else
+                txtCookieValue.Text = "001";
 
             AuthenticationService.SetCookie(ExternalBasketCookieName, SessionCookieDomain, txtCookieValue.Text);
 
@@ -52,10 +55,10 @@ namespace bigbus.checkout
 
         private string IncreaseCookieValue(string cookieValue)
         {
-            if (string.IsNullOrEmpty(cookieValue) || cookieValue.Length < 11)
+            if (string.IsNullOrEmpty(cookieValue) || cookieValue.Length < 3)
                 return string.Empty;
 
-            var val = cookieValue.Substring(19);
+            var val = cookieValue.Substring(2);
             var newval = Convert.ToInt32(val);
             newval++;
             return cookieValue.Replace(val, newval.ToString());

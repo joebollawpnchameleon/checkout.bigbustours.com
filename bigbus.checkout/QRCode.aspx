@@ -54,11 +54,19 @@
     }
 </style>
 
- <div id="wrapperdiv">
+<%-- <div id="wrapperdiv">
        <asp:Literal ID="ltDetails" runat="server"></asp:Literal>
         <asp:Image ID="QrImage"  runat="server" />
- </div>
+ </div>--%>
     
+<div id="wrapperdiv">
+    <asp:Repeater ID="rpProducts" runat="server">
+        <ItemTemplate>
+            <%# Eval("Details") %> />
+            <%# Eval("ImageHtml") %>
+        </ItemTemplate>
+    </asp:Repeater>
+</div>
 
    
 </asp:Content>

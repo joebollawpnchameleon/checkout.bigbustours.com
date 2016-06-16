@@ -97,8 +97,11 @@
 %>
 
          </div>
-          <div class="b-code">              
+          <div class="b-code" runat="server" id="dvQrcode">              
               <img alt="QR-Image"  src='<%= HandlerUrl + "?w=200&h=200&extension=" + ImageExtension + "&micrositeid=" + MicrositeId + "&imageid=" + ImageId   %>'/>
-            </div>
+          </div>
+          <div class="b-code" runat="server" id="dvBarcode">              
+              <img alt="BarCode-Image" border="1" src='<%= VoucherTicket.BarCodeImageUrl  %>'/>
+          </div>
         </div>
     </div>

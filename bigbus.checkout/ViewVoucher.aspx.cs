@@ -10,10 +10,7 @@ namespace bigbus.checkout
     public partial class ViewVoucher : BasePage
     {
         public IClientRenderService PdfRendererService { get; set; }
-
-        public ILocalizationService LocalizationService { get; set; }
-
-
+       
         protected void Page_Load(object sender, EventArgs eventArgs)
         {
             AddMetas(@"<meta name=""robots"" content=""noindex"">");

@@ -1,6 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UserDetails.ascx.cs" Inherits="bigbus.checkout.Controls.WebUserControl1" %>
     
-    <p class="form__mandatory">* <%= ParentPage.GetTranslation("FormFieldMandatoryMessage") %></p>
+    <p class="form__mandatory">* <%= ParentPage.GetTranslation("Youmustfillinthefieldsmarkedwithx") %></p>
     
     <div class="form__errors">
         <div>

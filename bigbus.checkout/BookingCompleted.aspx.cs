@@ -315,11 +315,11 @@ namespace bigbus.checkout
                         }
 
                         var mobiletext =
-                            @"Thank you for booking with Big Bus Tours
-                                Order number: {0}
-                                {1} tickets in total
-                                Click the link below to view your ticket
-                                {2}";
+                            "Thank you for booking with Big Bus Tours" + Environment.NewLine +
+                            "Order number: {0}" + Environment.NewLine +
+                            "{1} tickets in total" + Environment.NewLine +
+                            "Click the link below to view your ticket" + Environment.NewLine +
+                            "{2}";
 
                         mobiletext = string.Format(mobiletext, _order.OrderNumber, _order.TotalQuantity, tinyUrl);
 

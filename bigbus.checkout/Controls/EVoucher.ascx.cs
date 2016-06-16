@@ -56,9 +56,18 @@ namespace bigbus.checkout.Controls
         protected void Page_Load(object sender, EventArgs e)
         {
             if (VoucherTicket != null && Order != null)
+            {
                 LoadVoucherDetails();
+                DisplayCodeImage();
+            }
         }
+        
 
+        private void DisplayCodeImage()
+        {
+            dvQrcode.Visible = VoucherTicket.UseQrCode;
+            dvBarcode.Visible = !VoucherTicket.UseQrCode;
+        }
         protected void LoadVoucherDetails()
         {
             _ticket = VoucherTicket.Ticket;
@@ -69,11 +78,19 @@ namespace bigbus.checkout.Controls
             VoucherPrice = Order.Currency.Symbol + VoucherTicket.OrderLines.Sum(x => x.NettOrderLineValue ?? (decimal)0.0);
             OrderTotal = Order.Currency.Symbol + Order.Total;
 
-           // MakeSureImageExists();
-            ImageWidth = VoucherTicket.ImageData.Width;
-            ImageHeight = VoucherTicket.ImageData.Height;
-            ImageId = VoucherTicket.ImageData.ImageId.ToString();
-            ImageExtension = VoucherTicket.ImageData.Type;
+            // MakeSureImageExists();
+            if (VoucherTicket.UseQrCode)
+            {
+                ImageWidth = VoucherTicket.ImageData.Width;
+                ImageHeight = VoucherTicket.ImageData.Height;
+                ImageId = VoucherTicket.ImageData.ImageId.ToString();
+                ImageExtension = VoucherTicket.ImageData.Type;
+            }
+            //else
+            //{
+            //    ImageId = VoucherTicket.ImageData.ImageId.ToString();
+            //    ImageExtension = VoucherTicket.ImageData.Type;
+            //}
 
             TicketLine1 = GetTicketLine1();
 
@@ -108,8 +125,6 @@ namespace bigbus.checkout.Controls
                 PaymentType = "CC Number:";
                 CcNumber = !string.IsNullOrEmpty(Order.CcLast4Digits) ? Order.CcLast4Digits : "****";
             }
-            
-
         }
 
         private string GetTicketLine1()
@@ -138,6 +153,9 @@ namespace bigbus.checkout.Controls
 
             if (!orderLines.Any())
                 return 0;
+
+            if (!VoucherTicket.UseQrCode)
+                return 1;
 
             var sum = orderLines.Sum(x => x.TicketQuantity);
 

@@ -58,6 +58,8 @@ namespace bigbus.checkout
                 else if (ecrVersionId == (int) EcrVersion.One)
                     LoadEcr1Tickets(selectedOrderLines);
 
+
+                PopulateVoucherTickets();
             }
             
 
@@ -117,7 +119,7 @@ namespace bigbus.checkout
                     );
             }
 
-            PopulateVoucherTickets();
+            //PopulateVoucherTickets();
         }
 
         private void LoadVoucherTicketWithBarcode(List<OrderLine> orderLines)

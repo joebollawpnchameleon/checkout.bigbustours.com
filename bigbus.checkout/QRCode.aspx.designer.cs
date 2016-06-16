@@ -13,21 +13,12 @@ namespace bigbus.checkout {
     public partial class QrCodeTestWebform {
         
         /// <summary>
-        /// ltDetails control.
+        /// rpProducts control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal ltDetails;
-        
-        /// <summary>
-        /// QrImage control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Image QrImage;
+        protected global::System.Web.UI.WebControls.Repeater rpProducts;
     }
 }
