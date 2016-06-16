@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SiteMaster.Master" AutoEventWireup="true" CodeBehind="EmailTestSend.aspx.cs" Inherits="bigbus.checkout.TestingBeforeLive.EmailTestSend" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/SiteMaster.Master" AutoEventWireup="true" CodeBehind="EmailTest.aspx.cs" Inherits="bigbus.checkout.TestingBeforeLive.EmailTestSend" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="IePlaceHolder" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cphHeaderScriptAndStylesheets" runat="server">
