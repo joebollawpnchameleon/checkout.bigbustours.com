@@ -1,6 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="QRCode.aspx.cs"  MasterPageFile="~/BlankTemplate.Master" Inherits="bigbus.checkout.QrCodeTestWebform" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="main_body" runat="server">
+<asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     
  <style type="text/css">
     #wrapperdiv {
@@ -18,7 +18,7 @@
             font-weight: bold;
         }
 
-    #ctl00_main_body_QRImage {
+    #ctl00_main_body_QRImage, .qr-code {
         width: 80%;
         height: auto;
         border-width: 0;
@@ -60,12 +60,20 @@
  </div>--%>
     
 <div id="wrapperdiv">
-    <asp:Repeater ID="rpProducts" runat="server">
-        <ItemTemplate>
-            <%# Eval("Details") %> />
-            <%# Eval("ImageHtml") %>
-        </ItemTemplate>
-    </asp:Repeater>
+    <div>
+    
+        <%= IntroDetails %>
+
+        <asp:Repeater ID="rpProducts" runat="server">
+            <ItemTemplate>
+                <%# Eval("Details") %> 
+                <%# Eval("ImageHtml") %>
+            </ItemTemplate>
+        </asp:Repeater>
+    
+        <%= BottomDetails %>
+
+    </div>
 </div>
 
    

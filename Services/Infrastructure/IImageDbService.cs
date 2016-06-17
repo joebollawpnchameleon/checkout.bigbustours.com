@@ -26,5 +26,7 @@ namespace Services.Infrastructure
         ImageMetaData GetImageMetaDataByName(string name);
 
         QrImageSaveStatus GenerateQrImage(int orderNumber, byte[] imageChartBytes, string micrositeId);
+
+        EcrOrderLineBarcode GetBarcodeByTicketAndOrder(string orderLineId);
     }
 }

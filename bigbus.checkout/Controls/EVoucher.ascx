@@ -102,6 +102,7 @@
           </div>
           <div class="b-code" runat="server" id="dvBarcode">              
               <img alt="BarCode-Image" border="1" src='<%= VoucherTicket.BarCodeImageUrl  %>'/>
+              <div><%= VoucherTicket.BarCode %></div>
           </div>
         </div>
     </div>

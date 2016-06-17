@@ -162,7 +162,8 @@ namespace bigbus.checkout
                         Ticket = ticket,
                         BarCodeFixQuantity = 1,
                         BarCodeImageUrl = barcodePath,
-                        ValidTicketName = validTicketName
+                        ValidTicketName = validTicketName,
+                        BarCode = barcode.GeneratedBarcode
                     }
                 );
             }

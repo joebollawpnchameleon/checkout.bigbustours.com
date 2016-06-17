@@ -83,6 +83,7 @@ namespace Services.Implementation
                 OrderNumber = orderNumber,
                 TicketId = ticketId,
                 ImageId = newImageMetaData.ImageId.Value
+                //Add orderId here
             };
 
             _ecrBarcodeRepository.Add(barcode);
@@ -184,6 +185,12 @@ namespace Services.Implementation
         public IList<EcrOrderLineBarcode> GetOrderEcrBarcodes(int orderNumber)
         {
            return _ecrBarcodeRepository.GetList(x => x.OrderNumber == orderNumber);
+        }
+
+        public EcrOrderLineBarcode GetBarcodeByTicketAndOrder(string orderLineId)
+        {
+            return _ecrBarcodeRepository.GetSingle(x => 
+                x.OrderLineId.Equals(orderLineId, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public virtual ImageMetaData GetImageMetaData(Guid imageGuid)

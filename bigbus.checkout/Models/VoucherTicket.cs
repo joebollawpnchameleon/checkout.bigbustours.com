@@ -20,6 +20,8 @@ namespace bigbus.checkout.Models
 
         public string BarCodeImageUrl { get; set; }
 
+        public string BarCode { get; set; }
+
         public int BarCodeFixQuantity { get; set; }
 
         public bool UseQrCode { get; set; }

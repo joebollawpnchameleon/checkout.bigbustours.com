@@ -19,6 +19,8 @@ namespace bigbus.checkout.data.Model
         
         public int OrderNumber { get; set; }
 
+        public string OrderLineId { get; set; }
+
         public Guid ImageId { get; set; }
     }
 }

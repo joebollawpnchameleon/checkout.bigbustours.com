@@ -14,68 +14,12 @@ namespace bigbus.checkout
 {
     public partial class QrCodeTestWebform : BasePage
     {
-        private void GenerateQrCodeForTimedAttractions(Order order, string orderExternalOrderId)
-        {
-            //try
-            //{
-                //var externalBarcodes = EVoucherCreationHelper.GetOrderExternalBarcodes(this, orderExternalOrderId);
+        private Order _order;
 
-                //if (externalBarcodes == null || externalBarcodes.Count < 1)
-                //    return;
+        private readonly List<ProductStruct> _allTickets = new List<ProductStruct>();
 
-                //var helper = new EVoucherCreationHelper(this, order);
-                //var firstCode = externalBarcodes.FirstOrDefault();
-
-                //dvTimeAttractions.Controls.Add(new Label { Text = firstCode.EventDate.Trim().Split()[0] + " at " + firstCode.EventTime + "<br/>" });
-
-                //foreach (var externalBarcode in externalBarcodes)
-                //{
-                //    var qrCodeFile = helper.MakeTimedAttractionQrCode(order.OrderNumber.ToString(), order.ExternalOrderId,
-                //        externalBarcode.Barcode);
-
-                //    var label = new Label
-                //    {
-                //        Text =
-                //            string.Format("<br/>1 {0} <br/>",
-                //                externalBarcode.CustomerTypeName)
-                //    };
-
-                //    var qrImage = new System.Web.UI.WebControls.Image
-                //    {
-                //        AlternateText = externalBarcode.Barcode,
-                //        ImageUrl = qrCodeFile
-                //    };
-
-                //    qrImage.Style.Add("width", "80%");
-                    //dvTimeAttractions.Controls.Add(label);
-                    //dvTimeAttractions.Controls.Add(qrImage);
-
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    Log("Failed to generate qr codes on mobile ticket for order: " + orderExternalOrderId);
-            //}
-        }
-
-        //public static List<ExternalOrderBarcode> GetOrderExternalBarcodes(BasePage page, string orderExternalOrderId)
-        //{
-        //    try
-        //    {
-        //        return
-        //            page.GetObjectFactory()
-        //                .GetListOf<ExternalOrder_Barcodes>("*ExternalOrder_Barcode(ExternalOrderId = $p0$)",
-        //                    orderExternalOrderId)
-        //                .ToList();
-        //    }
-        //    catch
-        //    {
-        //        page.Log("External Barcode retrieval failed. for orderid " + orderExternalOrderId);
-        //    }
-
-        //    return null;
-        //}
-        List<ProductStruct> AllTickets = new List<ProductStruct>();
+        public string IntroDetails { get; set; }
+        public string BottomDetails { get; set; }
 
         protected void Page_Load(object sender, EventArgs eventArgs)
         {
@@ -85,14 +29,14 @@ namespace bigbus.checkout
 
                 if (string.IsNullOrWhiteSpace(orderId)) return;
 
-                var order = CheckoutService.GetFullOrder(orderId);
+                _order = CheckoutService.GetFullOrder(orderId);
 
-                if (order == null) return;
+                if (_order == null) return;
 
-                var _orderlineData = CheckoutService.GetOrderLineDetails(orderId);
+                var orderlineData = CheckoutService.GetOrderLineDetails(orderId);
 
                 var queryVersionGroups =
-                  from detail in _orderlineData
+                  from detail in orderlineData
                   group detail by detail.NewCheckoutVersionId into versionGroup
                   orderby versionGroup.Key
                   select versionGroup;
@@ -102,11 +46,16 @@ namespace bigbus.checkout
                     return;
                 }
 
+                IntroDetails = "<p>Big Bus Tours Booking:</p><p>" +
+                    (string.IsNullOrWhiteSpace(_order.User.Title) ? "" : (_order.User.Title + " ")) +_order.User.Firstname + " " +
+                        (string.IsNullOrWhiteSpace(_order.User.Lastname) ? "" : (_order.User.Lastname + " ")) +
+                        "</p>";
+
                 foreach (var versionGroup in queryVersionGroups)
                 {
                     var ecrVersionId = versionGroup.Key;
 
-                    var selectedOrderLines = order.OrderLines.Where(a => versionGroup.ToList().Any(x =>
+                    var selectedOrderLines = _order.OrderLines.Where(a => versionGroup.ToList().Any(x =>
                        x.OrderLineId.Equals(a.Id.ToString(), StringComparison.CurrentCultureIgnoreCase))).ToList();
 
                     if (ecrVersionId == (int)EcrVersion.Three)
@@ -116,7 +65,12 @@ namespace bigbus.checkout
 
 
                     //PopulateVoucherTickets();  
-                }              
+                }
+
+                BottomDetails = "";
+
+                rpProducts.DataSource = _allTickets;
+                rpProducts.DataBind();
             }
             catch (Exception e1)
             {
@@ -125,39 +79,36 @@ namespace bigbus.checkout
         }
             
 
-       private void LoadTicket(Order order, OrderLine selectedLine) {
+       private void LoadEcr3Ticket(List<OrderLine> selectedLines, Ticket ticket, MicroSite site, ImageMetaData imageData) {
 
             var sbDetails = new StringBuilder();
-            var imageHtml = @"<img style=""width:80%"" src=""{0}"" alt=""{1}"" />";
+            var imageHtml = @"<img class=""qr-code"" src=""{0}"" alt=""{1}"" />";
+           
+           foreach (var line in selectedLines)
+           {
+               sbDetails.AppendLine("<p>Open date ticket</p>");
+               sbDetails.AppendLine(string.Format("<p>{0}&nbsp;{1} ({2}{3}) {4}</p>",
+                   line.TicketQuantity, ticket.Name, site.Name, line.TicketTorA, line.TicketType));
+           }
 
-            //  var ols = order.OrderLines;
-            sbDetails.AppendLine("<div><p>Big Bus Tours Booking:<br/><br/>");
-            sbDetails.AppendLine(string.IsNullOrWhiteSpace(order.User.Title) ? "" : (order.User.Title + " "));
-            sbDetails.AppendLine(order.User.Firstname + " " +
-                    (string.IsNullOrWhiteSpace(order.User.Lastname) ? "" : (order.User.Lastname + " ")) +
-                    "<br/><br/>");
-            sbDetails.AppendLine(
-                selectedLine.TicketDate == null || selectedLine.TicketDate == DateUtil.NullDate ?
-                "Open date ticket" : selectedLine.TicketDate.Value.ToString("dd MMM yyyy") +
-                                  "<br/><br/>");
+           sbDetails.AppendLine(string.Format("<p>Order number:{0}</p>", _order.OrderNumber));
+           sbDetails.AppendLine("<p>Credit card: ***" + (!string.IsNullOrWhiteSpace(_order.CcLast4Digits) ? _order.CcLast4Digits : "N/A") + "</p>");
 
-            sbDetails.AppendLine(selectedLine.TicketQuantity + "&nbsp;" + selectedLine.Ticket.Name + 
-                        " (" + selectedLine.MicroSite.Name + " " + selectedLine.TicketTorA + ") " + selectedLine.TicketType + "<br/><br/>");
+           //*** get related ecr3 image here.
 
-            sbDetails.AppendLine("Credit card: ***" + (!string.IsNullOrWhiteSpace(order.CcLast4Digits) ? order.CcLast4Digits : "N/A") + "</p></div><br/>");
+           var imageUrl = "/QrCodeImageHandler.ashx?w=200&h=200&extension=" + imageData.Type + "&micrositeid=" +
+                          MicrositeId + "&imageid=" + imageData.ImageId;
 
-            AllTickets.Add(
+            _allTickets.Add(
                 new ProductStruct {
                     Details = sbDetails.ToString(),
-                    ImageHtml = string.Format(imageHtml, ) });
+                    ImageHtml = string.Format(imageHtml, imageUrl, "QR-Code")
+                }); //Add qr image here
         }
 
         private void LoadEcr3Tickets(List<OrderLine> orderLines)
         {
-
-            _attractionCount = orderLines.Count(a =>
-                a.TicketTorA.Equals("attraction", StringComparison.CurrentCultureIgnoreCase));
-
+          
             //get all Ecr barcodes
             var barcodes = ImageDbService.GetOrderEcrBarcodes(_order.OrderNumber);
 
@@ -167,7 +118,7 @@ namespace bigbus.checkout
                 Log("Barcodes failed to retrieve for ordernumber: " + _order.OrderNumber);
                 return;
             }
-
+            
             //group orderlines by barcode images
             foreach (var barcode in barcodes.ToList())
             {
@@ -176,7 +127,7 @@ namespace bigbus.checkout
 
                 if (!tempOrderLines.Any())
                     continue;
-
+                
                 var ticket = TicketService.GetTicketById(barcode.TicketId);
 
                 var topOrderLine = tempOrderLines.FirstOrDefault();
@@ -186,25 +137,25 @@ namespace bigbus.checkout
 
                 var microsite = SiteService.GetMicroSiteById(topOrderLine.MicrositeId);
 
-                var validTicketName = ticket.Name.ToLower().Contains(microsite.Name.ToLower())
-                    ? ticket.Name
-                    : string.Concat(microsite.Name, " ", ticket.Name);
+                var imageData = ImageDbService.GetImageMetaData(barcode.ImageId);
 
-                var attractionMetaData = ticket.ImageMetaDataId != null
-                    ? ImageDbService.GetMetaData(ticket.ImageMetaDataId.Value.ToString())
-                    : null;
+                LoadEcr3Ticket(tempOrderLines.ToList(), ticket, microsite, imageData);
 
-                MainList.Add(
-                        new VoucherTicket
-                        {
-                            UseQrCode = true,
-                            OrderLines = tempOrderLines.ToList(),
-                            Ticket = ticket,
-                            AttractionImageData = attractionMetaData,
-                            ImageData = ImageDbService.GetImageMetaData(barcode.ImageId),
-                            ValidTicketName = validTicketName
-                        }
-                    );
+                //var attractionMetaData = ticket.ImageMetaDataId != null
+                //    ? ImageDbService.GetMetaData(ticket.ImageMetaDataId.Value.ToString())
+                //    : null;
+
+                //    MainList.Add(
+                //            new VoucherTicket
+                //            {
+                //                UseQrCode = true,
+                //                OrderLines = tempOrderLines.ToList(),
+                //                Ticket = ticket,
+                //                AttractionImageData = attractionMetaData,
+                //                ImageData = ImageDbService.GetImageMetaData(barcode.ImageId),
+                //                ValidTicketName = validTicketName
+                //            }
+                //        );
             }
 
             //PopulateVoucherTickets();
