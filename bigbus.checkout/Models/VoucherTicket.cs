@@ -6,8 +6,7 @@ using Microsoft.SqlServer.Server;
 namespace bigbus.checkout.Models
 {
     public class VoucherTicket
-    {
-        
+    {        
         public Ticket Ticket { get; set; }
 
         public string ValidTicketName { get; set; }
@@ -22,6 +21,8 @@ namespace bigbus.checkout.Models
 
         public string BarCode { get; set; }
 
+        public string QrCodeImageUrl { get; set; }
+
         public int BarCodeFixQuantity { get; set; }
 
         public bool UseQrCode { get; set; }
@@ -30,7 +31,7 @@ namespace bigbus.checkout.Models
         { 
             get
             {
-                return Ticket != null && Ticket.TicketType.Equals("attraction", StringComparison.CurrentCultureIgnoreCase);
+                return Ticket != null && Ticket.IsAttraction;
             } 
         }
 
@@ -38,7 +39,7 @@ namespace bigbus.checkout.Models
         {
             get
             {
-                return Ticket != null && Ticket.TicketType.Equals("tour", StringComparison.CurrentCultureIgnoreCase);
+                return Ticket != null && Ticket.IsTour;
             }
         }
     }

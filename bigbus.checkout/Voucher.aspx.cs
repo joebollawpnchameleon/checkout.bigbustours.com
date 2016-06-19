@@ -102,23 +102,25 @@ namespace bigbus.checkout
 
                 var validTicketName = ticket.Name.ToLower().Contains(microsite.Name.ToLower())
                     ? ticket.Name
-                    : string.Concat(microsite.Name, " ", ticket.Name);
-
-                var attractionMetaData = ticket.ImageMetaDataId != null
-                    ? ImageDbService.GetMetaData(ticket.ImageMetaDataId.Value.ToString())
-                    : null;
+                    : string.Concat(microsite.Name, " ", ticket.Name);               
                     
-                MainList.Add(
-                        new VoucherTicket
-                        {
-                            UseQrCode = true,
-                             OrderLines = tempOrderLines.ToList(),
-                             Ticket = ticket,
-                             AttractionImageData = attractionMetaData,
-                             ImageData = ImageDbService.GetImageMetaData(barcode.ImageId),
-                             ValidTicketName = validTicketName
-                        }
-                    );
+                var voucherTicket =
+                    new VoucherTicket
+                    {
+                        UseQrCode = true,
+                            OrderLines = tempOrderLines.ToList(),
+                            Ticket = ticket,
+                            ImageData = ImageDbService.GetImageMetaData(barcode.ImageId),
+                            ValidTicketName = validTicketName
+                    };
+
+                //only load ticket image if we have an attraction
+                if (ticket.IsAttraction)
+                {
+                    voucherTicket.AttractionImageData = ticket.ImageMetaDataId != null
+                       ? ImageDbService.GetMetaData(ticket.ImageMetaDataId.Value.ToString())
+                       : null;
+                }
             }
 
             //PopulateVoucherTickets();
@@ -230,7 +232,27 @@ namespace bigbus.checkout
                     //make the qr image
                     var filePath = MakeAttractionQrCode(ticketOrderlines.ToList(), ticketId, _order.DateCreated);
                     //*** use file path and create the Voucher.
+                    var ticket = TicketService.GetTicketById(ticketId);
 
+                    var validTicketName = ticket.Name.ToLower().Contains(orderLineData.MicrositeName)
+                   ? ticket.Name
+                   : string.Concat(orderLineData.MicrositeName, " ", ticket.Name);
+
+                    var attractionMetaData = ticket.ImageMetaDataId != null
+                        ? ImageDbService.GetMetaData(ticket.ImageMetaDataId.Value.ToString())
+                        : null;
+
+                    MainList.Add(
+                            new VoucherTicket
+                            {
+                                UseQrCode = true,
+                                OrderLines = attractionOrderLines,
+                                Ticket = ticket,
+                                AttractionImageData = attractionMetaData,
+                                ValidTicketName = validTicketName,
+                                QrCodeImageUrl = filePath
+                            }
+                        );
                 }
             }
 

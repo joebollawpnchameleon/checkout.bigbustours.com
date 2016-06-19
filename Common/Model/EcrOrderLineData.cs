@@ -7,6 +7,8 @@ namespace Common.Model
     {
         public string MicrositeId { get; set; }
 
+        public string MicrositeName { get; set; }
+
         public string OrderLineId { get; set; }
 
         public int NewCheckoutVersionId { get; set; }
