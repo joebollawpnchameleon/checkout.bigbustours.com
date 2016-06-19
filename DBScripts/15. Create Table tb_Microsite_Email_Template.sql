@@ -1,0 +1,21 @@
+USE [BigBus]
+
+IF NOT EXISTS (SELECT 1 FROM SYS.TABLES WHERE NAME ='tb_Microsite_Email_Template')
+BEGIN
+
+	CREATE TABLE [dbo].[tb_Microsite_Email_Template](
+		[Id] [UNIQUEIDENTIFIER] NOT NULL CONSTRAINT [DF_tb_Microsite_Email_Template_Id]  DEFAULT (NEWID()),
+		[MicrositeId] [NVARCHAR](50) NOT NULL,
+		[EmailTemplateId] [UNIQUEIDENTIFIER] NOT NULL,
+		[LanguageId] [NVARCHAR](5) NOT NULL,
+		[Created] [DATETIME] NOT NULL CONSTRAINT [DF_tb_Microsite_Email_Template_Created]  DEFAULT (GETDATE()),
+		[TrustPilotLink] [NVARCHAR](1000) NULL,
+		[TripAdvisorLink] [NVARCHAR](1000) NULL,
+	 CONSTRAINT [PK_tb_Microsite_Email_Template_1] PRIMARY KEY CLUSTERED 
+	(
+		[Id] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+
+
+END

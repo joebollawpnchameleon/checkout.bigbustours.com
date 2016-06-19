@@ -1,0 +1,7 @@
+ALTER TABLE dbo.tb_ImageMetaData
+ADD CONSTRAINT DF_ID
+DEFAULT(NEWID()) FOR Id 
+
+ALTER TABLE [tb_Transaction_AddressPaypal]
+ADD CONSTRAINT DF_ID_Address_PayPal
+DEFAULT(NEWID()) FOR Id 
