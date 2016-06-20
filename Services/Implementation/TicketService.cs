@@ -53,5 +53,20 @@ namespace Services.Implementation
             return
                 _ticketRepository.GetSingle(x => x.Id.ToString().Equals(id.Trim(), StringComparison.CurrentCultureIgnoreCase));
         }
+
+        public virtual void CreateTicket(Ticket ticket)
+        {
+            try
+            {
+                var existingTicket = GetTicketByEcrSysId(ticket.NcEcrProductCode);
+
+               if(existingTicket == null)
+                    _ticketRepository.Add(ticket);
+            }
+            catch (Exception ex)
+            {
+                Log("TicketService => CreateTicket() sysid" + ticket.NcEcrProductCode + ex.Message);
+            }
+        }
     }
 }

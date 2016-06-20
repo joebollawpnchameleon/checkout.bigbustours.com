@@ -123,11 +123,13 @@ namespace bigbus.checkout.data.Model
         [Column("NCEcrProductCode")]
         public string NcEcrProductCode { get; set; }
 
+        [NotMapped]
         public bool IsTour
         {
             get { return TicketType.Equals("Tour", StringComparison.InvariantCultureIgnoreCase); }
         }
 
+        [NotMapped]
         public bool IsAttraction
         {
             get { return TicketType.Equals("Attraction", StringComparison.InvariantCultureIgnoreCase); }

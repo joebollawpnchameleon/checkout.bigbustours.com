@@ -11,5 +11,7 @@ namespace Services.Infrastructure
         Ticket GetTicketById(string id);
 
         Ticket GetTicketByProductDimensionUid(string prodDimentionUid);
+
+        void CreateTicket(Ticket ticket);
     }
 }

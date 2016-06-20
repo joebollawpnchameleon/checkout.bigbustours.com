@@ -65,6 +65,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
       <Private>True</Private>
@@ -146,6 +147,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Admin\EcrProductImport.aspx" />
     <Content Include="android-chrome-144x144.png" />
     <Content Include="android-chrome-192x192.png" />
     <Content Include="android-chrome-36x36.png" />
@@ -430,6 +432,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Admin\EcrProductImport.aspx.cs">
+      <DependentUpon>EcrProductImport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Admin\EcrProductImport.aspx.designer.cs">
+      <DependentUpon>EcrProductImport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -642,6 +651,9 @@
     <Compile Include="Helpers\IntileryTagHelper.cs" />
     <Compile Include="Helpers\LanguageHelper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
+    <Compile Include="Models\AdminBasePage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Models\BasketDisplayVM.cs" />
     <Compile Include="GenericImageHandler.ashx.cs">
       <DependentUpon>GenericImageHandler.ashx</DependentUpon>
@@ -649,6 +661,7 @@
     <Compile Include="BarCodeImageHandler.ashx.cs">
       <DependentUpon>BarCodeImageHandler.ashx</DependentUpon>
     </Compile>
+    <Compile Include="Models\ImportedTicket.cs" />
     <Compile Include="QRCode.aspx.cs">
       <DependentUpon>QRCode.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -723,6 +736,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Admin\UploadedFiles\" />
     <Folder Include="App_Data\" />
     <Folder Include="UploadedImages\" />
   </ItemGroup>
