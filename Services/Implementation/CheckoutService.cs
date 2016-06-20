@@ -286,6 +286,7 @@ namespace Services.Implementation
                 select new EcrOrderLineData
                 {
                     MicrositeId = row["Microsite_Id"].ToString(), 
+                    MicrositeName = row["MicrositeName"].ToString(),
                     NewCheckoutEcrProductCode = (row["NCEcrProductCode"] != DBNull.Value)? 
                         row["NCEcrProductCode"].ToString() : string.Empty, 
                     NewCheckoutVersionId = (row["NewCKEcrVersionId"] != DBNull.Value) ? 

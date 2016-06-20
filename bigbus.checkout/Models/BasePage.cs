@@ -257,6 +257,7 @@ namespace bigbus.checkout.Models
                 var selectedOrderLines = order.OrderLines.Where(a => versionGroup.ToList().Any(x =>
                     x.OrderLineId.Equals(a.Id.ToString(), StringComparison.CurrentCultureIgnoreCase))).ToList();
                 
+                //for API 3 everything goes to ECR
                 if (ecrVersionId == (int)EcrVersion.Three)
                 {
                     var response = Ecr3ServiceHelper.SendBookingToEcr3(order, selectedOrderLines);
@@ -286,8 +287,14 @@ namespace bigbus.checkout.Models
                     Log("BasePage => SendBookingToEcr() - Booking sent to Ecr API3");
                     
                 }
-                else if (ecrVersionId == (int)EcrVersion.One)
-                {
+
+                //*** For API one, we need to decide (discuss with ECR)
+                //if we have more than 1 ticket, city or date do not send to ECR as we will get Barcodes
+                var ticketCount = selectedOrderLines.Select(x => x.TicketId).Count();
+                var cityCount = selectedOrderLines.Select(x => x.MicrositeId).Count();
+
+                if (ecrVersionId == (int)EcrVersion.One && ticketCount == 1 && cityCount == 1)
+                {                   
                     Log("BasePage SendBookingToEcr => sending booking to ECR1");
 
                     var result = Ecr3ServiceHelper.SendBookingToEcr1(order, selectedOrderLines, versionGroup.ToList());

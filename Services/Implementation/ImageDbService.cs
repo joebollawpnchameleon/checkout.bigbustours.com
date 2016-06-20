@@ -200,7 +200,9 @@ namespace Services.Implementation
 
         public virtual ImageMetaData GetImageMetaDataByName(string name)
         {
-            return _metaDataRepository.GetSingle(x => x.Name.Equals(name,StringComparison.CurrentCultureIgnoreCase));
+            return _metaDataRepository.GetSingle(x => 
+                !string.IsNullOrEmpty(x.Name) && 
+                x.Name.Equals(name,StringComparison.CurrentCultureIgnoreCase));
         }
 
         public virtual ImageMetaData GetImageMetaData(string imageId)

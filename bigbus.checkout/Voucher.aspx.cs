@@ -11,6 +11,7 @@ using Common.Enums;
 using Common.Model;
 using Services.Implementation;
 using Services.Infrastructure;
+using System.Threading;
 
 namespace bigbus.checkout
 {
@@ -22,6 +23,7 @@ namespace bigbus.checkout
  
         public bool IsTradeTicketSale;
         public List<VoucherTicket> MainList = new List<VoucherTicket>();
+        private readonly Random _rnd = new Random();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -100,23 +102,25 @@ namespace bigbus.checkout
 
                 var validTicketName = ticket.Name.ToLower().Contains(microsite.Name.ToLower())
                     ? ticket.Name
-                    : string.Concat(microsite.Name, " ", ticket.Name);
-
-                var attractionMetaData = ticket.ImageMetaDataId != null
-                    ? ImageDbService.GetMetaData(ticket.ImageMetaDataId.Value.ToString())
-                    : null;
+                    : string.Concat(microsite.Name, " ", ticket.Name);               
                     
-                MainList.Add(
-                        new VoucherTicket
-                        {
-                            UseQrCode = true,
-                             OrderLines = tempOrderLines.ToList(),
-                             Ticket = ticket,
-                             AttractionImageData = attractionMetaData,
-                             ImageData = ImageDbService.GetImageMetaData(barcode.ImageId),
-                             ValidTicketName = validTicketName
-                        }
-                    );
+                var voucherTicket =
+                    new VoucherTicket
+                    {
+                        UseQrCode = true,
+                            OrderLines = tempOrderLines.ToList(),
+                            Ticket = ticket,
+                            ImageData = ImageDbService.GetImageMetaData(barcode.ImageId),
+                            ValidTicketName = validTicketName
+                    };
+
+                //only load ticket image if we have an attraction
+                if (ticket.IsAttraction)
+                {
+                    voucherTicket.AttractionImageData = ticket.ImageMetaDataId != null
+                       ? ImageDbService.GetMetaData(ticket.ImageMetaDataId.Value.ToString())
+                       : null;
+                }
             }
 
             //PopulateVoucherTickets();
@@ -199,11 +203,162 @@ namespace bigbus.checkout
 
         }
 
+        private void LoadAttractionsForEcr1(List<OrderLine> attractionOrderLines)
+        {
+            // group these orderlines by ticketid
+            var ticketGroups =
+            from detail in attractionOrderLines
+            group detail by detail.TicketId into ticketGroup
+            orderby ticketGroup.Key
+            select ticketGroup;
+
+            //loog through all ticket groups and make vouchers
+            foreach(var ticketgroup in ticketGroups)
+            {
+                var ticketId = ticketgroup.Key.Value.ToString();
+                var ticketOrderlines = attractionOrderLines.Where(x => 
+                    x.TicketId.Value.ToString().Equals(ticketId, StringComparison.CurrentCultureIgnoreCase)
+                    );
+
+                //since they all have the same ticket lest get the first one to work with
+                var topOrderLine = ticketOrderlines.FirstOrDefault();
+                //get corresponding site data
+                var orderLineData = _orderlineData.FirstOrDefault(x =>
+                    x.OrderLineId.Equals(topOrderLine.Id.ToString(),
+                    StringComparison.CurrentCultureIgnoreCase));
+                //only generate qr code if site supports qr code
+                if (orderLineData.UseQrCode)
+                {
+                    //make the qr image
+                    var filePath = MakeAttractionQrCode(ticketOrderlines.ToList(), ticketId, _order.DateCreated);
+                    //*** use file path and create the Voucher.
+                    var ticket = TicketService.GetTicketById(ticketId);
+
+                    var validTicketName = ticket.Name.ToLower().Contains(orderLineData.MicrositeName)
+                   ? ticket.Name
+                   : string.Concat(orderLineData.MicrositeName, " ", ticket.Name);
+
+                    var attractionMetaData = ticket.ImageMetaDataId != null
+                        ? ImageDbService.GetMetaData(ticket.ImageMetaDataId.Value.ToString())
+                        : null;
+
+                    MainList.Add(
+                            new VoucherTicket
+                            {
+                                UseQrCode = true,
+                                OrderLines = attractionOrderLines,
+                                Ticket = ticket,
+                                AttractionImageData = attractionMetaData,
+                                ValidTicketName = validTicketName,
+                                QrCodeImageUrl = filePath
+                            }
+                        );
+                }
+            }
+
+           
+        }
+
+        public string MakeAttractionQrCode(List<OrderLine> ticketOrderLines, string ticketId, DateTime ticketDate)
+        {
+            try
+            {
+                var filePath = QrCodeDir + _order.OrderNumber +
+                    ticketId + ticketDate.ToString("ddMMyyyy") + ".png";
+
+                var fi = new FileInfo(Server.MapPath(filePath));
+
+                if (!fi.Exists)
+                {
+                    string qrcode = GetAttractionQrCode(ticketOrderLines ,ticketId, ticketDate);
+
+                    if (!qrcode.Trim().Equals(string.Empty))
+                    {
+                        var imageBytes = ImageService.DownloadImageFromUrl(qrcode);                       
+                        var oimg = System.Drawing.Image.FromStream(new MemoryStream(imageBytes));
+
+                        oimg.Save(fi.FullName);
+                        oimg.Dispose();
+                    }
+                }
+
+                return filePath;
+            }
+            catch(Exception ex)
+            {
+                Log("Voucher.aspx.cs => akeAttractionQrCode() failed - orderid: " + _order.Id + "  ex: " + ex.Message);
+                return string.Empty;
+            }
+        }
+       
+        private string GetAttractionQrCode(List<OrderLine> attractOrderLines, string ticketId, DateTime ticketDate)
+        {
+            if (string.IsNullOrWhiteSpace(_order.AuthCodeNumber))
+            {
+                lock (_rnd)
+                {
+                    Thread.Sleep(20);
+                    string num = string.Empty;
+
+                    for (int i = 0; i < 10; i++)
+                        num += _rnd.Next(0, 9);
+
+                    num = num.Substring(0, 10);
+
+                    _order.AuthCodeNumber = num;
+                    CheckoutService.SaveOrder(_order);
+                }
+            }
+
+            string productCode = string.Empty;
+
+            foreach (var orderLine in attractOrderLines)
+            {
+                var generatedBarcodes = CheckoutService.GetOrderLineGeneratedBarcodes(orderLine);
+
+                foreach (var orderLineGeneratedBarcode in generatedBarcodes)
+                {
+                    productCode += orderLineGeneratedBarcode.GeneratedBarcode + "01";
+                    int lineprice = Convert.ToInt32(orderLine.TicketCost * 100);
+                    productCode += lineprice.ToString("000000"); 
+                }                    
+            }
+
+            int orderTotal = Convert.ToInt32(_order.Total * 100);
+            string sixDigitOrderTotalString = orderTotal.ToString("000000"); // Again ensure that the string is at least 6 characters long
+            string tenDigitOrderNumber = _order.OrderNumber.ToString("0000000000"); // This time we need to ensure the string is at least 10 characters long
+            string qrCurrencyCode = _order.Currency.QrId.ToString("00"); // Ensure it's at least two characters long
+
+            string qrCodeDataString =
+                tenDigitOrderNumber +
+                _order.AuthCodeNumber +
+                qrCurrencyCode +
+                sixDigitOrderTotalString +
+                ticketDate.ToString("ddMMyyyy") +
+                productCode;
+
+            //_order.CentinelAcsurl = qrCodeDataString;
+            //_order.PersistData();
+
+                return string.Format("https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl={0}", Server.UrlEncode(qrCodeDataString));
+            
+        }
 
         private void LoadEcr1Tickets(List<OrderLine> orderLines)
         {
+            var tourOrderLines = orderLines.Where(x => x.IsTour);
+            var attractionOrderLines = orderLines.Where(x => x.IsAttraction);
+
+            if (attractionOrderLines.Any())
+            {
+                LoadAttractionsForEcr1(attractionOrderLines.ToList());
+            }
+
+            if (!tourOrderLines.Any())
+                return;
+
             var ticketGroups =
-             from detail in orderLines
+             from detail in tourOrderLines
              group detail by detail.TicketId into ticketGroup
              orderby ticketGroup.Key
              select ticketGroup;
@@ -218,7 +373,7 @@ namespace bigbus.checkout
             //if we have more than 1 ticket or more than 1 site then print barcodes automatically or site not support qr code
             if (ticketGroups.Count() > 1)
             {
-                LoadVoucherTicketWithBarcode(orderLines);
+                LoadVoucherTicketWithBarcode(tourOrderLines.ToList());
                 return;
             }
 
@@ -237,11 +392,11 @@ namespace bigbus.checkout
             //make sure this one site supports qr otherwise, do barcodes
             if (!microsite.UseQR)
             {
-                LoadVoucherTicketWithBarcode(orderLines);
+                LoadVoucherTicketWithBarcode(tourOrderLines.ToList());
                 return;
             }
 
-            LoadVoucherTicketWithQrcode(orderLines, ticket, microsite);
+            LoadVoucherTicketWithQrcode(tourOrderLines.ToList(), ticket, microsite);
 
         }
         

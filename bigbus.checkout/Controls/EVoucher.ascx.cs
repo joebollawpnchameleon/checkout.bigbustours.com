@@ -41,10 +41,11 @@ namespace bigbus.checkout.Controls
         protected int ImageHeight { get; set; }
         protected string ImageId { get; set; }
         protected string ImageExtension { get; set; }
+        protected string QrImageUrl { get; set; }
 
         private Ticket _ticket;
 
-        public string HandlerUrl
+        public string CodeImageUrl
         {
             get
             {
@@ -60,14 +61,17 @@ namespace bigbus.checkout.Controls
                 LoadVoucherDetails();
                 DisplayCodeImage();
             }
-        }
-        
+        }        
 
         private void DisplayCodeImage()
         {
+            QrImageUrl = _ticket.IsAttraction?
+                VoucherTicket.QrCodeImageUrl : CodeImageUrl + "?w=200&h=200&extension=" + ImageExtension 
+                + "&micrositeid=" + MicrositeId + "&imageid=" + ImageId;
             dvQrcode.Visible = VoucherTicket.UseQrCode;
             dvBarcode.Visible = !VoucherTicket.UseQrCode;
         }
+
         protected void LoadVoucherDetails()
         {
             _ticket = VoucherTicket.Ticket;
@@ -78,8 +82,8 @@ namespace bigbus.checkout.Controls
             VoucherPrice = Order.Currency.Symbol + VoucherTicket.OrderLines.Sum(x => x.NettOrderLineValue ?? (decimal)0.0);
             OrderTotal = Order.Currency.Symbol + Order.Total;
 
-            // MakeSureImageExists();
-            if (VoucherTicket.UseQrCode)
+            //*** MakeSureImageExists();
+            if (VoucherTicket.UseQrCode && VoucherTicket.ImageData != null)
             {
                 ImageWidth = VoucherTicket.ImageData.Width;
                 ImageHeight = VoucherTicket.ImageData.Height;
@@ -106,7 +110,7 @@ namespace bigbus.checkout.Controls
             ChildQuantity = GetQuantityByUserType("Child");
             FamilyQuantity = GetQuantityByUserType("Family");
             
-            if (VoucherTicket.AttractionImageData != null)
+            if (_ticket.IsAttraction && VoucherTicket.AttractionImageData != null)
             {
                 imgAttraction.Visible = true;
                 imgAttraction.Alt = "";
