@@ -135,6 +135,8 @@ namespace bigbus.checkout.Admin
         {
             foreach (var iticket in importedTickets)
             {
+                 var product = ecrProductList.FirstOrDefault(x => x.SysID.Equals(iticket.EcrProductSku));
+
                 var ticket = new Ticket
                 {
                     StartDate = iticket.StartDate,
@@ -174,9 +176,21 @@ namespace bigbus.checkout.Admin
                 {
                     Log("Failed to create ticket into DB ecr ticket id sysid:" + iticket.EcrProductSku);
                 }
-                else //create related product dimensions
+                else //create related product dimensions - *** leave this for later as it is not needed at this stage.
                 {
+                    //var dimensions = iticket.EcrProductDimensionList;
                     
+                    //if (product != null && dimensions.Count > 0)
+                    //{
+                    //    foreach (var dimension in product.ProductDimensions)
+                    //    {
+                    //        var ecrDimension = new TicketEcrDimension
+                    //        {
+                    //             Name = dimension.Name,
+                    //             Amount =  dimension.Prices
+                    //        };
+                    //    }    
+                    //}
                 }
             }
         }

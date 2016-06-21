@@ -68,5 +68,10 @@ namespace Services.Implementation
                 Log("TicketService => CreateTicket() sysid" + ticket.NcEcrProductCode + ex.Message);
             }
         }
+
+        public virtual void CreateTicketEcrDimension(TicketEcrDimension dimension)
+        {
+            EcrProductDimensionRepository.Add(dimension);
+        }
     }
 }

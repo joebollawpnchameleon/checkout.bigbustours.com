@@ -20,7 +20,11 @@ namespace bigbus.checkout.data.Model
 
         public string CurrencyId { get; set; }
 
-        public string ProductDimensionUID { get; set; }
+        [Column("ProductDimensionUID")]
+        public string ProductDimensionUid { get; set; }
+
+        [Column("ProductTypeUID")]
+        public string ProductTypeUid { get; set; }
 
         public string TicketId { get; set; }
 
