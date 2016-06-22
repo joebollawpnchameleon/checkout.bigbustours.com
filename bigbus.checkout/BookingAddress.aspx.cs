@@ -285,7 +285,7 @@ namespace bigbus.checkout
         public void RedirectToPciLandingPage()
         {
             var subSite = SubSite.Equals("international", StringComparison.OrdinalIgnoreCase) ? "london" : SubSite;
-            Response.Redirect(string.Format(PciDomain, CurrentLanguageId, subSite)  + PciLandingPagePath);
+            Response.Redirect(string.Format(PciDomain, subSite)  + PciLandingPagePath);
         }
 
         #endregion

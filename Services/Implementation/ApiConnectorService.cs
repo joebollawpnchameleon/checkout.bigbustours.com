@@ -26,7 +26,32 @@ namespace Services.Implementation
             _endPoint = endPoint;
             _apiPath = apiPath;
         }
-        
+
+        public string GetJsonFromApi(string url)
+        {
+            try
+            {
+                var result = string.Empty;
+                var client = new HttpClient();
+                var task = client.GetAsync(url)
+                  .ContinueWith((taskwithresponse) =>
+                  {
+                      var response = taskwithresponse.Result;
+                      var jsonString = response.Content.ReadAsStringAsync();
+                      jsonString.Wait();
+
+                      result = jsonString.Result;
+                  });
+
+                task.Wait();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return string.Empty;
+            }
+        }
+
         //*** make sure you padd cookievalue here.
         public BornBasket GetExternalBasketByCookie(string cookieValue)
         {
@@ -36,8 +61,9 @@ namespace Services.Implementation
             {
                 LoggerService.LogItem("Retrieving basket for external sessionid: " + cookieValue, cookieValue);
 
+                var finalUrl = string.Format(_fullUrl, cookieValue);
                 var client = new HttpClient();
-                var task = client.GetAsync(_fullUrl)
+                var task = client.GetAsync(finalUrl)
                   .ContinueWith((taskwithresponse) =>
                   {
                       var response = taskwithresponse.Result;

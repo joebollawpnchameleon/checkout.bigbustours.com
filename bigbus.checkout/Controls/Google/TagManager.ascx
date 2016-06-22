@@ -2,32 +2,11 @@
 <%--https://support.google.com/tagmanager/answer/3002596?hl=en-GB--%>
 <asp:placeholder runat="server" ID="ecommerceTracking">
 <script type="text/javascript">
-    dataLayer = [
-        {
-            'transactionId': '<%=TransactionId%>',
-            'transactionAffiliation': '<%=HttpUtility.HtmlEncode(TransactionAffiliation)%>',
-            'transactionTotal': '<%=TransactionTotal%>',
-            'transactionTax': '<%=TransactionTax%>',
-            'transactionShipping': '<%=TransactionShipping%>',
-            'currencyCode': '<%=TransactionCurrency%>',
-            <asp:repeater ID="products" runat="server">
-            <HeaderTemplate>'transactionProducts':
-            [</HeaderTemplate><ItemTemplate>
-                {
-                    'sku': '<%# HttpUtility.HtmlEncode(Eval("Ticket.Name")) %>',
-                    'name': '<%# HttpUtility.HtmlEncode(Eval("TicketType")) %> - <%# HttpUtility.HtmlEncode(Eval("Ticket.Name")) %>',
-                    'category': '<%# Eval("TicketTOrA") %>',
-                    'price': '<%# Eval("TicketCost") %>',
-                    'quantity': '<%# Eval("TicketQuantity") %>'
-                }</ItemTemplate><SeparatorTemplate>,
-                </SeparatorTemplate><FooterTemplate>
+    <%= GetTagManagerScript() %>
 
-            ]</FooterTemplate></asp:repeater>
-        }
-            ];
-
-    var currencyCode = '<%=TransactionCurrency%>';
+    var currencyCode = '<%=BaseCurrencyCode%>';
 </script>
+
 </asp:placeholder><!-- Google Tag Manager -->
 <noscript>
     <iframe src="//www.googletagmanager.com/ns.html?id=GTM-KNQPVV" height="0" width="0" style="display: none; visibility: hidden"></iframe>

@@ -7,6 +7,8 @@ namespace Services.Infrastructure
     public interface IApiConnectorService
     {
         BornBasket GetExternalBasketByCookie(string cookieValue);
-      
+
+        string GetJsonFromApi(string url);
+
     }
 }

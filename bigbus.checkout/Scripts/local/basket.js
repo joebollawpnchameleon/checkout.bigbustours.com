@@ -1,5 +1,6 @@
 $(document).ready(function () {
-  var toggle = $('.js-toggle-basket');
+    var toggle = $('.js-toggle-basket');
+    
   var basket = $('.basket__container');
   $(toggle).on('click', function(e) {
     e.preventDefault();
@@ -9,6 +10,7 @@ $(document).ready(function () {
   // $('.form__input-date').datepicker();
 
   if (!Modernizr.touchevents || !Modernizr.inputtypes.date) {
+      
     $('input[type=date]')
       .attr('type', 'text')
       .datepicker({
@@ -19,5 +21,5 @@ $(document).ready(function () {
         prevText: ""
     });
   }
-
+  
 });

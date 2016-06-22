@@ -24,7 +24,7 @@ namespace Services.Implementation
          {
              using (var client = new HttpClient())
              {
-                 client.BaseAddress = new Uri(string.Format(_pciEndPoint, language, microSiteId));
+                 client.BaseAddress = new Uri(string.Format(_pciEndPoint, microSiteId));
                  client.DefaultRequestHeaders.Accept.Clear();
                  client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -38,7 +38,7 @@ namespace Services.Implementation
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(string.Format(_pciEndPoint, language, microSiteId));
+                client.BaseAddress = new Uri(string.Format(_pciEndPoint, microSiteId));
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -53,7 +53,7 @@ namespace Services.Implementation
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(string.Format(_pciEndPoint, language, microSiteId));
+                client.BaseAddress = new Uri(string.Format(_pciEndPoint, microSiteId));
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
