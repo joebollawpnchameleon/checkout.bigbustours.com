@@ -14,6 +14,7 @@ namespace Common.Model.Pci
         public BasketLine[] Items { get; set; }
         public User User { get; set; }
         public int Status { get; set; }
+        public string CountryCode { get; set; }
     }
 
     public class User

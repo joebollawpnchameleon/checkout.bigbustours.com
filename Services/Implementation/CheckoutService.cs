@@ -190,7 +190,9 @@ namespace Services.Implementation
                 TicketCost = basketLine.Price,
                 GrossOrderLineValue = basketLine.LineTotal + basketLine.Discount,
                 NettOrderLineValue = basketLine.LineTotal,
-                EcrProductDimensionId = basketLine.EcrProductDimensionId
+                EcrProductDimensionId = basketLine.EcrProductDimensionId,
+                ExternalCoupon = basketLine.ExternalCoupon,
+                ExternalOrder = basketLine.ExternalOrder
             };
 
             if (basketLineTicket.TicketType.Equals("attraction", StringComparison.CurrentCultureIgnoreCase))

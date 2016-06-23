@@ -91,6 +91,8 @@ namespace Services.Implementation
             if(!IsBornBasketValid(brnBasket))
                 return Guid.Empty;
 
+            var itemCount = 0;
+
             var basket = new Basket
             {
                 DateCreated = DateTime.Now,
@@ -115,8 +117,12 @@ namespace Services.Implementation
                         Price = item.UnitCost,
                         Discount = item.Discount,
                         LineTotal = item.Total,
-                        EcrProductDimensionId = item.ProductDimensionUid
+                        EcrProductDimensionId = item.ProductDimensionUid,
+                        ExternalCoupon = item.Coupon,
+                        ExternalOrder = itemCount
                     });
+
+                itemCount++;
             }
            
             _repository.Add(basket);
@@ -131,6 +137,21 @@ namespace Services.Implementation
                     x =>
                         x.ExternalCookieValue != null &&
                         x.ExternalCookieValue.Trim().Equals(externalSessionId.Trim(), StringComparison.CurrentCultureIgnoreCase));
+
+            if (basket != null && (basket.BasketLines == null || basket.BasketLines.Count == 0))
+            {
+                basket.BasketLines = _lineRepository.GetList(x => x.BasketId == basket.Id);
+            }
+
+            return basket;
+        }
+
+        public virtual Basket GetBasketById(string basketId)
+        {
+            var basket =
+                _repository.GetSingle(
+                    x =>
+                        x.Id.ToString().Equals(basketId, StringComparison.CurrentCultureIgnoreCase));
 
             if (basket != null && (basket.BasketLines == null || basket.BasketLines.Count == 0))
             {
@@ -162,7 +183,8 @@ namespace Services.Implementation
                     IsAgent = false,
                     ISOCurrencyCode = _currencyService.GetCurrencyIsoCodeById(basket.CurrencyId.ToString()), 
                     IsFromUS = _siteService.GetMicroSiteById(customer.MicroSiteId).IsUS , 
-                    Total = basket.Total
+                    Total = basket.Total,
+                    CountryCode = basket.PurchaseLanguage
                 };
 
             var itemsToAdd = new List<pci.BasketLine>();
@@ -258,5 +280,11 @@ namespace Services.Implementation
             var topBasket = all.OrderByDescending(x => x.DateCreated);
             return topBasket.FirstOrDefault();
         }
+
+        public void DeleteBasket(Basket basket)
+        {
+            _repository.Remove(basket);
+        }
+
     }
 }

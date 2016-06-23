@@ -24,11 +24,17 @@ namespace Common.Model
         [JsonProperty("discount")]
         public decimal Discount { get; set; }
 
+        [JsonProperty("coupon")]
+        public string Coupon { get; set; }
+
         [JsonProperty("total")]
         public decimal Total { get; set; }
 
         [JsonProperty("city")]
         public string Microsite { get; set; }
+
+        //[JsonProperty("ItemOrderId")]
+        //public int ItemOrder { get; set; }
 
         [JsonProperty("type")]
         public TicketVariation TicketType { get; set; }

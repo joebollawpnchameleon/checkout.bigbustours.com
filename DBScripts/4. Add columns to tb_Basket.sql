@@ -1,5 +1,22 @@
 USE BigBus
 
+
+IF NOT EXISTS(SELECT 1 FROM sys.columns WHERE  OBJECT_ID = OBJECT_ID(N'[dbo].[tb_BasketLine]') 
+         AND NAME = 'ExternalOrder' )
+BEGIN
+	ALTER TABLE dbo.tb_BasketLine
+	ADD ExternalOrder INT NULL DEFAULT(1)
+
+	PRINT('Column ExternalOrder added to table tb_BasketLine')
+END
+
+IF NOT EXISTS(SELECT * FROM sys.columns
+WHERE Name = N'ExternalCoupon' AND OBJECT_ID = OBJECT_ID(N'tb_BasketLine'))
+BEGIN
+	ALTER TABLE tb_BasketLine add ExternalCoupon NVARCHAR(100) NULL
+	PRINT 'Your Column ExternalCoupon has been created in table tb_BasketLine'
+END 
+
 IF NOT EXISTS(SELECT * FROM sys.columns
 WHERE Name = N'Price' AND OBJECT_ID = OBJECT_ID(N'tb_BasketLine'))
 BEGIN
@@ -12,6 +29,13 @@ WHERE Name = N'Discount' AND OBJECT_ID = OBJECT_ID(N'tb_BasketLine'))
 BEGIN
 	ALTER TABLE tb_BasketLine add Discount DECIMAL(18,2) NULL
 	PRINT 'Your Column Discount has been created in table tb_BasketLine'
+END 
+
+IF NOT EXISTS(SELECT * FROM sys.columns
+WHERE Name = N'ExternalCoupon' AND OBJECT_ID = OBJECT_ID(N'tb_BasketLine'))
+BEGIN
+	ALTER TABLE tb_BasketLine add ExternalCoupon NVARCHAR(100) NULL
+	PRINT 'Your Column ExternalCoupon has been created in table tb_BasketLine'
 END 
 
 IF NOT EXISTS(SELECT * FROM sys.columns

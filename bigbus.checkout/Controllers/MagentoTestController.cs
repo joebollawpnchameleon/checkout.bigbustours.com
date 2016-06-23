@@ -83,7 +83,7 @@ namespace bigbus.checkout.Controllers
             @"{
             ""items"":[
              {""name"":""360 Chicago General Admission"",""sku"":""15721"",""ProductDimensionUID"":""4ABCEC20-DF14-4942-BD74-820271AEDDA9"",""qty"":2,""price"":29.99,""discount"":0,""total"":59.98,""city"":""chicago"",""type"":""adult""},            
-            {""name"":""Art Institute General Admission"",""sku"":""15722"",""ProductDimensionUID"":""76EB57C6-DE0D-455F-9FBE-342D87ADEF6D"",""qty"":1,""price"":23.59,""discount"":3.5,""total"":20.09,""city"":""chicago"",""type"":""adult""}],
+            {""name"":""Art Institute General Admission"",""sku"":""15722"",""ProductDimensionUID"":""76EB57C6-DE0D-455F-9FBE-342D87ADEF6D"",""qty"":1,""price"":23.59,""discount"":3.5,""total"":20.09,""city"":""chicago"",""type"":""adult"",""coupon"":""Coupe-coupe""}],
             ""subtotal"":83.57,""discount"":3.5,""total"":80.07,""coupon"":""TEST-COUPON1"",""currency"":""EUR"",""language"":""eng""
             }";
 

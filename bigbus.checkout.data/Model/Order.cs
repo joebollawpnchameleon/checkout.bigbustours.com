@@ -167,6 +167,8 @@ namespace bigbus.checkout.data.Model
 
         public bool IsMobileAppOrder { get; set; }
 
+        public string ExternalCoupon { get; set; }
+
         [Column("Basket_Id")]
         public Guid? BasketId { get; set; }
 

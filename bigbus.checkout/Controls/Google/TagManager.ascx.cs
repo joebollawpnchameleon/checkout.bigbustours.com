@@ -5,14 +5,17 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Web.UI;
+using Services.Implementation;
 
 namespace bigbus.checkout.Controls.Google
 {
     public partial class TagManager : BaseControl
     {
+        private string _baseCurrencyCode;
+
         protected string BaseCurrencyCode
         {
-            get { return ConfigurationManager.AppSettings["Default.GA.Currency"]; }
+            get { return string.IsNullOrEmpty(_baseCurrencyCode)? Order.Currency.ISOCode : _baseCurrencyCode; }
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -27,7 +30,7 @@ namespace bigbus.checkout.Controls.Google
 
             // todo: if we have and orderId which does not return a valid order then log it
             if (Order == null) return;
-
+            
             // Start -> _addTrans
             TransactionId = Order.OrderNumber;
             TransactionAffiliation = string.Empty;
@@ -35,34 +38,53 @@ namespace bigbus.checkout.Controls.Google
             TransactionTax = 0;
             TransactionShipping = 0;
             TransactionCurrency = Order.Currency.ISOCode ;
-            //products.DataSource = Order.OrderLines;
-            //products.DataBind();
 
             ecommerceTracking.Visible = true;
+            _baseCurrencyCode = GetLastOrderLineCurrencyCode();
 
         }
 
-        public string MakeOrderLines(List<OrderLine> orderLines)
+        public string GetLastOrderLineCurrencyCode()
+        {
+            try
+            {
+                var orderLines = Order.OrderLines;
+                var topLine = orderLines.OrderBy(x => x.ExternalOrder).FirstOrDefault();
+
+                if (topLine == null) return null;
+
+                var microsite = BasePage.SiteService.GetMicroSiteById(topLine.MicrositeId);
+                return microsite != null ? BasePage.CurrencyService.GetCurrencyIsoCodeById(microsite.CurrencyId) : null;
+            }
+            catch (Exception ex)
+            {
+                BasePage.Log("TagManager => GetLastOrderLineCurrencyCode() failed orderId: " + Order.Id + " ex " + ex.Message);
+                return string.Empty;
+            }
+        }
+
+        public string MakeOrderLines()
         {
             var sbTemp = new StringBuilder();
+            var orderLines = Order.OrderLines;
 
             foreach (var orderline in orderLines)
             {
                 var ticket = BasePage.TicketService.GetTicketById(orderline.TicketId.ToString());
-
+               
                 if (sbTemp.Length > 10)
                 {
                     sbTemp.AppendLine(",");
                 }
 
-                sbTemp.AppendLine("{'name': '" + orderline.TicketType + " - " + ticket.Name.Replace("'", "\'") + "',");
-                sbTemp.AppendLine("'id': '" + ticket.Name.Replace("'", "\'") +"',");
+                sbTemp.AppendLine("{'name': '" + ticket.Name.Replace("'", "\'") + "',");
+                sbTemp.AppendLine("'id': '" + ticket.Id +"',");
                 sbTemp.AppendLine("'price': '" + ConvertPriceToBaseCurrency(orderline.TicketCost.Value) + "',");
-                sbTemp.AppendLine("'brand': 'Google',");
+                sbTemp.AppendLine("'brand': 'Big Bus Tours',");
                 sbTemp.AppendLine("'category': '" + orderline.TicketTorA + "',");
-                sbTemp.AppendLine("'variant': '',");
+                sbTemp.AppendLine("'variant': '" + orderline.TicketType + "',");
                 sbTemp.AppendLine("'quantity': " + orderline.TicketQuantity + ",");
-                sbTemp.AppendLine("'coupon': ''");//use coupon from BORN
+                sbTemp.AppendLine("'coupon': '" + orderline.ExternalCoupon + "'");//use coupon from BORN
                 sbTemp.AppendLine(" }");
             }
 
@@ -74,18 +96,21 @@ namespace bigbus.checkout.Controls.Google
            
             try
             {
+                var coupon = string.Empty;
+
                 return @"dataLayer.push({                                            
                     'ecommerce': {
-                        'purchase': {
+                    'currencyCode': '" + TransactionCurrency + "'," +                                                    
+                        @"'purchase': {
                             'actionField': {
                                 'id': '" + TransactionId + "'," + Environment.NewLine +
-                             "'affiliation': '" + TransactionAffiliation + "'," + Environment.NewLine +
-                             "'revenue': '" + ConvertPriceToBaseCurrency(TransactionTotal) + "'," + Environment.NewLine +
-                             "'tax':'" + ConvertPriceToBaseCurrency(TransactionTax) + "'," + Environment.NewLine +
-                             "'shipping': '" + ConvertPriceToBaseCurrency(TransactionShipping) + "'," + Environment.NewLine +
-                             "'coupon': ''" + Environment.NewLine +
+                                 "'affiliation': '" + TransactionAffiliation + "'," + Environment.NewLine +
+                                 "'revenue': '" + ConvertPriceToBaseCurrency(TransactionTotal) + "'," + Environment.NewLine +
+                                 "'tax':'" + ConvertPriceToBaseCurrency(TransactionTax) + "'," + Environment.NewLine +
+                                 "'shipping': '" + ConvertPriceToBaseCurrency(TransactionShipping) + "'," + Environment.NewLine +
+                                 "'coupon': '" + Order.ExternalCoupon + "'" + Environment.NewLine +
                              @"},                    
-                            'products': [" + MakeOrderLines(Order.OrderLines.ToList()) + @"]
+                            'products': [" + MakeOrderLines() + @"]
                         }
                     }
                 });";
@@ -101,11 +126,10 @@ namespace bigbus.checkout.Controls.Google
         {
             try
             {
-                var baseCurrencyCode = ConfigurationManager.AppSettings["Default.GA.Currency"];
-                if (TransactionCurrency.Equals(baseCurrencyCode, StringComparison.CurrentCultureIgnoreCase))
+                if (TransactionCurrency.Equals(BaseCurrencyCode, StringComparison.CurrentCultureIgnoreCase))
                     return price;
 
-                var baseCurrencyConfigValue = Convert.ToDecimal(ConfigurationManager.AppSettings["GA." + baseCurrencyCode]);
+                var baseCurrencyConfigValue = Convert.ToDecimal(ConfigurationManager.AppSettings["GA." + BaseCurrencyCode]);
                 var currencyConfigValue = Convert.ToDecimal(ConfigurationManager.AppSettings["GA." + TransactionCurrency]);
 
                 var convertedPrice = (baseCurrencyConfigValue*price)/ currencyConfigValue;
@@ -121,7 +145,6 @@ namespace bigbus.checkout.Controls.Google
         }
 
         public Order Order { get; set; }
-
         public string OrderId { get; set; }
 
         public int TransactionId { get; set; }

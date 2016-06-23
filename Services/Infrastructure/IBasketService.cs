@@ -17,6 +17,8 @@ namespace Services.Infrastructure
 
         Basket GetBasketBySessionId(string externalSessionId);
 
+        Basket GetBasketById(string basketId);
+
         bool ConnectUserToBasket(Guid userId, Guid basketId);
 
         Common.Model.Pci.Basket GetPciBasket(Customer customer, Basket basket);
@@ -24,5 +26,7 @@ namespace Services.Infrastructure
         PayPalOrder BuildPayPalOrder(Basket basket);
 
         Basket GetLatestBasket();
+
+        void DeleteBasket(Basket basket);
     }
 }

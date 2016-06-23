@@ -46,15 +46,17 @@ namespace bigbus.checkout
             //first check if we don't already have this basket saved
             var dbBasket = BasketService.GetBasketBySessionId(externalSessionId);
 
-            if (dbBasket != null)
+            if (dbBasket != null)// if basket is there, update it simply.
             {
-                Log("BookingAddress => LoadBasket().Basket Found Basket Id: " + dbBasket.Id);
-                var currency = CurrencyService.GetCurrencyById(dbBasket.CurrencyId.ToString());
-                TotalSummary = currency.Symbol + dbBasket.Total;
+                BasketService.DeleteBasket(dbBasket);
 
-                Log("BookingAddress => LoadBasket().Displaying Basket Id: " + dbBasket.Id);
-                DisplayBasketDetails(dbBasket, ucBasketDisplay, currency.Symbol);
-                return;
+                //Log("BookingAddress => LoadBasket().Basket Found Basket Id: " + dbBasket.Id);
+                //var currency = CurrencyService.GetCurrencyById(dbBasket.CurrencyId.ToString());
+                //TotalSummary = currency.Symbol + dbBasket.Total;
+
+                //Log("BookingAddress => LoadBasket().Displaying Basket Id: " + dbBasket.Id);
+                //DisplayBasketDetails(dbBasket, ucBasketDisplay, currency.Symbol);
+                //return;
             }
 
             Log("BookingAddress => LoadBasket().New basket needs retrieval from API. ExternalSessionId: " + externalSessionId);

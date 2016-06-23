@@ -66,6 +66,10 @@ namespace bigbus.checkout.data.Model
         [StringLength(100)]
         public string EcrProductDimensionId { get; set; }
 
+        public string ExternalCoupon { get; set; }
+
+        public int? ExternalOrder { get; set; }
+
         public decimal? Price { get; set; }
 
         public decimal? Discount { get; set; }
