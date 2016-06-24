@@ -33,7 +33,7 @@ namespace bigbus.checkout.Controls.Google
             
             // Start -> _addTrans
             TransactionId = Order.OrderNumber;
-            TransactionAffiliation = string.Empty;
+            TransactionAffiliation = "Big Bus Tours Ticket Store";
             if (Order.Total != null) TransactionTotal = Order.Total.Value;
             TransactionTax = 0;
             TransactionShipping = 0;
@@ -96,11 +96,9 @@ namespace bigbus.checkout.Controls.Google
            
             try
             {
-                var coupon = string.Empty;
-
                 return @"dataLayer.push({                                            
                     'ecommerce': {
-                    'currencyCode': '" + TransactionCurrency + "'," +                                                    
+                    'currencyCode': '" + BaseCurrencyCode + "'," +                                                    
                         @"'purchase': {
                             'actionField': {
                                 'id': '" + TransactionId + "'," + Environment.NewLine +
