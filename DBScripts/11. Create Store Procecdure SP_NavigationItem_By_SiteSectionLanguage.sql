@@ -1,3 +1,9 @@
+IF EXISTS (SELECT * FROM sys.objects 
+                WHERE object_id = OBJECT_ID(N'[dbo].[SP_NavigationItem_By_SiteSectionLanguage]') 
+                  AND type in (N'P', N'PC'))
+
+DROP PROCEDURE [dbo].[SP_NavigationItem_By_SiteSectionLanguage]
+GO
 
 Create PROC SP_NavigationItem_By_SiteSectionLanguage
 

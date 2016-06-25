@@ -23,6 +23,9 @@ SELECT TOP 1 @EngNYTemplateId = Id FROM dbo.tb_EmailTemplate WHERE Name = 'Order
 SELECT TOP 1 @SpaNYTemplateId = Id FROM dbo.tb_EmailTemplate WHERE Name = 'Order Confirmation Spanish NewYork'
 SELECT TOP 1 @DeuNYTemplateId = Id FROM dbo.tb_EmailTemplate WHERE Name = 'Order Confirmation Deu New York'
 
+IF EXISTS (SELECT 1 FROM dbo.tb_Microsite_Email_Template WHERE MicrositeId = 'philadelphia' AND LanguageId = 'eng')
+	RETURN;
+
 INSERT INTO dbo.tb_Microsite_Email_Template
         ( 
           MicrositeId ,

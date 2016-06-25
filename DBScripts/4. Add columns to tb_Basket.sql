@@ -20,7 +20,7 @@ END
 IF NOT EXISTS(SELECT * FROM sys.columns
 WHERE Name = N'Price' AND OBJECT_ID = OBJECT_ID(N'tb_BasketLine'))
 BEGIN
-	ALTER TABLE tb_BasketLine add Price DECIMAL(18,2) NULL
+	ALTER TABLE tb_BasketLine add Price DECIMAL(18,2) NOT NULL DEFAULT 0.0
 	PRINT 'Your Column Price has been created in table tb_BasketLine'
 END 
 

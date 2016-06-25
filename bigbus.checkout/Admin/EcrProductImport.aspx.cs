@@ -120,6 +120,12 @@ namespace bigbus.checkout.Admin
 
                 parser.Close();
 
+                //make sure last generated ticket gets added
+                if (!importedTicketList.Contains(previousTicket))
+                {
+                    importedTicketList.Add(previousTicket);
+                }
+
                 CreateNewTicketsInDb(importedTicketList, productList);
 
                 return importedTicketList;
