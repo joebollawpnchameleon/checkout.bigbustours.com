@@ -14,14 +14,7 @@ namespace bigbus.checkout.data.Model
 
         public string Name { get; set; }
 
-        public string Amount { get; set; }
-
-        public string CurrencyCode { get; set; }
-
-        public string CurrencyId { get; set; }
-
-        [Column("ProductDimensionUID")]
-        public string ProductDimensionUid { get; set; }
+        public string ProductTypeSku { get; set; }
 
         [Column("ProductTypeUID")]
         public string ProductTypeUid { get; set; }

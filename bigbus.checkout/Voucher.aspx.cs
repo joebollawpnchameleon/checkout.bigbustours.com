@@ -246,7 +246,7 @@ namespace bigbus.checkout
                             new VoucherTicket
                             {
                                 UseQrCode = true,
-                                OrderLines = attractionOrderLines,
+                                OrderLines = ticketOrderlines.ToList(),
                                 Ticket = ticket,
                                 AttractionImageData = attractionMetaData,
                                 ValidTicketName = validTicketName,

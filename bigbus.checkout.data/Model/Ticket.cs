@@ -8,6 +8,7 @@ namespace bigbus.checkout.data.Model
     [Table("tb_Ticket")]
     public class Ticket
     {
+        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 

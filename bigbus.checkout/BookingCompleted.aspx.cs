@@ -34,6 +34,19 @@ namespace bigbus.checkout
             get { return _useremail; }
         }
 
+        protected string DownloadFreeAppText
+        {
+            get
+            {
+                var text = GetTranslation("ViewBusStopsDownload");
+                var appleLink = "<a href=\"" + MakeAppleDownloadUrl() + "\">App Store</a>";
+                var googlePlayLink = "<a href=\"" + MakeGooglePlayDownloadUrl() + "\">Google Play</a>";
+
+                return !string.IsNullOrEmpty(text) ?
+                    string.Format(text, appleLink, googlePlayLink, MicrositeId) : text;
+            }    
+        }
+
         public bool ShowMobile { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)

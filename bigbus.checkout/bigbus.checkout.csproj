@@ -358,6 +358,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\Ecr1ServiceRef\Dts.wsdl" />
+    <Content Include="Views\Checkout\Failure.cshtml" />
     <None Include="Web References\EcrServiceRef\Api.wsdl" />
     <None Include="Web References\EcrServiceRef\Api.xsd">
       <SubType>Designer</SubType>

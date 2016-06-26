@@ -47,5 +47,10 @@ namespace bigbus.checkout.Controllers
             Response.Redirect(string.Format("~/BookingAddressPayPal.aspx?pptoken={0}&pppayerid={1}", token, payerId));
             return null;
         }
+
+        public ActionResult Failure()
+        {
+            return View();
+        }
     }
 }

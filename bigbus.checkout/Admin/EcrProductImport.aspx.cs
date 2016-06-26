@@ -80,6 +80,7 @@ namespace bigbus.checkout.Admin
                     if (product == null)
                     {
                         Log("Product not found sysid: " + fields[1]);
+                        continue;
                     }
 
                     var dimension = new EcrProductDimension
@@ -114,12 +115,12 @@ namespace bigbus.checkout.Admin
                     }
 
                     //*** testing only please remove after
-                    //if (index == 2)
+                    //if (index == 6)
                     //    break;
                 }
 
                 parser.Close();
-
+               
                 CreateNewTicketsInDb(importedTicketList, productList);
 
                 return importedTicketList;
@@ -131,10 +132,29 @@ namespace bigbus.checkout.Admin
             }
         }
 
+        private string MatchTicketType(string originalType)
+        {
+            switch (originalType)
+            {
+                case "Attractions":
+                    return "Attraction";
+                case "Big Bus":
+                    return "Tour";
+                case "Bonus Tickets":
+                    return "BonusTicket";
+                default:
+                    return originalType;
+            }  
+        }
+
         private void CreateNewTicketsInDb(List<ImportedTicket> importedTickets, Product[] ecrProductList)
         {
+            int count = 0;
+
             foreach (var iticket in importedTickets)
             {
+                count++;
+
                  var product = ecrProductList.FirstOrDefault(x => x.SysID.Equals(iticket.EcrProductSku));
 
                 var ticket = new Ticket
@@ -154,7 +174,7 @@ namespace bigbus.checkout.Admin
                     IsPackage = false,
                     EcrVersionId = (int)EcrVersion.Three,
                     NcEcrProductCode = iticket.EcrProductSku,
-                    TicketType = iticket.TicketType,
+                    TicketType = MatchTicketType(iticket.TicketType),
                     MicroSiteId = iticket.MicroSiteId,
                     Name = iticket.Name,
                     HasMobile = true
@@ -164,10 +184,25 @@ namespace bigbus.checkout.Admin
                 {
                     var len = iticket.FulfilmentInstructions.Length;
                     var ticketDetails = iticket.FulfilmentInstructions;
-
+                    
                     ticket.TicketTextLine2 = (len <= 130) ? ticketDetails : ticketDetails.Substring(0, 130);
-                    ticket.TicketTextLine3 = (len > 130) ? ticketDetails.Substring(130, 130) : string.Empty;
-                    ticket.TicketTextBottomLine = (len > 260) ? ticketDetails.Substring(260, 40) : string.Empty;
+                    len -= 130;
+
+                    if (len > 0)
+                    {
+                        ticket.TicketTextLine3 = (len <= 130)
+                            ? ticketDetails.Substring(130, len)
+                            : ticketDetails.Substring(130, 130);
+                        len -= 130;
+                    }
+
+                    if (len > 0)
+                    {
+                        ticket.TicketTextBottomLine = (len <= 40)
+                            ? ticketDetails.Substring(260, len)
+                            : ticketDetails.Substring(260, 40);
+                    }
+
                 }
 
                 TicketService.CreateTicket(ticket);
@@ -178,21 +213,32 @@ namespace bigbus.checkout.Admin
                 }
                 else //create related product dimensions - *** leave this for later as it is not needed at this stage.
                 {
-                    //var dimensions = iticket.EcrProductDimensionList;
-                    
-                    //if (product != null && dimensions.Count > 0)
-                    //{
-                    //    foreach (var dimension in product.ProductDimensions)
-                    //    {
-                    //        var ecrDimension = new TicketEcrDimension
-                    //        {
-                    //             Name = dimension.Name,
-                    //             Amount =  dimension.Prices
-                    //        };
-                    //    }    
-                    //}
+                    var dimensions = iticket.EcrProductDimensionList;
+
+                    if (product != null && dimensions.Count > 0)
+                    {
+                        foreach (var dimension in product.ProductDimensions)
+                        {
+                            if(string.IsNullOrEmpty(dimension.Name))
+                                continue;
+                            
+                            var ecrDimension = new TicketEcrDimension
+                            {
+                                Name = dimension.Name,
+                                TicketId = ticket.Id.ToString(),
+                                EcrSysId = product.SysID,
+                                ProductTypeUid = dimension.ProductUID,
+                                ProductTypeSku = dimension.SysID
+                            };
+
+                            TicketService.CreateTicketEcrDimension(ecrDimension);
+                        }
+                    }
                 }
             }
         }
+
+
+
     }
 }

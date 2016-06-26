@@ -482,7 +482,7 @@ namespace bigbus.checkout.Models
             return GetTranslation("email_Your_trip_with_BigBus_has_been_booked") + " (" + GetTranslation("email_Order_number") + ": " + orderNumber + ")";
         }
 
-        private string MakeAppleDownloadUrl()
+        protected string MakeAppleDownloadUrl()
         {
             var appleBaseUrl = ConfigurationManager.AppSettings["AppStore.Url"];
             var languageId = (AppleLanguageMaps)Enum.Parse(typeof(AppleLanguageMaps), CurrentLanguageId, true);
@@ -490,7 +490,7 @@ namespace bigbus.checkout.Models
             return string.Format(appleBaseUrl, EnumHelper.GetDescription(languageId));
         }
 
-        private string MakeGooglePlayDownloadUrl()
+        protected string MakeGooglePlayDownloadUrl()
         {
             var googlePlayBaseUrl = ConfigurationManager.AppSettings["GooglePlay.Url"];
             var languageId = (GooglePlayLanguageMaps)Enum.Parse(typeof(GooglePlayLanguageMaps), CurrentLanguageId, true);

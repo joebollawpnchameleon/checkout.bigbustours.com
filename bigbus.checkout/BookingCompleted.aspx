@@ -39,7 +39,7 @@
                     <p><%=GetTranslation("Booking_Select_Telephone")%></p>
                     <p>
                         <asp:DropDownList ID="DiallingList" runat="server" AutoPostBack="true" />
-                        <input id="CountryCode" runat="server" disabled type="text"/>
+                        <input id="CountryCode" runat="server" style="width: 100px; margin: 0 5px;" disabled type="text"/>
                         <input id="Mobile" runat="server" type="tel" class="mobileNumber" title="Mobile. This is a required field eg. 07956007121" />
                     </p>
                     <asp:Literal ID="LIMobileError" runat="server"></asp:Literal>
@@ -86,31 +86,36 @@
     <ul class="ticket-information__steps">
         <li>
             <img src="/Content/images/design/print-ticket.png">
-            <h4>1. Print your Ticket</h4>
-            <p>Click the link above to view, download and print your ticket. It will feature a code which will be checked by a Big Bus Tours staff member when you’re ready to board the bus.</p>
+            <h4>1. <%= GetTranslation("H1PrintUrTicket") %></h4>
+            <p><%= GetTranslation("ClickDownloadPrintTickets") %></p>
         </li>
         <li>
             <img src="/Content/images/design/download-app.png">
-            <h4>2. Download our Free App</h4>
-            <p>View bus stop locations, bus timetables, city maps and great things to do in [city name] with our free app – available now from the <a href="">App Store</a> or <a href="">Google Play</a>.</p>
-          </li>
+            <h4>2. <%= GetTranslation("H1DownloadFreeApp") %></h4>
+            <p>
+                <%= DownloadFreeAppText %>
+            </p>
+            <%--<p>View bus stop locations, bus timetables, city maps and great things to do in [city name] with our free app – available now from the <a href="">App Store</a> or <a href="">Google Play</a>.</p>
+       --%>   </li>
         <li>
-            <img src="/Content/images/design/enjoy-tour.png">
-            <h4>3. Enjoy the tour</h4>
-            <p>Show your printed ticket to a member of staff at one of our stops or aboard the bus. They’ll issue you a receipt that you’ll be able to use to hop on the bus throughout the validity period of your ticket.</p>
+            <img src="/Content/images/design/enjoy-tour.png"/>
+            <h4>3. <%= GetTranslation("H1EnjoyYourTour") %></h4>
+            <p><%= GetTranslation("ShowYourPrintedTicket") %></p>
         </li>
     </ul>
     <div class="ticket-information__sms">
         <div class="image-container"><img src="/Content/images/design/information.png"></div>
         <div class="copy-container">
-            <h4>Did you request your tickets to be sent via SMS?</h4>
-            <p>If you requested to have your tickets sent via SMS, remember that there is no need to print your tickets, just bring your phone with you with the ticket page open to show it to one of our on street staff who will issue you your ticket.</p>
+            <h4><%= GetTranslation("H1RequestTicketViaSms") %></h4>
+            <p><%= GetTranslation("IfYouRequestedSMS") %></p>
         </div>
     </div>
     <div class="download-app">
           <div class="copy-container">
-            <h1>Download the Big Bus Tours mobile app and enhance your sightseeing experience.</h1>
-            <p>With maps and useful information to discover the city</p><img src="/Content/images/design/app-store.png" alt="App Store"><img src="/Content/images/design/google-play.png" alt="Google Play">
+            <h1><%= GetTranslation("H1DownloadBBTour") %></h1>
+            <p>With maps and useful information to discover the city</p>
+              <a href="<%= MakeAppleDownloadUrl() %>"><img src="/Content/images/design/app-store.png" alt="App Store"/></a>
+              <a href="<%= MakeGooglePlayDownloadUrl() %>"><img src="/Content/images/design/google-play.png" alt="Google Play"/></a>
           </div>
           <div class="image-container"><img src="/Content/images/design/iphone.png"></div>
         </div>
