@@ -1,4 +1,11 @@
-Create PROC SP_Order_GetOrderLineEcrVersions
+IF EXISTS (SELECT * FROM sys.objects 
+                WHERE object_id = OBJECT_ID(N'[dbo].[SP_Order_GetOrderLineEcrVersions]') 
+                  AND type in (N'P', N'PC'))
+
+DROP PROCEDURE [dbo].[SP_Order_GetOrderLineEcrVersions]
+GO
+
+CREATE PROC SP_Order_GetOrderLineEcrVersions
 	@orderid UNIQUEIDENTIFIER
 AS
 BEGIN
@@ -13,3 +20,5 @@ BEGIN
 	WHERE Order_Id = @orderid
 
 END
+
+GO

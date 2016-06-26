@@ -34,7 +34,7 @@ namespace bigbus.checkout.Admin
                          "Content type: " +
                          FileUploader.PostedFile.ContentType + "<br><b>Uploaded Successfully";
 
-                    var importedTickets = ParseCsv(fullPath);
+                    ParseCsv(fullPath);
 
                    
                 }
@@ -120,7 +120,13 @@ namespace bigbus.checkout.Admin
                 }
 
                 parser.Close();
-               
+
+                //make sure last generated ticket gets added
+                if (!importedTicketList.Contains(previousTicket))
+                {
+                    importedTicketList.Add(previousTicket);
+                }
+
                 CreateNewTicketsInDb(importedTicketList, productList);
 
                 return importedTicketList;
