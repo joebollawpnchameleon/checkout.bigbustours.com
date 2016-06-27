@@ -59,7 +59,7 @@ namespace Services.Implementation
 
             try
             {
-                LoggerService.LogItem("Retrieving basket for external sessionid: " + cookieValue, cookieValue);
+                Log("Retrieving basket for external sessionid: " + cookieValue + " url " + _fullUrl);
 
                 var finalUrl = string.Format(_fullUrl, cookieValue);
                 var client = new HttpClient();

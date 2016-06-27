@@ -53,7 +53,9 @@ namespace Services.Implementation
         {
             using (var client = new HttpClient())
             {
+                Log("Before building end point format " + _pciEndPoint);
                 client.BaseAddress = new Uri(string.Format(_pciEndPoint, microSiteId));
+                Log("after building end point format " + _pciEndPoint);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 

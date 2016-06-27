@@ -48,15 +48,8 @@ namespace bigbus.checkout
 
             if (dbBasket != null)// if basket is there, update it simply.
             {
+                Log("Basket found. Deleting sessionid:" + externalSessionId);
                 BasketService.DeleteBasket(dbBasket);
-
-                //Log("BookingAddress => LoadBasket().Basket Found Basket Id: " + dbBasket.Id);
-                //var currency = CurrencyService.GetCurrencyById(dbBasket.CurrencyId.ToString());
-                //TotalSummary = currency.Symbol + dbBasket.Total;
-
-                //Log("BookingAddress => LoadBasket().Displaying Basket Id: " + dbBasket.Id);
-                //DisplayBasketDetails(dbBasket, ucBasketDisplay, currency.Symbol);
-                //return;
             }
 
             Log("BookingAddress => LoadBasket().New basket needs retrieval from API. ExternalSessionId: " + externalSessionId);
