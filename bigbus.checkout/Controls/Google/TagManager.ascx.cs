@@ -49,7 +49,7 @@ namespace bigbus.checkout.Controls.Google
             try
             {
                 var orderLines = Order.OrderLines;
-                var topLine = orderLines.OrderBy(x => x.ExternalOrder).FirstOrDefault();
+                var topLine = orderLines.OrderByDescending(x => x.ExternalOrder).FirstOrDefault();
 
                 if (topLine == null) return null;
 
