@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -21,6 +22,11 @@ namespace bigbus.checkout
         {
             if (!IsPostBack)
             {
+                if (ConfigurationManager.AppSettings["Testing"] == null || !ConfigurationManager.AppSettings["Testing"].Equals("1"))
+                {
+                    Response.Redirect("~/bookingaddress.aspx");
+                    return;
+                }
                 PlantCookie(sender, e);
                 LoadBasketLines();
             }
@@ -58,7 +64,7 @@ namespace bigbus.checkout
 
         protected void PostUserToDetailsPage(object sender, EventArgs e)
         {
-            AuthenticationService.SetCookie("BasketItemsSelectionTest", SessionCookieDomain, hdnSelections.Value);
+            //AuthenticationService.SetCookie(ExternalBasketCookieName, SessionCookieDomain, hdnSelections.Value);
             Response.Redirect("~/BookingAddress.aspx");
         }
         

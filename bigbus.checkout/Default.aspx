@@ -11,10 +11,12 @@
         <div>
             This is a test page for new checkout!<br/>
             Default Cookie Value:<asp:TextBox runat="server" id="txtCookieValue"></asp:TextBox>
-            
             <p>
-                Please select Products from the list below or just click 'Go to checkout' button to use default test products.
+                Click on the button below to go to checkout.
             </p>
+           <%-- <p>
+                Please select Products from the list below or just click 'Go to checkout' button to use default test products.
+            </p>--%>
             <%--Click to plant cookie <asp:Button runat="server" Text="Click" OnClick="PlantCookie"/>--%>
             <%--<asp:Button runat="server" Text="Go to checkout" OnClick="GoToCheckout" />
              <asp:LinkButton ID="LinkButton1" ValidationGroup="CreditCardCheckout"  runat="server" OnClick="GoToCheckout" CssClass="form__continue button button_red button_forward">
@@ -23,7 +25,7 @@
         </div>
         
         <div>
-            <asp:Repeater id="rptItems" runat="server">
+            <asp:Repeater id="rptItems" runat="server" Visible="False">
                 <HeaderTemplate>
                     <table style="border-collapse: collapse; width: 98%; text-align: left; margin: 20px 0;">
                     <tr>

@@ -58,10 +58,7 @@ namespace Services.Implementation
         {
             try
             {
-                var existingTicket = GetTicketByEcrSysId(ticket.NcEcrProductCode);
-
-               if(existingTicket == null)
-                    _ticketRepository.Add(ticket);
+                _ticketRepository.Add(ticket);
             }
             catch (Exception ex)
             {

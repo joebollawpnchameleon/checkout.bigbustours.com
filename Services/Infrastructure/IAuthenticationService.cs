@@ -30,5 +30,7 @@ namespace Services.Infrastructure
 
         bool SetCookie(string cookieName, string domain, string value);
 
+        string GetCookieValStr(string cookieName);
+
     }
 }

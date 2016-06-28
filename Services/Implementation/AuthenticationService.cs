@@ -71,6 +71,20 @@ namespace Services.Implementation
             return string.Empty;
         }
 
+        public string GetCookieValStr(string cookieName)
+        {
+            try
+            {
+                var cookie = HttpContext.Current.Request.Cookies[cookieName];
+                if (cookie != null) return cookie.Value;
+            }
+            catch
+            {
+                //ignore
+            }
+            return string.Empty;
+        }
+
         public virtual Session GetSession(Guid sessionId)
         {
             return _sessionRepository.GetSingle(x => x.Id == sessionId);

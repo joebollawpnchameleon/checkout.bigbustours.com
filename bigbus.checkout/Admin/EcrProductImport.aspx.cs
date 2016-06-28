@@ -155,13 +155,25 @@ namespace bigbus.checkout.Admin
 
         private void CreateNewTicketsInDb(List<ImportedTicket> importedTickets, Product[] ecrProductList)
         {
-            int count = 0;
+            var count = 0;
 
             foreach (var iticket in importedTickets)
             {
                 count++;
+                var product = ecrProductList.FirstOrDefault(x => x.SysID.Equals(iticket.EcrProductSku));
 
-                 var product = ecrProductList.FirstOrDefault(x => x.SysID.Equals(iticket.EcrProductSku));
+                if (product == null)
+                {
+                    Log("ECR Product Import: CreateNewTicketsInDb() => Product not found SKU: " + iticket.EcrProductSku);
+                    continue;
+                }
+
+                var existingTicket = TicketService.GetTicketByEcrSysId(iticket.EcrProductSku);
+
+                if (existingTicket != null)
+                {
+                    continue;
+                }
 
                 var ticket = new Ticket
                 {
@@ -242,6 +254,8 @@ namespace bigbus.checkout.Admin
                     }
                 }
             }
+
+            Log("ECR Product Import: " + count + "Products Imported.");
         }
 
 

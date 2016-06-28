@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
@@ -26,7 +27,34 @@ namespace bigbus.checkout.Controllers
         //    return new string[] { "value1", "value2" };
         //}
 
-        
+        //                @"{
+        //                ""items"":[{""name"":""London 24 hour"",""sku"":""01011"",""ProductDimensionUID"":""c4bf36f4-acf4-4da8-b8ca-f4f9ce9345a0"",""qty"":2,""price"":29.99,""discount"":0,""total"":59.98,""city"":""London"",""type"":""adult""}
+        //                ,{""name"":""London 24 hour"",""sku"":""01011"",""ProductDimensionUID"":""c4bf36f4-acf4-4da8-b8ca-f4f9ce9345a0"",""qty"":1,""price"":25.99,""discount"":5,""total"":20.99,""city"":""London"",""type"":""child""}],
+        //                ""subtotal"":85.97,""discount"":5,""total"":80.97,""coupon"":""TEST-COUPON1"",""currency"":""GBP"",""language"":""eng""
+        //                }";
+        //            @"{
+        //            ""items"":[
+        //             {""name"":""London 24 hour"",""sku"":""01011"",""ProductDimensionUID"":""c4bf36f4-acf4-4da8-b8ca-f4f9ce9345a0"",""qty"":2,""price"":29.99,""discount"":0,""total"":59.98,""city"":""London"",""type"":""adult""}
+        //            ,{""name"":""London 48 hour"",""sku"":""32033"",""ProductDimensionUID"":""E5CD49D7-3575-464F-AE3F-A093C83261BB"",""qty"":1,""price"":25.99,""discount"":5,""total"":20.99,""city"":""London"",""type"":""child""}],
+        //            ""subtotal"":85.97,""discount"":5,""total"":80.97,""coupon"":""TEST-COUPON1"",""currency"":""GBP"",""language"":""eng""
+        //            }";
+
+        //            @"{
+        //            ""items"":[
+        //             {""name"":""360 Chicago General Admission"",""sku"":""15721"",""ProductDimensionUID"":""4ABCEC20-DF14-4942-BD74-820271AEDDA9"",""qty"":2,""price"":29.99,""discount"":0,""total"":59.98,""city"":""chicago"",""type"":""adult""},            
+        //            {""name"":""Art Institute General Admission"",""sku"":""15722"",""ProductDimensionUID"":""76EB57C6-DE0D-455F-9FBE-342D87ADEF6D"",""qty"":1,""price"":23.59,""discount"":3.5,""total"":20.09,""city"":""chicago"",""type"":""adult"",""coupon"":""Coupe-coupe""}],
+        //            ""subtotal"":83.57,""discount"":3.5,""total"":80.07,""coupon"":""TEST-COUPON1"",""currency"":""EUR"",""language"":""eng""
+        //            }";
+
+        //            @"{
+        //            ""items"":[
+        //             {""name"":""London 24 hour"",""sku"":""1348"",""ProductDimensionUID"":""c4bf36f4-acf4-4da8-b8ca-f4f9ce9345a0"",""qty"":2,""price"":29.99,""discount"":0,""total"":59.98,""city"":""London"",""type"":""adult""},
+        //            {""name"":""24 Hour Day Tour"",""sku"":""1503"",""ProductDimensionUID"":""2f83ee23-b357-4f2d-b52c-bf8e32904381"",""qty"":1,""price"":21.00,""discount"":1,""total"":20.00,""city"":""abudhabi"",""type"":""Child""},            
+        //            {""name"":""Madame Tusseau"",""sku"":""32033"",""ProductDimensionUID"":""E5CD49D7-3575-464F-AE3F-A093C83261BB"",""qty"":1,""price"":23.59,""discount"":3.5,""total"":20.09,""city"":""London"",""type"":""adult""}],
+        //            ""subtotal"":104.57,""discount"":4.5,""total"":100.07,""coupon"":""TEST-COUPON1"",""currency"":""GBP"",""language"":""eng""
+        //            }";
+
+
         public static List<BornBasketItem> TestBasketItems = new List<BornBasketItem>
         {
             new BornBasketItem{ProductName = "360 Chicago General Admission", Discount = 0, Microsite = "chicago", ProductDimensionUid = "A8A795B7-5F8F-42A8-990C-27630F12AF78", Quantity = 2, Sku = "15721", TicketType = TicketVariation.Adult, UnitCost = (decimal) 24.50, Total = 49 },
@@ -67,33 +95,30 @@ namespace bigbus.checkout.Controllers
         [Http.Route("Api/MagentoTest/DumCart/")]
         public HttpResponseMessage DumCart(string id)
         {
-            var jsonString =
-                //                @"{
-                //                ""items"":[{""name"":""London 24 hour"",""sku"":""01011"",""ProductDimensionUID"":""c4bf36f4-acf4-4da8-b8ca-f4f9ce9345a0"",""qty"":2,""price"":29.99,""discount"":0,""total"":59.98,""city"":""London"",""type"":""adult""}
-                //                ,{""name"":""London 24 hour"",""sku"":""01011"",""ProductDimensionUID"":""c4bf36f4-acf4-4da8-b8ca-f4f9ce9345a0"",""qty"":1,""price"":25.99,""discount"":5,""total"":20.99,""city"":""London"",""type"":""child""}],
-                //                ""subtotal"":85.97,""discount"":5,""total"":80.97,""coupon"":""TEST-COUPON1"",""currency"":""GBP"",""language"":""eng""
-                //                }";
-                //            @"{
-                //            ""items"":[
-                //             {""name"":""London 24 hour"",""sku"":""01011"",""ProductDimensionUID"":""c4bf36f4-acf4-4da8-b8ca-f4f9ce9345a0"",""qty"":2,""price"":29.99,""discount"":0,""total"":59.98,""city"":""London"",""type"":""adult""}
-                //            ,{""name"":""London 48 hour"",""sku"":""32033"",""ProductDimensionUID"":""E5CD49D7-3575-464F-AE3F-A093C83261BB"",""qty"":1,""price"":25.99,""discount"":5,""total"":20.99,""city"":""London"",""type"":""child""}],
-                //            ""subtotal"":85.97,""discount"":5,""total"":80.97,""coupon"":""TEST-COUPON1"",""currency"":""GBP"",""language"":""eng""
-                //            }";
+            var jsonString = @"{
+                    ""items"":[
+                     {""name"":""360 Chicago General Admission"",""sku"":""15721"",""ProductDimensionUID"":""4ABCEC20-DF14-4942-BD74-820271AEDDA9"",""qty"":2,""price"":29.99,""discount"":0,""total"":59.98,""city"":""chicago"",""type"":""adult""},            
+                    {""name"":""Art Institute General Admission"",""sku"":""15722"",""ProductDimensionUID"":""76EB57C6-DE0D-455F-9FBE-342D87ADEF6D"",""qty"":1,""price"":23.59,""discount"":3.5,""total"":20.09,""city"":""chicago"",""type"":""adult"",""coupon"":""Coupe-coupe""}],
+                    ""subtotal"":83.57,""discount"":3.5,""total"":80.07,""coupon"":""TEST-COUPON1"",""currency"":""EUR"",""language"":""eng""
+                    }";
 
-            @"{
-            ""items"":[
-             {""name"":""360 Chicago General Admission"",""sku"":""15721"",""ProductDimensionUID"":""4ABCEC20-DF14-4942-BD74-820271AEDDA9"",""qty"":2,""price"":29.99,""discount"":0,""total"":59.98,""city"":""chicago"",""type"":""adult""},            
-            {""name"":""Art Institute General Admission"",""sku"":""15722"",""ProductDimensionUID"":""76EB57C6-DE0D-455F-9FBE-342D87ADEF6D"",""qty"":1,""price"":23.59,""discount"":3.5,""total"":20.09,""city"":""chicago"",""type"":""adult"",""coupon"":""Coupe-coupe""}],
-            ""subtotal"":83.57,""discount"":3.5,""total"":80.07,""coupon"":""TEST-COUPON1"",""currency"":""EUR"",""language"":""eng""
-            }";
+            //if (!string.IsNullOrEmpty(id))
+            //{
+            //    var indexArr = id.Split('-');
 
-            //            @"{
-            //            ""items"":[
-            //             {""name"":""London 24 hour"",""sku"":""1348"",""ProductDimensionUID"":""c4bf36f4-acf4-4da8-b8ca-f4f9ce9345a0"",""qty"":2,""price"":29.99,""discount"":0,""total"":59.98,""city"":""London"",""type"":""adult""},
-            //            {""name"":""24 Hour Day Tour"",""sku"":""1503"",""ProductDimensionUID"":""2f83ee23-b357-4f2d-b52c-bf8e32904381"",""qty"":1,""price"":21.00,""discount"":1,""total"":20.00,""city"":""abudhabi"",""type"":""Child""},            
-            //            {""name"":""Madame Tusseau"",""sku"":""32033"",""ProductDimensionUID"":""E5CD49D7-3575-464F-AE3F-A093C83261BB"",""qty"":1,""price"":23.59,""discount"":3.5,""total"":20.09,""city"":""London"",""type"":""adult""}],
-            //            ""subtotal"":104.57,""discount"":4.5,""total"":100.07,""coupon"":""TEST-COUPON1"",""currency"":""GBP"",""language"":""eng""
-            //            }";
+            //    if (indexArr.Length > 0)
+            //    {
+            //        var sbTemp = new StringBuilder();
+            //        foreach (var t in indexArr)
+            //        {
+            //            var test = TestBasketItems[Convert.ToInt32(t)];
+            //            var jsonResult = new JavaScriptSerializer().Serialize(test);
+
+            //            sbTemp.AppendLine(jsonResult);
+            //        }
+            //        jsonString = sbTemp.ToString();
+            //    }
+            //}
 
             JToken json = JObject.Parse(jsonString);
 
