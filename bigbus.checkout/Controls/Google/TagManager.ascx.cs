@@ -18,6 +18,14 @@ namespace bigbus.checkout.Controls.Google
             get { return string.IsNullOrEmpty(_baseCurrencyCode)? Order.Currency.ISOCode : _baseCurrencyCode; }
         }
 
+        protected string GtmCode
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["GTMCode"] ?? "GTM-KNQPVV";
+            }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             ecommerceTracking.Visible = false;
@@ -37,32 +45,14 @@ namespace bigbus.checkout.Controls.Google
             if (Order.Total != null) TransactionTotal = Order.Total.Value;
             TransactionTax = 0;
             TransactionShipping = 0;
-            TransactionCurrency = Order.Currency.ISOCode ;
+            TransactionCurrency = Order.Currency.ISOCode;
 
             ecommerceTracking.Visible = true;
-            _baseCurrencyCode = GetLastOrderLineCurrencyCode();
+            _baseCurrencyCode = Order.PurchaseMicrositeCurrencyCode;
 
         }
 
-        public string GetLastOrderLineCurrencyCode()
-        {
-            try
-            {
-                var orderLines = Order.OrderLines;
-                var topLine = orderLines.OrderByDescending(x => x.ExternalOrder).FirstOrDefault();
-
-                if (topLine == null) return null;
-
-                var microsite = BasePage.SiteService.GetMicroSiteById(topLine.MicrositeId);
-                return microsite != null ? BasePage.CurrencyService.GetCurrencyIsoCodeById(microsite.CurrencyId) : null;
-            }
-            catch (Exception ex)
-            {
-                BasePage.Log("TagManager => GetLastOrderLineCurrencyCode() failed orderId: " + Order.Id + " ex " + ex.Message);
-                return string.Empty;
-            }
-        }
-
+       
         public string MakeOrderLines()
         {
             var sbTemp = new StringBuilder();
@@ -127,10 +117,13 @@ namespace bigbus.checkout.Controls.Google
                 if (TransactionCurrency.Equals(BaseCurrencyCode, StringComparison.CurrentCultureIgnoreCase))
                     return price;
 
-                var baseCurrencyConfigValue = Convert.ToDecimal(ConfigurationManager.AppSettings["GA." + BaseCurrencyCode]);
-                var currencyConfigValue = Convert.ToDecimal(ConfigurationManager.AppSettings["GA." + TransactionCurrency]);
+                var baseCurrency = BasePage.CurrencyService.GetCurrencyByCode(BaseCurrencyCode);
+                var orderCurrency = Order.Currency;
 
-                var convertedPrice = (baseCurrencyConfigValue*price)/ currencyConfigValue;
+                var baseRate = Convert.ToDecimal(baseCurrency.ConversionRate);
+                var orderRate = Convert.ToDecimal(orderCurrency.ConversionRate);
+
+                var convertedPrice = (baseRate * price) / orderRate;
 
                 return Math.Round(convertedPrice, 2);
             }

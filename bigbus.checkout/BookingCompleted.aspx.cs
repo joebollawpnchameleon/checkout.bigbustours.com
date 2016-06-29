@@ -554,6 +554,15 @@ namespace bigbus.checkout
                 Log("UpdateAnalyticsTrackers() - " + ex.Message);
             }
 
+            try
+            {
+                CommissionJunctionTag.Order = order;
+            }
+            catch (Exception ex)
+            {
+                Log("UpdateAnalyticsTrackers() - failed for CommissionJunctionTag" + ex.Message);
+            }
+
             order.OrderConfirmationViewed = true;
             CheckoutService.SaveOrder(order);
         }

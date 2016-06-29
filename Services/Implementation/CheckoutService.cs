@@ -20,7 +20,8 @@ namespace Services.Implementation
             {
                 Guid? currencyId =  new Guid(session.CurrencyId);
                 var currency = CurrencyRepository.GetSingle(x => x.Id.Equals(currencyId));
-                var user = UserRepository.GetSingle(x => x.Id == basket.UserId);
+                var micrositeCurrency = GetCurrencyFromMicrositeId(micrositeId);
+                var user =  UserRepository.GetSingle(x => x.Id == basket.UserId);
 
                 var order = new Order
                 {
@@ -44,7 +45,9 @@ namespace Services.Implementation
                     TotalQuantity = basket.BasketLines.Sum(x => x.TicketQuantity),
                     IsMobileAppOrder = false, //check how this is populated on old system.
                     DateCreated = LocalizationService.GetLocalDateTime(micrositeId),
-                    FromNewCheckout = true
+                    FromNewCheckout = true,
+                    PurchaseMicrosite = micrositeId,
+                    PurchaseMicrositeCurrencyCode = micrositeCurrency.ISOCode
                 };
 
                 //populate order lines with existing baskets.
@@ -68,13 +71,34 @@ namespace Services.Implementation
            
         }
 
+        public Currency GetCurrencyFromMicrositeId(string micrositeId)
+        {
+            var row = QueryFunctions.DataRowFromStoredProcedure("GetMicrositeCurrency", "micrositeid",
+                    micrositeId);
+
+            return (row != null)?
+            
+                new Currency
+                {
+                    Id = (Guid) row["Id"],
+                    ISOCode = row["IsoCode"].ToString(),
+                    IsoNumericCode = row["IsoNumericCode"].ToString(),
+                    Name = row["Name"].ToString(),
+                    QrId = Convert.ToInt32(row["QrId"]),
+                    Symbol = row["Symbol"].ToString(),
+                    ConversionRate = Convert.ToDecimal(row["ConversionRate"])
+                }
+                : null;
+        }
+
         public virtual Order CreateOrderPayPal(Session session, Basket basket, User user, string clientIpAddress, string languageId, string micrositeId)
         {
             try
             {
                 Guid? currencyId = new Guid(session.CurrencyId);
                 var currency = CurrencyRepository.GetSingle(x => x.Id.Equals(currencyId));
-               
+                var micrositeCurrency = GetCurrencyFromMicrositeId(micrositeId);
+
                 var order = new Order
                 {
                     PaymentMethod = "PayPal",
@@ -96,7 +120,9 @@ namespace Services.Implementation
                     PayPalOrderId = session.PayPalOrderId,
                     PayPalPayerId = session.PayPalPayerId,
                     PayPalToken = session.PayPalToken,
-                    FromNewCheckout = true
+                    FromNewCheckout = true,
+                    PurchaseMicrosite = micrositeId,
+                    PurchaseMicrositeCurrencyCode = micrositeCurrency.ISOCode
                 };
 
                 //populate order lines with existing baskets.

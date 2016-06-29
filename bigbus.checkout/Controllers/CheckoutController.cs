@@ -14,18 +14,21 @@ namespace bigbus.checkout.Controllers
         {
             return View();
         }
-        
-        // GET: Checkout
-        public ActionResult Success()
+
+        public RedirectResult UserDetails()
         {
-            Response.Redirect("~/BookingSuccess.aspx");
-            return null;
+            return Redirect("~/BookingAddress.aspx");
+        }
+
+        // GET: Checkout
+        public RedirectResult Success()
+        {
+            return Redirect("~/BookingSuccess.aspx");
         }
 
         public ActionResult Completed(string sid)
         {
             var model = new OrderConfirmationVm {OrderId = sid};
-
             return View(model);
         }
 

@@ -11,5 +11,9 @@ namespace bigbus.checkout.data.PlainQueries
         DataSet DataSetFromStoredProcedure(string storedProcedureName, IEnumerable<SqlParameter> parameters);
 
         DataTable DataTableFromStoredProcedure(string storedProcedureName, IEnumerable<SqlParameter> parameters);
+
+        DataRow DataRowFromStoredProcedure(string storedProcedureName, IEnumerable<SqlParameter> parameters);
+
+        DataRow DataRowFromStoredProcedure(string storedProcedureName, string paramName, string paramValue);
     }
 }

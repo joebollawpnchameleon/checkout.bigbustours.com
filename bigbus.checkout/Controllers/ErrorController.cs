@@ -39,7 +39,7 @@ namespace bigbus.checkout.Controllers
             return View("StandardErrorView");
         }
 
-        public ActionResult ExternalAPiError()
+        public ActionResult ExternalAPiError(string sid)
         {
             return View("StandardErrorView");
         }

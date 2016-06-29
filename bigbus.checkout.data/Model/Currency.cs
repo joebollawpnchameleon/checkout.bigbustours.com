@@ -29,5 +29,7 @@ namespace bigbus.checkout.data.Model
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int QrId { get; set; }
+
+        public decimal ConversionRate { get; set; }
     }
 }

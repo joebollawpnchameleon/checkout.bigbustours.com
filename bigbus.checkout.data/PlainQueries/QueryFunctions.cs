@@ -83,5 +83,77 @@ namespace bigbus.checkout.data.PlainQueries
                     conn.Close();
             }
         }
+
+        public DataRow DataRowFromStoredProcedure(string storedProcedureName, IEnumerable<SqlParameter> parameters)
+        {
+            SqlConnection conn = null;
+
+            try
+            {
+                var dt = new DataTable();
+
+                using (conn = new SqlConnection(_connString))
+                {
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = storedProcedureName;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        foreach (var parameter in parameters)
+                        {
+                            cmd.Parameters.Add(parameter);
+                        }
+                        conn.Open();
+                        var reader = cmd.ExecuteReader();
+                        dt.Load(reader);
+                    }
+                }
+
+                return dt.Rows[0];
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                if (conn != null && conn.State == ConnectionState.Open)
+                    conn.Close();
+            }
+        }
+
+        public DataRow DataRowFromStoredProcedure(string storedProcedureName, string paramName, string paramValue)
+        {
+            SqlConnection conn = null;
+
+            try
+            {
+                var dt = new DataTable();
+
+                using (conn = new SqlConnection(_connString))
+                {
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = storedProcedureName;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                       
+                        cmd.Parameters.Add(new SqlParameter(paramName, paramValue));
+                        conn.Open();
+                        var reader = cmd.ExecuteReader();
+                        dt.Load(reader);
+                    }
+                }
+
+                return dt.Rows[0];
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                if (conn != null && conn.State == ConnectionState.Open)
+                    conn.Close();
+            }
+        }
     }
 }

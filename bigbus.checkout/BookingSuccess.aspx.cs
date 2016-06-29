@@ -52,7 +52,7 @@ namespace bigbus.checkout
             //result from booking must be there.
             if (result.Status != EcrResponseCodes.BookingSuccess )
             {
-                JumpToOrderCreationError(GetTranslation("Booking_failed"), " Status: " + result.Status.ToString() + " Error: " + result.ErrorMessage);
+                JumpToOrderCreationError(GetTranslation("Booking_failed"), " Status: " + result.Status + " Error: " + result.ErrorMessage);
                 return;
             }           
 

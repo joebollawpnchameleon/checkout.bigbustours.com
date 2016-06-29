@@ -211,6 +211,10 @@ namespace bigbus.checkout.data.Model
         [StringLength(100)]
         public string ExternalOrderId { get; set; }
 
+        public string PurchaseMicrosite { get; set; }
+
+        public string PurchaseMicrositeCurrencyCode { get; set; }
+
         public bool FromNewCheckout { get; set; }
 
         public virtual ICollection<OrderLine> OrderLines { get; set; }
