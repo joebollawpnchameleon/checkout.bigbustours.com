@@ -72,3 +72,4 @@ BEGIN
 	ALTER TABLE tb_Basket add PurchaseLanguage NVARCHAR(3) NULL
 	PRINT 'Your Column PurchaseLanguage has been created in table tb_Basket'
 END 
+

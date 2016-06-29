@@ -32,3 +32,17 @@ BEGIN
 	PRINT('Column ExternalOrder added to table tb_OrderLine')
 END
 
+
+IF NOT EXISTS(SELECT * FROM sys.columns
+WHERE Name = N'PurchaseMicrosite' AND OBJECT_ID = OBJECT_ID(N'tb_Order'))
+BEGIN
+	ALTER TABLE tb_Order add PurchaseMicrosite NVARCHAR(50) NULL
+	PRINT 'Your Column PurchaseMicrosite has been created in table tb_Order'
+END
+
+IF NOT EXISTS(SELECT * FROM sys.columns
+WHERE Name = N'PurchaseMicrositeCurrencyCode' AND OBJECT_ID = OBJECT_ID(N'tb_Order'))
+BEGIN
+	ALTER TABLE tb_Order add PurchaseMicrositeCurrencyCode NVARCHAR(5) NULL
+	PRINT 'Your Column PurchaseMicrositeCurrencyCode has been created in table tb_Order'
+END  
