@@ -341,6 +341,121 @@ namespace bigbus.checkout.Models
             return new EcrResult { Status = EcrResponseCodes.BookingSuccess };
         }
 
+        public string MakeAttractionQrCode(Order order, List<OrderLine> ticketOrderLines, string ticketId)
+        {
+            try
+            {
+                var filePath = QrCodeDir + order.OrderNumber +
+                    ticketId + order.DateCreated.ToString("ddMMyyyy") + ".png";
+
+                var fi = new FileInfo(Server.MapPath(filePath));
+
+                if (!fi.Exists)
+                {
+                    string qrcode = GetAttractionQrCode(order, ticketOrderLines);
+
+                    if (!qrcode.Trim().Equals(string.Empty))
+                    {
+                        var imageBytes = ImageService.DownloadImageFromUrl(qrcode);
+                        var oimg = System.Drawing.Image.FromStream(new MemoryStream(imageBytes));
+
+                        oimg.Save(fi.FullName);
+                        oimg.Dispose();
+                    }
+                }
+
+                return filePath;
+            }
+            catch (Exception ex)
+            {
+                Log("Voucher.aspx.cs => akeAttractionQrCode() failed - orderid: " + order.Id + "  ex: " + ex.Message);
+                return string.Empty;
+            }
+        }
+
+        private readonly Random _rnd = new Random();
+
+        public string GetAttractionQrCode(Order order, List<OrderLine> attractOrderLines)
+        {
+            if (string.IsNullOrWhiteSpace(order.AuthCodeNumber))
+            {
+                lock (_rnd)
+                {
+                    Thread.Sleep(20);
+                    string num = string.Empty;
+
+                    for (int i = 0; i < 10; i++)
+                        num += _rnd.Next(0, 9);
+
+                    num = num.Substring(0, 10);
+
+                    order.AuthCodeNumber = num;
+                    CheckoutService.SaveOrder(order);
+                }
+            }
+
+            var productCode = string.Empty;
+
+            foreach (var orderLine in attractOrderLines)
+            {
+                var generatedBarcodes = CheckoutService.GetOrderLineGeneratedBarcodes(orderLine);
+
+                foreach (var orderLineGeneratedBarcode in generatedBarcodes)
+                {
+                    productCode += orderLineGeneratedBarcode.GeneratedBarcode + "01";
+                    var lineprice = Convert.ToInt32(orderLine.TicketCost * 100);
+                    productCode += lineprice.ToString("000000");
+                }
+            }
+
+            var orderTotal = Convert.ToInt32(order.Total * 100);
+            var sixDigitOrderTotalString = orderTotal.ToString("000000"); // Again ensure that the string is at least 6 characters long
+            var tenDigitOrderNumber = order.OrderNumber.ToString("0000000000"); // This time we need to ensure the string is at least 10 characters long
+            var qrCurrencyCode = order.Currency.QrId.ToString("00"); // Ensure it's at least two characters long
+
+            var qrCodeDataString =
+                tenDigitOrderNumber +
+                order.AuthCodeNumber +
+                qrCurrencyCode +
+                sixDigitOrderTotalString +
+                order.DateCreated.ToString("ddMMyyyy") +
+                productCode;
+
+            return string.Format("https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl={0}", Server.UrlEncode(qrCodeDataString));
+
+        }
+
+        public VoucherTicket LoadVoucherTicketWithQrcode(Order order, List<OrderLine> orderLines, Ticket ticket, MicroSite microsite)
+        {
+            var validTicketName = ticket.Name.ToLower().Contains(microsite.Name.ToLower())
+               ? ticket.Name
+               : string.Concat(microsite.Name, " ", ticket.Name);
+
+            var attractionMetaData = ticket.ImageMetaDataId != null
+                ? ImageDbService.GetMetaData(ticket.ImageMetaDataId.Value.ToString())
+                : null;
+
+            var qrCodeImageData =GetOrderImageMetaData(order);
+
+            return
+                    new VoucherTicket
+                    {
+                        UseQrCode = true,
+                        OrderLines = orderLines,
+                        Ticket = ticket,
+                        AttractionImageData = attractionMetaData,
+                        ImageData = qrCodeImageData,
+                        ValidTicketName = validTicketName
+                    };
+
+        }
+
+        public ImageMetaData GetOrderImageMetaData(Order order)
+        {
+            return ImageDbService.GetImageMetaDataByName(string.Format(Services.Implementation.ImageDbService.QrImageNameFormat, order.OrderNumber,
+                 "Ecr"));   
+        }
+
         protected void ClearCheckoutCookies()
         {
             AuthenticationService.ExpireCookie(SessionCookieName);

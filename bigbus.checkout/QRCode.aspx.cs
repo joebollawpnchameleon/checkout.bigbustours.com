@@ -67,7 +67,13 @@ namespace bigbus.checkout
                     //PopulateVoucherTickets();  
                 }
 
-                BottomDetails = "";
+                BottomDetails = string.Format("<p>Order number:{0}</p>", _order.OrderNumber);
+
+                if (_order.PaymentMethod.Equals("paypal", StringComparison.CurrentCultureIgnoreCase))
+                    BottomDetails += "<p>Paypal</p>";
+                else
+                    BottomDetails += ("<p>Credit card: ***" + (!string.IsNullOrWhiteSpace(_order.CcLast4Digits) ? _order.CcLast4Digits : "N/A") + "</p>");
+               
 
                 rpProducts.DataSource = _allTickets;
                 rpProducts.DataBind();
@@ -81,55 +87,51 @@ namespace bigbus.checkout
 
         private void LoadEcr1Tickets(List<OrderLine> orderLines)
         {
-            //var tourOrderLines = orderLines.Where(x => x.IsTour);
-            //var attractionOrderLines = orderLines.Where(x => x.IsAttraction);
-
-            //if (attractionOrderLines.Any())
-            //{
-            //    LoadAttractionsForEcr1(attractionOrderLines.ToList());
-            //}
-
-            //if (!tourOrderLines.Any())
-            //    return;
-
-            //var ticketGroups =
-            // from detail in tourOrderLines
-            // group detail by detail.TicketId into ticketGroup
-            // orderby ticketGroup.Key
-            // select ticketGroup;
+            var ticketGroups =
+             from detail in orderLines
+             group detail by detail.TicketId into ticketGroup
+             orderby ticketGroup.Key
+             select ticketGroup;
 
 
             var sbDetails = new StringBuilder();
             var imageHtml = @"<img class=""qr-code"" src=""{0}"" alt=""{1}"" />";
 
-            foreach (var line in orderLines)
+            foreach (var ticketgroup in ticketGroups)
             {
-                var ticketName = line.IsAttraction ? line.AttractionName : TicketService.GetTicketById(line.TicketId.ToString()).Name;
+                var ticketId = ticketgroup.Key.Value.ToString();
+                var ticketOrderlines = orderLines.Where(x =>
+                    x.TicketId.Value.ToString().Equals(ticketId, StringComparison.CurrentCultureIgnoreCase)
+                    );
 
-                sbDetails.AppendLine("<p>Open date ticket</p>");
-                sbDetails.AppendLine(string.Format("<p>{0}&nbsp;{1} ({2}{3}) {4}</p>",
-                    line.TicketQuantity, ticketName, line.MicrositeId, line.TicketTorA, line.TicketType));
+                sbDetails.AppendLine("<p>Date valid: Open date ticket</p>");
+                var ticket = TicketService.GetTicketById(ticketId);
+
+                foreach (var line in ticketOrderlines)
+                {
+                    sbDetails.AppendLine(string.Format("<p>{0}&nbsp;{1} - ({2} {3}) {4}</p>",
+                        line.TicketQuantity, ticket.Name, line.MicrositeId, line.TicketTorA, line.TicketType));
+                }
+
+                var imageUrl = ticket.IsAttraction ? MakeAttractionQrCode(_order, ticketOrderlines.ToList(), ticketId) : MakeImageQrUrl();
+                
+                   
+                _allTickets.Add(
+                       new ProductStruct
+                       {
+                           Details = sbDetails.ToString(),
+                           ImageHtml = string.Format(imageHtml, imageUrl, "QR-Code")
+                       }); //Add q
+                sbDetails.Clear();
             }
-
-            sbDetails.AppendLine(string.Format("<p>Order number:{0}</p>", _order.OrderNumber));
-            sbDetails.AppendLine("<p>Credit card: ***" + (!string.IsNullOrWhiteSpace(_order.CcLast4Digits) ? _order.CcLast4Digits : "N/A") + "</p>");
-
-            //*** get related ecr1 image here.
-            //ImageDbService.GetImageMetaDataByName()
-
-            
-            //var imageUrl = line.IsAttraction ? "/QrCodeImageHandler.ashx?w=200&h=200&extension=" + imageData.Type + "&micrositeid=" +
-            //               MicrositeId + "&imageid=" + imageData.ImageId;
-
-            //_allTickets.Add(
-            //   new ProductStruct
-            //   {
-            //       Details = sbDetails.ToString(),
-            //       ImageHtml = string.Format(imageHtml, imageUrl, "QR-Code")
-            //   }); //Add q
-
-
              
+        }
+
+        private string MakeImageQrUrl()
+        {
+            var meta = GetOrderImageMetaData(_order);
+            return "/QrCodeImageHandler.ashx?w=200&h=200&extension=" + meta.Type + "&micrositeid=" +
+                       MicrositeId + "&imageid=" + meta.ImageId; 
         }
 
        private void LoadEcr3Ticket(List<OrderLine> selectedLines, Ticket ticket, MicroSite site, ImageMetaData imageData) {
