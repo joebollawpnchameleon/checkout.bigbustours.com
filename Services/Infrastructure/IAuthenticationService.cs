@@ -10,7 +10,7 @@ namespace Services.Infrastructure
 
         Guid GetSessionId(string sessionCookieName);
 
-        Guid CreateNewSession(Guid basketId, Guid currencyId, string sessionCookieDomain, string sessionCookieName);
+        Session CreateNewSession(string sessionCookieDomain, string sessionCookieName);
 
         CustomerSession PutSessionInCheckoutMode(string sessionId);
 
@@ -22,6 +22,8 @@ namespace Services.Infrastructure
 
         Session GetSession(Guid sessionId);
 
+        Session GetSession(string sessionId);
+
         void PutSessionInOrderCreationMode(Session session);
 
         void UpdateSession(Session session);
@@ -31,6 +33,8 @@ namespace Services.Infrastructure
         bool SetCookie(string cookieName, string domain, string value);
 
         string GetCookieValStr(string cookieName);
+
+        void LinkSessionToBasketAndCurrency(Session session, Guid basketId, Guid currencyId);
 
     }
 }

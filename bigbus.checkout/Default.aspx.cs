@@ -27,8 +27,10 @@ namespace bigbus.checkout
                     Response.Redirect("~/bookingaddress.aspx");
                     return;
                 }
+
+                //txtCookieValue.Text = "0%253A2%253AzdqzxUdeGzV1wCalCSxHJRizo8AtSVKi%253ABwmx0AmImyc%252FLkkGRnfhpdhbq%252B3JpOCVhdWXyHlwS9U%253D"; // GetLatestIncreasedCookieValue();
                 PlantCookie(sender, e);
-                LoadBasketLines();
+                //LoadBasketLines();
             }
         }
 
@@ -38,11 +40,16 @@ namespace bigbus.checkout
             rptItems.DataBind();
         }
 
-        protected void PlantCookie(object sender, EventArgs e)
+        protected string GetLatestIncreasedCookieValue()
         {
             var basket = BasketService.GetLatestBasket();
-            txtCookieValue.Text = basket != null ? IncreaseCookieValue(basket.ExternalCookieValue) : "001";
+            return basket != null ? IncreaseCookieValue(basket.ExternalCookieValue) : "001";
+        }
 
+        protected void PlantCookie(object sender, EventArgs e)
+        {
+            txtCookieValue.Text = GetLatestIncreasedCookieValue();
+            //txtCookieValue.Text = "0%253A2%253AzdqzxUdeGzV1wCalCSxHJRizo8AtSVKi%253ABwmx0AmImyc%252FLkkGRnfhpdhbq%252B3JpOCVhdWXyHlwS9U%253D";
             AuthenticationService.SetCookie(ExternalBasketCookieName, SessionCookieDomain, txtCookieValue.Text);
         }
 
@@ -64,7 +71,8 @@ namespace bigbus.checkout
 
         protected void PostUserToDetailsPage(object sender, EventArgs e)
         {
-            //AuthenticationService.SetCookie(ExternalBasketCookieName, SessionCookieDomain, hdnSelections.Value);
+            //var cookieVal = GetLatestIncreasedCookieValue();
+            //AuthenticationService.SetCookie(ExternalBasketCookieName, SessionCookieDomain, cookieVal);
             Response.Redirect("~/BookingAddress.aspx");
         }
         

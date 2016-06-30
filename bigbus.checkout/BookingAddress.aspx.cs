@@ -25,49 +25,47 @@ namespace bigbus.checkout
         {
             if (IsPostBack) return;
 
+            //make sure basket cookie is available otherwise show only error to user
+            if(string.IsNullOrEmpty(ExternalSessionCookieValue))
+            { 
+                //show message for empty session
+                DisplayError(GetTranslation("Session_Details_NotFound"), "External/Magento session not found!");
+                return;
+            }
+
             InitControls();
             LoadBasket();
         }
 
         protected void LoadBasket()
         {
-            //Get user basket cookie at this level.
-            var externalSessionId = AuthenticationService.GetExternalSessionId(ExternalBasketCookieName);
-            
-            if (string.IsNullOrEmpty(externalSessionId))
-            {
-                //show message for empty session
-                DisplayError(GetTranslation("Session_Details_NotFound"), "External/Magento session not found!");
-                return;
-            }
-
-            Log("BookingAddress => LoadBasket().External cookie picked up BORN SessionId: " + externalSessionId + " Going to retrieve basket from DB.");
+            Log("BookingAddress => LoadBasket().External cookie picked up BORN SessionId: " + ExternalSessionCookieValue + " Going to retrieve basket from DB.");
 
             //first check if we don't already have this basket saved
-            var dbBasket = BasketService.GetBasketBySessionId(externalSessionId);
+            var dbBasket = BasketService.GetBasketBySessionId(ExternalSessionCookieValue);
 
             if (dbBasket != null)// if basket is there, update it simply.
             {
-                Log("Basket found. Deleting sessionid:" + externalSessionId);
+                Log("Basket found. Deleting sessionid:" + ExternalSessionCookieValue);
                 BasketService.DeleteBasket(dbBasket);
             }
 
-            Log("BookingAddress => LoadBasket().New basket needs retrieval from API. ExternalSessionId: " + externalSessionId);
+            Log("BookingAddress => LoadBasket().New basket needs retrieval from API. ExternalSessionId: " + ExternalSessionCookieValue);
 
             //retrieve basket from Magento and persist it and create session.
-            var basket = ApiConnector.GetExternalBasketByCookie(externalSessionId);
+            var basket = ApiConnector.GetExternalBasketByCookie(Server.UrlEncode(ExternalSessionCookieValue));
 
             //check basket has been retrieved
             if (basket == null)
             {
-                DisplayError(GetTranslation("Session_Basket_NotFound"), "BookingAddress => LoadBasket().Basket retrieval failed with cookievalue: " + externalSessionId);
+                DisplayError(GetTranslation("Session_Basket_NotFound"), "BookingAddress => LoadBasket().Basket retrieval failed with cookievalue: " + ExternalSessionCookieValue);
                 return;
             }
 
-            Log("BookingAddress => LoadBasket().Basket retrieved successfully from BORN. External SessionId: " + externalSessionId);
+            Log("BookingAddress => LoadBasket().Basket retrieved successfully from BORN. External SessionId: " + ExternalSessionCookieValue);
 
             //this is required for persisting the basket.
-            basket.ExternalCookieValue = externalSessionId;
+            basket.ExternalCookieValue = ExternalSessionCookieValue;
             var basketGuid = BasketService.PersistBasket(basket);
           
             DisplayBasketDetails(basket);
@@ -75,17 +73,16 @@ namespace bigbus.checkout
             //check basket has been saved
             if (basketGuid == Guid.Empty)
             {
-                DisplayError(GetTranslation("Session_Save_Failed"), "BookingAddress => LoadBasket().Basket Save failed with cookievalue: " + externalSessionId);
+                DisplayError(GetTranslation("Session_Save_Failed"), "BookingAddress => LoadBasket().Basket Save failed with cookievalue: " + ExternalSessionCookieValue);
                 return;
             }
 
             Log("BookingAddress => LoadBasket().Basket saved to Database Successfully. basketid: " + basketGuid);
 
             //create local session if everything OK.
-            var ncSessionId = AuthenticationService.CreateNewSession(basketGuid, basket.CurrencyId, SessionCookieDomain,
-                SessionCookieName);
+            AuthenticationService.LinkSessionToBasketAndCurrency(CurrentSession, basketGuid, basket.CurrencyId);
 
-            Log("BookingAddress => LoadBasket().Session Created Id: " + ncSessionId);
+            Log("BookingAddress => LoadBasket().Session Created Id: " + CurrentSession.Id);
 
             AuthenticationService.SetCookie(BasketCookieName, SessionCookieDomain, basketGuid.ToString());
 
@@ -106,7 +103,7 @@ namespace bigbus.checkout
         {
             ltError.Text = string.Empty;
             dvErrorSummary.Visible = false;
-            //btnCancel.Text = GetTranslation("Back");
+            pPaypal.Visible = true;
             ucUserDetails.Visible = true;
             btnContinueCheckout.Visible = true;
         }
@@ -341,6 +338,7 @@ namespace bigbus.checkout
             ltError.Text = message;
             Log(logMessage);
             dvErrorSummary.Visible = true;
+            pPaypal.Visible = false;
             ucUserDetails.Visible = false;
             btnContinueCheckout.Visible = false;
         }

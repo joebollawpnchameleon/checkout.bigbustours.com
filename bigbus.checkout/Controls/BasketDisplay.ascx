@@ -63,9 +63,9 @@
             </table>
             <div class="basket__footer">
                 <p class="basket__link" style="<%= DisplayMode %>">
-                    <asp:LinkButton CssClass="button button_white button_back" runat="server" OnClick="AddMoreTickets" >
+                    <a class="button button_white button_back" href="<%= ParentPage.BornBaseUrl %>">
                         <span><%=ParentPage.GetTranslation("Booking_AddTourTickets")%></span>
-                    </asp:LinkButton>
+                    </a>
                 </p>
 
                 <p class="basket__total">

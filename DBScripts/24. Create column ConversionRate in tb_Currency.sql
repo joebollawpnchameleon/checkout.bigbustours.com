@@ -1,3 +1,4 @@
+USE BigBus
 
 IF NOT EXISTS(SELECT * FROM sys.columns
 WHERE Name = N'ConversionRate' AND OBJECT_ID = OBJECT_ID(N'tb_Currency'))

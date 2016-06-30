@@ -56,6 +56,8 @@ namespace bigbus.checkout.Models
 
         private MicroSite _currentSite;
         private string _externalSessionId;
+        private Session _currentSession;
+        private string _currentSessionId;
 
         public string ExternalBasketCookieName { get { return ConfigurationManager.AppSettings["External.Basket.CookieName"]; } }
         public string SessionCookieName { get { return ConfigurationManager.AppSettings["Session.CookieName"]; } }
@@ -82,6 +84,11 @@ namespace bigbus.checkout.Models
         public string MicrositeId { get { return "london"; } } //*** get from url as in function
         public string SubSite { get { return "london"; } }  //*** work out from old code
 
+        public string ExternalSessionCookieValue
+        {
+            get { return _externalSessionId; }
+        }
+
         public bool SiteIsUs(ISiteService siteService)
         {
             return siteService.GetMicroSiteById(MicrositeId).IsUS;
@@ -91,6 +98,8 @@ namespace bigbus.checkout.Models
         {
             get { return _currentSite ?? (_currentSite = SiteService.GetMicroSiteById(MicrositeId)); }
         }
+
+        public Session CurrentSession { get { return _currentSession; } }
 
         public bool ShowAffiliateWindow
         {
@@ -103,8 +112,30 @@ namespace bigbus.checkout.Models
             }
         }
 
+        public Session GetCurrentSession()
+        {
+            if (_currentSession != null)
+                return _currentSession;
+
+            _currentSessionId = AuthenticationService.GetCookieValStr(SessionCookieName);
+
+            if (string.IsNullOrEmpty(_currentSessionId))
+            {
+                _currentSession = AuthenticationService.CreateNewSession(SessionCookieDomain, SessionCookieName);
+                _currentSessionId = _currentSession.Id.ToString();
+            }
+            else
+            {
+                _currentSession = AuthenticationService.GetSession(_currentSessionId);
+            }
+
+            return _currentSession;
+        }
+
         protected void Page_PreInit(object sender, EventArgs e)
         {
+            GetCurrentSession();
+
             _externalSessionId = AuthenticationService.GetExternalSessionId(ExternalBasketCookieName);
             var cpa = (IContainerProviderAccessor)HttpContext.Current.ApplicationInstance;
             var cp = cpa.ContainerProvider;
@@ -119,7 +150,7 @@ namespace bigbus.checkout.Models
 
         public void Log(string message)
         {
-            LoggerService.LogItem(message, _externalSessionId);
+            LoggerService.LogItem(message, _currentSessionId);
         }
 
         public string GetClientIpAddress()

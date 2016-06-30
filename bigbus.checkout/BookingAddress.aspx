@@ -22,7 +22,7 @@
     
     <section class="contact-details">
         <div class="contact-details__header">
-            <p class="contact-details__payment-options">
+            <p class="contact-details__payment-options" runat="server" id="pPaypal">
                 <asp:LinkButton runat="server" CssClass="contact-details__paypal-link" OnClick="CheckoutWithPaypal">
                     <img src="/Content/images/Design/paypal.png" alt="PayPal">
                 </asp:LinkButton>
@@ -32,8 +32,10 @@
 
         <div class="form contact-details__form">
 
-            <div id="dvErrorSummary" runat="server" Visible="False">
-                <asp:Literal runat="server" id="ltError"></asp:Literal>
+            <div id="dvErrorSummary" class="form__error" runat="server" Visible="False">
+                <p>
+                    <asp:Literal runat="server" id="ltError"></asp:Literal>
+                </p>
             </div>
 
             <NCK:UserDetails id="ucUserDetails" runat="server"/>

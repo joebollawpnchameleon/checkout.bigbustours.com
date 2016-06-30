@@ -5,7 +5,7 @@ BEGIN
 
 	CREATE TABLE [dbo].[tb_BornBasketDump](
 		[Id] [UNIQUEIDENTIFIER] NOT NULL DEFAULT (NEWID()),
-		[ExternalCookieValue] [VARCHAR](100) NOT NULL,
+		[ExternalCookieValue] [VARCHAR](250) NOT NULL,
 		[BasketJsonDump] [NVARCHAR](MAX) NOT NULL,
 		[DateCreated] [DATETIME] NOT NULL DEFAULT GETDATE(),
 	 CONSTRAINT [PK_tb_BornBasketDump] PRIMARY KEY CLUSTERED 
@@ -16,3 +16,4 @@ BEGIN
 
 
 END
+

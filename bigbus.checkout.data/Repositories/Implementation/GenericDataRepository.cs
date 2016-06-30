@@ -27,6 +27,26 @@ namespace bigbus.checkout.data.Repositories.Implementation
             }
         }
 
+        public string FleshExeptionOut(DbEntityValidationException exception)
+        {
+            var sbTemp = new StringBuilder();
+
+            foreach (var eve in exception.EntityValidationErrors)
+            {
+                sbTemp.AppendLine(
+                    string.Format("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                        eve.Entry.Entity.GetType().Name, eve.Entry.State));
+
+                foreach (var ve in eve.ValidationErrors)
+                {
+                    sbTemp.AppendLine(string.Format("- Property: \"{0}\", Error: \"{1}\"",
+                        ve.PropertyName, ve.ErrorMessage));
+                }
+            }
+
+            return sbTemp.ToString();
+        }
+
         public virtual IList<T> GetAll(params Expression<Func<T, object>>[] navigationProperties)
         {
             try
@@ -48,22 +68,8 @@ namespace bigbus.checkout.data.Repositories.Implementation
                 return list;
             }
             catch (DbEntityValidationException e)
-            {
-                var sbTemp = new StringBuilder();
-
-                foreach (var eve in e.EntityValidationErrors)
-                {
-                    sbTemp.AppendLine(
-                        string.Format("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-                            eve.Entry.Entity.GetType().Name, eve.Entry.State));
-
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        sbTemp.AppendLine(string.Format("- Property: \"{0}\", Error: \"{1}\"",
-                            ve.PropertyName, ve.ErrorMessage));
-                    }
-                }
-                Log(sbTemp.ToString());
+            {               
+                Log(FleshExeptionOut(e));
                 throw;
             }
 
@@ -94,20 +100,7 @@ namespace bigbus.checkout.data.Repositories.Implementation
             }
             catch(DbEntityValidationException e)
             {
-                var sbTemp = new StringBuilder();
-
-                foreach (var eve in e.EntityValidationErrors)
-                {
-                    sbTemp.AppendLine(string.Format("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-                        eve.Entry.Entity.GetType().Name, eve.Entry.State));
-
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        sbTemp.AppendLine(string.Format("- Property: \"{0}\", Error: \"{1}\"",
-                            ve.PropertyName, ve.ErrorMessage));
-                    }
-                }
-                Log(sbTemp.ToString());
+                Log(FleshExeptionOut(e));
                 throw;
             }
         }
@@ -115,55 +108,84 @@ namespace bigbus.checkout.data.Repositories.Implementation
         public virtual T GetSingle(Func<T, bool> where,
              params Expression<Func<T, object>>[] navigationProperties)
         {
-            T item = null;
-            using (var context = new CheckoutDbContext())
+            try
             {
-                IQueryable<T> dbQuery = context.Set<T>();
+                T item = null;
+                using (var context = new CheckoutDbContext())
+                {
+                    IQueryable<T> dbQuery = context.Set<T>();
 
-                //Apply eager loading
-                foreach (Expression<Func<T, object>> navigationProperty in navigationProperties)
-                    dbQuery = dbQuery.Include<T, object>(navigationProperty);
+                    //Apply eager loading
+                    foreach (Expression<Func<T, object>> navigationProperty in navigationProperties)
+                        dbQuery = dbQuery.Include<T, object>(navigationProperty);
 
-                item = dbQuery
-                    //.AsNoTracking() //Don't track any changes for the selected item
-                    .FirstOrDefault(where); //Apply where clause
+                    item = dbQuery
+                        //.AsNoTracking() //Don't track any changes for the selected item
+                        .FirstOrDefault(where); //Apply where clause
+                }
+                return item;
             }
-            return item;
+            catch (DbEntityValidationException ex)
+            {
+                Log(FleshExeptionOut(ex));
+                throw;
+            }
         }
 
         public virtual void Add(params T[] items)
         {
-            using (var context = new CheckoutDbContext())
-            {
-                foreach (T item in items)
+            try { 
+                using (var context = new CheckoutDbContext())
                 {
-                    context.Entry(item).State = EntityState.Added;
+                    foreach (T item in items)
+                    {
+                        context.Entry(item).State = EntityState.Added;
+                    }
+                    context.SaveChanges();
                 }
-                context.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                Log(FleshExeptionOut(ex));
+                throw;
             }
         }
 
         public virtual void Update(params T[] items)
         {
-            using (var context = new CheckoutDbContext())
-            {
-                foreach (T item in items)
+            try { 
+                using (var context = new CheckoutDbContext())
                 {
-                    context.Entry(item).State = EntityState.Modified;
+                    foreach (T item in items)
+                    {
+                        context.Entry(item).State = EntityState.Modified;
+                    }
+                    context.SaveChanges();
                 }
-                context.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                Log(FleshExeptionOut(ex));
+                throw;
             }
         }
 
         public virtual void Remove(params T[] items)
         {
-            using (var context = new CheckoutDbContext())
-            {
-                foreach (T item in items)
+            try { 
+                using (var context = new CheckoutDbContext())
                 {
-                    context.Entry(item).State = EntityState.Deleted;
+                    foreach (T item in items)
+                    {
+                        context.Entry(item).State = EntityState.Deleted;
+                    }
+                    context.SaveChanges();
                 }
-                context.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                Log(FleshExeptionOut(ex));
+                throw;
             }
         }
     }

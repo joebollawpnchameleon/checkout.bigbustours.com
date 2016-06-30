@@ -90,13 +90,19 @@ namespace Services.Implementation
             return _sessionRepository.GetSingle(x => x.Id == sessionId);
         }
 
-        public virtual Guid CreateNewSession(Guid basketId, Guid currencyId, string sessionCookieDomain, string sessionCookieName)
+        public virtual Session GetSession(string sessionId)
+        {
+            return _sessionRepository.GetSingle(x => x.Id.ToString().Equals(sessionId, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public virtual Session CreateNewSession(string sessionCookieDomain, string sessionCookieName)
         {
             var newSession = new Session
             {
-                BasketId = basketId,
+                //*** add mobile option
+                //BasketId = basketId,
                 DateCreated = DateTime.Now,
-                CurrencyId = currencyId.ToString(),
+                //CurrencyId = currencyId.ToString(),
                 DateModified = DateTime.Now
             };
 
@@ -104,7 +110,15 @@ namespace Services.Implementation
 
             SetCookie(sessionCookieName, sessionCookieDomain, newSession.Id.ToString());
 
-            return newSession.Id;
+            return newSession;
+        }
+
+        public virtual void LinkSessionToBasketAndCurrency(Session session, Guid basketId, Guid currencyId)
+        {
+            session.BasketId = basketId;
+            session.CurrencyId = currencyId.ToString();
+
+            _sessionRepository.Update(session);
         }
 
         public virtual CustomerSession PutSessionInCheckoutMode(string sessionId)

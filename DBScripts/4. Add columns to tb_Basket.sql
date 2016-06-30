@@ -55,7 +55,7 @@ END
 IF NOT EXISTS(SELECT * FROM sys.columns
 WHERE Name = N'ExternalCookieValue' AND OBJECT_ID = OBJECT_ID(N'tb_Basket'))
 BEGIN
-	ALTER TABLE tb_Basket add ExternalCookieValue NVARCHAR(100) NULL
+	ALTER TABLE tb_Basket add ExternalCookieValue NVARCHAR(250) NULL
 	PRINT 'Your Column ExternalCookieValue has been created in table tb_Basket'
 END 
 
