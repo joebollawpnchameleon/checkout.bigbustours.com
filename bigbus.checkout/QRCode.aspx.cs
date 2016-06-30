@@ -60,8 +60,8 @@ namespace bigbus.checkout
 
                     if (ecrVersionId == (int)EcrVersion.Three)
                         LoadEcr3Tickets(selectedOrderLines);
-                    //else if (ecrVersionId == (int)EcrVersion.One)
-                    //    LoadEcr1Tickets(selectedOrderLines);
+                    else if (ecrVersionId == (int)EcrVersion.One)
+                        LoadEcr1Tickets(selectedOrderLines);
 
 
                     //PopulateVoucherTickets();  
@@ -77,7 +77,60 @@ namespace bigbus.checkout
                 var te = e1.Message;
             }
         }
+
+
+        private void LoadEcr1Tickets(List<OrderLine> orderLines)
+        {
+            //var tourOrderLines = orderLines.Where(x => x.IsTour);
+            //var attractionOrderLines = orderLines.Where(x => x.IsAttraction);
+
+            //if (attractionOrderLines.Any())
+            //{
+            //    LoadAttractionsForEcr1(attractionOrderLines.ToList());
+            //}
+
+            //if (!tourOrderLines.Any())
+            //    return;
+
+            //var ticketGroups =
+            // from detail in tourOrderLines
+            // group detail by detail.TicketId into ticketGroup
+            // orderby ticketGroup.Key
+            // select ticketGroup;
+
+
+            var sbDetails = new StringBuilder();
+            var imageHtml = @"<img class=""qr-code"" src=""{0}"" alt=""{1}"" />";
+
+            foreach (var line in orderLines)
+            {
+                var ticketName = line.IsAttraction ? line.AttractionName : TicketService.GetTicketById(line.TicketId.ToString()).Name;
+
+                sbDetails.AppendLine("<p>Open date ticket</p>");
+                sbDetails.AppendLine(string.Format("<p>{0}&nbsp;{1} ({2}{3}) {4}</p>",
+                    line.TicketQuantity, ticketName, line.MicrositeId, line.TicketTorA, line.TicketType));
+            }
+
+            sbDetails.AppendLine(string.Format("<p>Order number:{0}</p>", _order.OrderNumber));
+            sbDetails.AppendLine("<p>Credit card: ***" + (!string.IsNullOrWhiteSpace(_order.CcLast4Digits) ? _order.CcLast4Digits : "N/A") + "</p>");
+
+            //*** get related ecr1 image here.
+            //ImageDbService.GetImageMetaDataByName()
+
             
+            //var imageUrl = line.IsAttraction ? "/QrCodeImageHandler.ashx?w=200&h=200&extension=" + imageData.Type + "&micrositeid=" +
+            //               MicrositeId + "&imageid=" + imageData.ImageId;
+
+            //_allTickets.Add(
+            //   new ProductStruct
+            //   {
+            //       Details = sbDetails.ToString(),
+            //       ImageHtml = string.Format(imageHtml, imageUrl, "QR-Code")
+            //   }); //Add q
+
+
+             
+        }
 
        private void LoadEcr3Ticket(List<OrderLine> selectedLines, Ticket ticket, MicroSite site, ImageMetaData imageData) {
 

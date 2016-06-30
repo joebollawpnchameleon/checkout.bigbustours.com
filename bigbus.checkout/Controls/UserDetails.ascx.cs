@@ -22,7 +22,7 @@ namespace bigbus.checkout.Controls
         {
             get
             {
-                var mainText = "I have read and agree to the {0}, and {1}";//ParentPage.GetTranslation("IhavereadandagreetotheTermsandConditions");
+                var mainText = ParentPage.GetTranslation("IhavereadandagreetotheTermsandConditionsParameterised");
                 var termsText = ParentPage.GetTranslation("TermsAndConditions");
                 var privacyText =  ParentPage.GetTranslation("PrivacyPolicy");
                 var termsLink = @"<a href=""" + ConfigurationManager.AppSettings["BaseUrl"] + 

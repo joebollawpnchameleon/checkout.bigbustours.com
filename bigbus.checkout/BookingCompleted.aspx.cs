@@ -294,14 +294,14 @@ namespace bigbus.checkout
 
                         var qrCodeUrl = string.Format("QRCode.aspx?oid={0}&id={1}", _order.Id, Uri.EscapeDataString(qrCodeHash));
                         
-                        if (qrCodeUrl.StartsWith("/"))
-                        {
+                        //if (qrCodeUrl.StartsWith("/"))
+                        //{
                             //var currentPageUrl = Response.Headers["HTTP_X_ORIGINAL_URL"];
 
                             //var hostPartOfUrl = currentPageUrl.Substring(0, currentPageUrl.IndexOf("/" + MicrositeId, StringComparison.Ordinal));
 
                             qrCodeUrl = BaseUrl + qrCodeUrl;
-                        }
+                        //}
 
                         string tinyUrl;
 

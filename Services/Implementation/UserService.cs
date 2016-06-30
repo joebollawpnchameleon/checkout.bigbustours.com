@@ -39,7 +39,8 @@ namespace Services.Implementation
                 City = newCustomer.City,
                 PostCode = newCustomer.PostCode,
                 CountryId = newCustomer.CountryId,
-                StateProvince = newCustomer.StateProvince
+                StateProvince = newCustomer.StateProvince,
+                DateRegistered = DateTime.Now
             };
 
             try
