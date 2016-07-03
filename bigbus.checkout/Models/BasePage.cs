@@ -79,6 +79,8 @@ namespace bigbus.checkout.Models
         public string EcrApiKey { get { return ConfigurationManager.AppSettings["EcrApiKey"]; } }
         public int EnvironmentId { get { return (ConfigurationManager.AppSettings["Environment"] != null)? 
             Convert.ToInt32(ConfigurationManager.AppSettings["Environment"]) : (int)Common.Enums.Environment.Local; } }
+        public string PayPalCancelUrl { get { return ConfigurationManager.AppSettings["PayPal.CancelURL"]; } }
+        public string PayPalSuccessUrl { get { return ConfigurationManager.AppSettings["PayPal.SuccessURL"]; } }
 
         public string CurrentLanguageId { get { return "eng"; } } //***replace with function
         public string MicrositeId { get { return "london"; } } //*** get from url as in function
@@ -88,7 +90,7 @@ namespace bigbus.checkout.Models
         {
             get { return _externalSessionId; }
         }
-
+        
         public bool SiteIsUs(ISiteService siteService)
         {
             return siteService.GetMicroSiteById(MicrositeId).IsUS;

@@ -10,5 +10,7 @@ namespace Services.Infrastructure
         string SendDeleteRequest(string language, string microSiteId, string basketId);
 
         string SendPostRequest(string language, string microSiteId, Basket basket);
+
+        bool SendPciBasket(Basket pciBasket, string languageId, string siteId);
     }
 }

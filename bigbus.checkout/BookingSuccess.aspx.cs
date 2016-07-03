@@ -13,8 +13,7 @@ using Common.Model;
 namespace bigbus.checkout
 {
     public partial class BookingSuccess : BasePage
-    {
-        private Session _session;
+    {       
         private Basket _basket;
         private string _basketId;
 
@@ -22,14 +21,12 @@ namespace bigbus.checkout
         public IPciApiServiceNoASync PciApiServices { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
-        {
-            //Load Session & Basket
-            LoadSession();
+        {           
             LoadBasket();
 
             //Take session off the checkout and set it in order creation mode
             Log("Putting session in order creation mode basketid:" + _basketId);
-            AuthenticationService.PutSessionInOrderCreationMode(_session);
+            AuthenticationService.PutSessionInOrderCreationMode(CurrentSession);
 
             //get and process basket pci status
             var returnedStatus = GetBasketPciStatus();
@@ -40,7 +37,7 @@ namespace bigbus.checkout
                    
             //create order and all lines in DB.
             Log("Starting order creation basketid: " + _basketId);
-            var newOrder = CheckoutService.CreateOrder(_session, _basket, returnedStatus, GetClientIpAddress(), CurrentLanguageId, MicrositeId);
+            var newOrder = CheckoutService.CreateOrder(CurrentSession, _basket, returnedStatus, GetClientIpAddress(), CurrentLanguageId, MicrositeId);
 
             Log("Payment success - Generate barcode");
             GenerateOrderBarcodes(newOrder);
@@ -59,33 +56,31 @@ namespace bigbus.checkout
             //clear cookie sessions and remove session from checkout mode
             ClearCheckoutCookies();
 
+            Log("Cookies cleared. Sending emails.");
+
             //Prepare email notifications
             CreateOrderConfirmationEmail(newOrder);
 
             //Redirect user to order confirmation page or error
             Response.Redirect(string.Format("~/BookingCompleted.aspx?oid={0}", newOrder.Id), false);
-        }    
-
-       
-
-        private void LoadSession()
-        {
-            _session = GetSession();
-
-            if (_session != null) return;
-
-            var sessionId = AuthenticationService.GetSessionId(SessionCookieName);
-            GoToErrorPage(GetTranslation("Session_Details_NotFound"), "Session Not found id:" + sessionId);
-        }
+        }   
+      
 
         private void LoadBasket()
         {
-            _basketId = (_session.BasketId == null || _session.BasketId == Guid.Empty) ? string.Empty : _session.BasketId.ToString();
+            //make sure we have a valid session
+            if (CurrentSession == null || CurrentSession.BasketId == null || CurrentSession.BasketId == Guid.Empty)
+            {
+                GoToErrorPage(GetTranslation("Session_Details_NotFound"), "Session not found in Session");
+                return;
+            }
+
+            _basketId = CurrentSession.BasketId.ToString();
 
             if (string.IsNullOrEmpty(_basketId))
             {
                 _basketId = AuthenticationService.GetBasketIdFromCookie(BasketCookieName);
-                GoToErrorPage(GetTranslation("Session_Basket_NotFound"), "Basket Id not found in Session");
+                GoToErrorPage(GetTranslation("Session_Basket_NotFound"), "Basket Id not found in Session Id:" + _basketId);
                 return;
             }
 
@@ -122,14 +117,14 @@ namespace bigbus.checkout
 
         private void JumpToOrderCreationError(string message, string logMessage)
         {
-            _session.BasketId = null;
-            _session.InOrderCreationProcess = false;
-            _session.AgentUseCustomersAddress = false;
-            _session.AgentFakeUserId = null;
-            _session.AgentIsTradeTicketSale = true;
-            _session.AgentNameToPrintOnTicket = null;
+            CurrentSession.BasketId = null;
+            CurrentSession.InOrderCreationProcess = false;
+            CurrentSession.AgentUseCustomersAddress = false;
+            CurrentSession.AgentFakeUserId = null;
+            CurrentSession.AgentIsTradeTicketSale = true;
+            CurrentSession.AgentNameToPrintOnTicket = null;
 
-            AuthenticationService.UpdateSession(_session);
+            AuthenticationService.UpdateSession(CurrentSession);
 
             if (Response.Cookies[BasketCookieName] != null)
             {

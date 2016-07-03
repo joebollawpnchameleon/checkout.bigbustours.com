@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Globalization;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 using bigbus.checkout.data.Model;
 using bigbus.checkout.Models;
 using Common.Model;
 using Common.Model.PayPal;
-using Services.Implementation;
-using Services.Infrastructure;
-using Common.Enums;
 
 namespace bigbus.checkout
 {
@@ -34,6 +26,70 @@ namespace bigbus.checkout
             TotalSummary = currency.Symbol + _basket.Total;
             DisplayBasketDetails(_basket, ucBasketDisplay, currency.Symbol);
         }
+
+        #region Paypal Prepayment methods
+
+        private void GetPayerDetails()
+        {
+            Log("BookingAddressPayPal => GetPayerDetails() - started.");
+
+            if (_session == null)
+                _session = GetSession();
+
+            Log("BookingAddressPayPal => GetPayerDetails() - Confirming Checkout Details.");
+            var paypalDetails = PaypalService.ConfirmCheckoutDetails(_session.PayPalToken);
+
+            Log("Updating Paypal Payment details");
+            _session.PayPalPayerId = paypalDetails.PayPalReturnUserInfo.Payer_Id;
+            _session.PayPalOrderId = paypalDetails.Transaction_Id;
+            AuthenticationService.UpdateSession(_session);
+
+            if (paypalDetails.PayPalReturnUserInfo.Firstname != null)
+            {
+                //populate user details form. and update address session details.
+                PopulateCustomerDetails(paypalDetails);
+            }
+        }
+
+        private void PopulateCustomerDetails(PayPalReturn paypalDetails)
+        {
+            if ((paypalDetails == null) || paypalDetails.PayPalReturnUserInfo == null) return;
+
+            if (paypalDetails.PayPalReturnUserInfo.Firstname != null)
+                ucUserDetails.FirstName = paypalDetails.PayPalReturnUserInfo.Firstname;
+
+            if (paypalDetails.PayPalReturnUserInfo.Lastname != null)
+                ucUserDetails.LastName = paypalDetails.PayPalReturnUserInfo.Lastname;
+
+            if (paypalDetails.PayPalReturnUserInfo.Email != null)
+                ucUserDetails.Email = paypalDetails.PayPalReturnUserInfo.Email;
+
+            if (paypalDetails.PayPalReturnUserInfo.AddressInfo == null) return;
+
+            if (paypalDetails.PayPalReturnUserInfo.AddressInfo.Street != null)
+                ucUserDetails.Address1 = paypalDetails.PayPalReturnUserInfo.AddressInfo.Street;
+
+            if (paypalDetails.PayPalReturnUserInfo.AddressInfo.Street2 != null)
+                ucUserDetails.Address2 = paypalDetails.PayPalReturnUserInfo.AddressInfo.Street2;
+
+            if (paypalDetails.PayPalReturnUserInfo.AddressInfo.City != null)
+                ucUserDetails.Town = paypalDetails.PayPalReturnUserInfo.AddressInfo.City;
+
+            if (paypalDetails.PayPalReturnUserInfo.AddressInfo.Postcode != null)
+            {
+                ucUserDetails.PostCode = paypalDetails.PayPalReturnUserInfo.AddressInfo.Postcode;
+            }
+
+            if (paypalDetails.PayPalReturnUserInfo.AddressInfo.State != null)
+                ucUserDetails.PostCode = paypalDetails.PayPalReturnUserInfo.AddressInfo.State;
+
+            if (paypalDetails.PayPalReturnUserInfo.AddressInfo.CountryCode != null)
+                ucUserDetails.Country = paypalDetails.PayPalReturnUserInfo.AddressInfo.CountryCode;
+        }
+
+        #endregion
+
+        #region PayPal Complete Payment
 
         protected void CompletePaypalCheckout(object sender, EventArgs e)
         {
@@ -119,10 +175,11 @@ namespace bigbus.checkout
                 ? string.Format("~/BookingCompleted.aspx?oid={0}", orderId)
                 : @"~/Error/PayPalProcessingError/standard");
         }
-
-      
+              
         private void UnlockSessionFromOrderCreationLock(Session session)
         {
+            Log("Unlocking Session");
+
             session.BasketId = null;
             session.InOrderCreationProcess = false;
             session.AgentFakeUserId = null;
@@ -138,15 +195,11 @@ namespace bigbus.checkout
             AuthenticationService.ExpireCookie(BasketCookieName);
             AuthenticationService.ExpireCookie(SessionCookieName);
             AuthenticationService.ExpireCookie(ExternalBasketCookieName);
-        }
 
-        private void DisplayError(string message, string logMessage)
-        {
-            ltError.Text = message;
-            Log(logMessage);
-            dvErrorSummary.Visible = true;
-        }
+            Log("Session Unlocked.");
 
+        }
+        
         private User CreateUser()
         {
             var customerSession = GetSession();
@@ -178,64 +231,10 @@ namespace bigbus.checkout
             DisplayError(GetTranslation("FailedToCreateUser"), "User creation failed.");
             return null;
         }
-        
-        private void GetPayerDetails()
-        {
-            Log("BookingAddressPayPal => GetPayerDetails() - started.");
-            
-            if(_session == null)
-                _session = GetSession();
-            
-            Log("BookingAddressPayPal => GetPayerDetails() - Confirming Checkout Details.");
-            var paypalDetails = PaypalService.ConfirmCheckoutDetails(_session.PayPalToken);
 
-            Log("Updating Paypal Payment details");
-            _session.PayPalPayerId = paypalDetails.PayPalReturnUserInfo.Payer_Id;
-            _session.PayPalOrderId = paypalDetails.Transaction_Id;
-            AuthenticationService.UpdateSession(_session);
+        #endregion
 
-            if (paypalDetails.PayPalReturnUserInfo.Firstname != null)
-            {
-                //populate user details form. and update address session details.
-                PopulateCustomerDetails(paypalDetails);
-            }
-        }
-
-        private void PopulateCustomerDetails(PayPalReturn paypalDetails)
-        {
-            if ((paypalDetails == null) || paypalDetails.PayPalReturnUserInfo == null) return;
-
-            if (paypalDetails.PayPalReturnUserInfo.Firstname != null)
-                ucUserDetails.FirstName = paypalDetails.PayPalReturnUserInfo.Firstname;
-
-            if (paypalDetails.PayPalReturnUserInfo.Lastname != null)
-                ucUserDetails.LastName = paypalDetails.PayPalReturnUserInfo.Lastname;
-
-            if (paypalDetails.PayPalReturnUserInfo.Email != null)
-                ucUserDetails.Email = paypalDetails.PayPalReturnUserInfo.Email;
-
-            if (paypalDetails.PayPalReturnUserInfo.AddressInfo == null) return;
-
-            if (paypalDetails.PayPalReturnUserInfo.AddressInfo.Street != null)
-                ucUserDetails.Address1 = paypalDetails.PayPalReturnUserInfo.AddressInfo.Street;
-                
-            if (paypalDetails.PayPalReturnUserInfo.AddressInfo.Street2 != null)
-                ucUserDetails.Address2 = paypalDetails.PayPalReturnUserInfo.AddressInfo.Street2;
-                
-            if (paypalDetails.PayPalReturnUserInfo.AddressInfo.City != null)
-                ucUserDetails.Town = paypalDetails.PayPalReturnUserInfo.AddressInfo.City;
-
-            if (paypalDetails.PayPalReturnUserInfo.AddressInfo.Postcode != null)
-            {
-                ucUserDetails.PostCode = paypalDetails.PayPalReturnUserInfo.AddressInfo.Postcode;
-            }
-                
-            if (paypalDetails.PayPalReturnUserInfo.AddressInfo.State != null)
-                ucUserDetails.PostCode = paypalDetails.PayPalReturnUserInfo.AddressInfo.State;
-
-            if (paypalDetails.PayPalReturnUserInfo.AddressInfo.CountryCode != null)
-                ucUserDetails.Country = paypalDetails.PayPalReturnUserInfo.AddressInfo.CountryCode;
-        }
+        #region validation methods
 
         private void JumpToOrderCreationError(string message, string logMessage)
         {
@@ -262,5 +261,15 @@ namespace bigbus.checkout
             Log(logMessage);
             Response.Redirect("BookingOrderCreationError.aspx?msg=" + Server.UrlEncode(message));
         }
+
+        private void DisplayError(string message, string logMessage)
+        {
+            ltError.Text = message;
+            Log(logMessage);
+            dvErrorSummary.Visible = true;
+        }
+
+        #endregion
+
     }
 }
