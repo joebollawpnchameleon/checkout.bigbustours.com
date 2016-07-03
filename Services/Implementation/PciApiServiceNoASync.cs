@@ -129,5 +129,41 @@ namespace Services.Implementation
 
         #endregion
 
+
+        public bool SendPciBasket(Basket pciBasket, string languageId, string siteId)
+        {
+            var pciRequestSuccess = true;
+            var pciRequestResponse = string.Empty;
+
+            try
+            {
+                var result = SendPostRequest(languageId, siteId, pciBasket);
+                pciRequestResponse = result;
+            }
+            catch (Exception exception)
+            {
+                Log("PCI web request error: " + DateTime.Now + " - Exception.Message: " + exception.Message);
+
+                if (exception.InnerException != null && !string.IsNullOrWhiteSpace(exception.InnerException.Message))
+                {
+                    Log("PCI web request error: " + DateTime.Now + " - InnerException.Message: " + exception.InnerException.Message);
+                }
+                pciRequestSuccess = false;
+            }
+
+            if (pciRequestSuccess && !pciRequestResponse.Equals("\"" + pciBasket.ID + "\"", StringComparison.OrdinalIgnoreCase))
+            {
+                Log("PCI web request error: " + DateTime.Now + " - Returned basket id doesn't match: " + pciRequestResponse);
+                pciRequestSuccess = false;
+            }
+            else if (pciRequestSuccess &&
+                     pciRequestResponse.Equals("\"" + pciBasket.ID + "\"", StringComparison.OrdinalIgnoreCase))
+            {//set basket cookie
+                Log("Pci Send Basket successful!");
+            }
+
+            return pciRequestSuccess;
+        }
+
     }
 }

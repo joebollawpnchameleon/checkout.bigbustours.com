@@ -1,25 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using Common.Enums;
 using System.Web.UI.WebControls;
 using bigbus.checkout.data.Model;
 using bigbus.checkout.Models;
 using Common.Model;
-using Common.Model.PayPal;
-using Services.Implementation;
-using PCI = Common.Model.Pci;
-using Services.Infrastructure;
 using Environment = System.Environment;
-using PCIServe = Services.Implementation.PciApiService;
 
 namespace bigbus.checkout
 {
     public partial class BookingAddress : BasePage
     {
         protected string TotalSummary { get; set; }
+
+        #region PageEvents
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -35,6 +29,25 @@ namespace bigbus.checkout
 
             InitControls();
             LoadBasket();
+        }
+
+       
+        protected void ContinueShopping(object sender, EventArgs e)
+        {
+            Response.Redirect(BornBaseUrl);
+        }
+
+        #endregion
+
+        #region UiLoadFunctions
+
+        private void InitControls()
+        {
+            ltError.Text = string.Empty;
+            dvErrorSummary.Visible = false;
+            pPaypal.Visible = true;
+            ucUserDetails.Visible = true;
+            btnContinueCheckout.Visible = true;
         }
 
         protected void LoadBasket()
@@ -67,7 +80,7 @@ namespace bigbus.checkout
             //this is required for persisting the basket.
             basket.ExternalCookieValue = ExternalSessionCookieValue;
             var basketGuid = BasketService.PersistBasket(basket);
-          
+
             DisplayBasketDetails(basket);
 
             //check basket has been saved
@@ -89,25 +102,6 @@ namespace bigbus.checkout
             Log("BookingAddress => LoadBasket().Basket details loaded from API and persisted to DB successfully.");
         }
         
-
-        protected void ContinueShopping(object sender, EventArgs e)
-        {
-            //***change to Born home page.
-            Response.Redirect("~/Default.aspx");
-        }
-
-        #region UiLoadFunctions
-
-        
-        private void InitControls()
-        {
-            ltError.Text = string.Empty;
-            dvErrorSummary.Visible = false;
-            pPaypal.Visible = true;
-            ucUserDetails.Visible = true;
-            btnContinueCheckout.Visible = true;
-        }
-
         private void DisplayBasketDetails(BornBasket basket)
         {
             var currency = CurrencyService.GetCurrencyByCode(basket.CurrencyCode);
@@ -129,9 +123,7 @@ namespace bigbus.checkout
 
             ucBasketDisplay.DataSource = itemList;
         }
-
         
-
         #endregion
 
         #region commonfunctions
@@ -147,6 +139,7 @@ namespace bigbus.checkout
             var externalSessionId = AuthenticationService.GetExternalSessionId(ExternalBasketCookieName);
             return BasketService.GetBasketBySessionId(externalSessionId);
         }
+
         #endregion
 
         #region CreditCardPayment
@@ -222,7 +215,7 @@ namespace bigbus.checkout
 
             Log("Sending Basket to PCI BasketId: " + basket.Id);
 
-            var pciRequestSuccess = SendPciBasket(pciBasket);
+            var pciRequestSuccess = PciApiService.SendPciBasket(pciBasket, CurrentLanguageId, MicrositeId);
 
             if (pciRequestSuccess)
             {
@@ -237,43 +230,7 @@ namespace bigbus.checkout
                 Response.Redirect(@"~/Error/BookingError/");
             }
         }
-
-        public bool SendPciBasket(PCI.Basket pciBasket)
-        {
-            var pciRequestSuccess = true;
-            var pciRequestResponse = string.Empty;
-           
-            try
-            {
-                var result = PciApiService.SendPostRequest(CurrentLanguageId, SubSite, pciBasket);
-             
-                pciRequestResponse = result;
-            }
-            catch (Exception exception)
-            {
-                Log("PCI web request error: " + DateTime.Now + " - Exception.Message: " + exception.Message);
-
-                if (exception.InnerException != null && !string.IsNullOrWhiteSpace(exception.InnerException.Message))
-                {
-                    Log("PCI web request error: " + DateTime.Now + " - InnerException.Message: " + exception.InnerException.Message);
-                }
-                pciRequestSuccess = false;
-            }
-
-            if (pciRequestSuccess && !pciRequestResponse.Equals("\"" + pciBasket.ID + "\"", StringComparison.OrdinalIgnoreCase))
-            {
-                Log("PCI web request error: " + DateTime.Now + " - Returned basket id doesn't match: " + pciRequestResponse);
-                pciRequestSuccess = false;
-            }
-            else if (pciRequestSuccess &&
-                     pciRequestResponse.Equals("\"" + pciBasket.ID + "\"", StringComparison.OrdinalIgnoreCase))
-            {//set basket cookie
-                Log("Pci Send Basket successful!");
-            }
-
-            return pciRequestSuccess;
-        }
-        
+              
         public void RedirectToPciLandingPage()
         {
             var subSite = SubSite.Equals("international", StringComparison.OrdinalIgnoreCase) ? "london" : SubSite;
@@ -304,16 +261,13 @@ namespace bigbus.checkout
                 DisplayError(GetTranslation("Session_Basket_NotFound"), "No Basket was found matching sessionId: " + externalSessionId);
                 return;
             }
+
             var sessionId = AuthenticationService.GetSessionId(SessionCookieName);
-            var session = AuthenticationService.GetSession(sessionId);
+           // var session = AuthenticationService.GetSession(sessionId);
             PaypalService.SetUserSessionId(sessionId.ToString());
-
-            var cancelUrl = ConfigurationManager.AppSettings["PayPal.CancelURL"];
-            var successUrl = ConfigurationManager.AppSettings["PayPal.SuccessURL"];
-
+                     
             var paypalOrder = BasketService.BuildPayPalOrder(basket);
-
-            var paypalResult = PaypalService.ShortcutExpressCheckout(successUrl, cancelUrl, null, paypalOrder, false, "Mark");
+            var paypalResult = PaypalService.ShortcutExpressCheckout(PayPalSuccessUrl, PayPalCancelUrl, null, paypalOrder, false, "Mark");
 
             if (paypalResult.IsError)
             {
@@ -321,10 +275,9 @@ namespace bigbus.checkout
             }
             else
             {
-                session.PayPalToken = paypalResult.Token;
-                session.PayPalOrderId = paypalResult.Transaction_Id;
-
-                AuthenticationService.UpdateSession(session);
+                CurrentSession.PayPalToken = paypalResult.Token;
+                CurrentSession.PayPalOrderId = paypalResult.Transaction_Id;
+                AuthenticationService.UpdateSession(CurrentSession);
                 Response.Redirect(paypalResult.RedirectURL);
             }
         }
