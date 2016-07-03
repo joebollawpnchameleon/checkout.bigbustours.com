@@ -211,5 +211,42 @@ namespace bigbus.checkout
            
         }
 
+        void Application_Error(object sender, EventArgs e)
+        {
+            var exception = Server.GetLastError();
+
+
+            HttpException httpException = exception as HttpException;
+            if (httpException != null)
+            {
+                RouteData routeData = new RouteData();
+                routeData.Values.Add("controller", "Error");
+                switch (httpException.GetHttpCode())
+                {
+                    case 404:
+                        // page not found
+                        routeData.Values.Add("action", "HttpError404");
+                        break;
+                    case 500:
+                        // server error
+                        routeData.Values.Add("action", "HttpError500");
+                        break;
+                    default:
+                        routeData.Values.Add("action", "General");
+                        break;
+                }
+                routeData.Values.Add("error", exception);
+                // clear error on server
+                Server.ClearError();
+
+                // at this point how to properly pass route data to error controller?
+            }
+
+            if (exception is HttpUnhandledException)
+            {
+                // Pass the error on to the error page.
+                Response.Redirect("~/Error/BookingError/");
+            }
+        }
     }
 }
