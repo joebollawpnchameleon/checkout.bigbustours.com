@@ -7,6 +7,7 @@ namespace Common.Model
         public string EmailSubject { get; set; }
         public string SenderEmail { get; set; }
         public string ReceiverEmail { get; set; }
+        public string CcEmails { get; set; }
         public string CityName { get; set; }
         public string LanguageId { get; set; }
         public string OrderNumber{get;set;}

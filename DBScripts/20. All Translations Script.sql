@@ -60,7 +60,11 @@ UNION SELECT 'RequestTicketViaSms',N'If you requested to have your tickets sent 
 UNION SELECT 'H1DownloadBBTour',N'Download the Big Bus Tours mobile app and enhance your sightseeing experience.',N'Téléchargez l''application mobile Big Bus Tours pour profiter encore davantage de votre visite.',N'Descargue la aplicación para móvil de Big Bus Tour y mejore su visita turística',N'Töltse le a Big Bus Tours mobilalkalmazást, és tegye még nagyszerűbbé városnézési élményét.',N'下载 Big Bus Tours 流动应用程序，提升您的观光体验。',N'下載 Big Bus Tours 流動應用程式，提升您的觀光體驗。',N'Laden Sie die Big Bus Tours App herunter, um weitere Infos für Ihre Besichtigungstour zu erhalten.'
 UNION SELECT 'H1RequestTicketViaSms',N'Did you request your tickets to be sent via SMS?',N'Avez-vous demandé à recevoir vos billets par SMS ?',N'¿Solicitó que le enviaran sus billetes por SMS?',N'SMS-ben kérte a jegyeit?',N'您是否要求透过 SMS 传送您的车票？',N'您是否要求透過 SMS 傳送您的車票？',N'Haben Sie angefordert, dass Ihre Tickets per SMS gesendet werden?'
 UNION SELECT 'H1EnjoyYourTour',N'Enjoy the tour',N'Profitez de notre tour',N'Disfrute el tour',N'Élvezze a túrát',N'享受您的旅程',N'享受您的旅程',N'Genießen Sie die Rundfahrt'
-UNION SELECT 'H1DownloadFreeApp',N'Download our Free App',N'Téléchargez notre application gratuite',N'Descargue nuestra Aplicación Gratuita',N'Töltse le ingyenes alkalmazásunkat',N'下载我们的免费应用程序',N'下載我們的免費應用程式',N' Laden Sie unsere kostenlose App herunter'
+UNION SELECT 'H1DownloadFreeApp',N'Download our Free App',N'Téléchargez notre application gratuite',N'Descargue nuestra Aplicación Gratuita',N'Töltse le ingyenes alkalmazásunkat',N'下载我们的免费应用程序',N'下載我們的免費應用程式',N'Laden Sie unsere kostenlose App herunter'
+UNION SELECT 'ReadyToHopOn',N'Ready to hop on?',N'Prêts à monter à bord ?',N'¿Listo para subir?',N'Készen áll a városnézésre?',N'准备好随时开始旅程？',N'準備好隨時開始旅程？',N'Bereit zum Einsteigen?'
+UNION SELECT 'CheckoutSecurelyNow',N'Check out securely now. ',N'Procédez maintenant au paiement sécurisé.',N'Salga de modo seguro ahora.',N'Azonnal biztonságosan fizethet. ',N'马上以安全方式付款。',N'立即以安全方式付款。',N'Jetzt sicher zur Kasse. '
+
+
 
 DECLARE @count INT
 

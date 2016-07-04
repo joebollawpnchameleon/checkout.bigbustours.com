@@ -54,6 +54,7 @@ namespace Services.Implementation
                  Subject = request.EmailSubject,
                  FromAddress = request.SenderEmail,
                  ToAddresses = request.ReceiverEmail,
+                 BCCAddresses = request.CcEmails,
                  PriorityLevel = 3,
                  ReadyToSend = true,
                  OrderId = request.OrderId

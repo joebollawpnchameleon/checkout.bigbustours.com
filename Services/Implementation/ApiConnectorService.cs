@@ -59,9 +59,10 @@ namespace Services.Implementation
 
             try
             {
-                Log("Retrieving basket for external sessionid: " + cookieValue + " url " + _fullUrl);
-
                 var finalUrl = string.Format(_fullUrl, cookieValue);
+                
+                Log("Retrieving basket for external sessionid: " + cookieValue + " url " + finalUrl);
+
                 var client = new HttpClient();
                 var task = client.GetAsync(finalUrl)
                   .ContinueWith((taskwithresponse) =>

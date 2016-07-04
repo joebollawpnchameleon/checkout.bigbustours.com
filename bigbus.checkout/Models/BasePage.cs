@@ -566,6 +566,7 @@ namespace bigbus.checkout.Models
                 EmailSubject = MakeSubject(order.OrderNumber),
                 SenderEmail = "\"BigBus Admin\" <" + contactData.Email + ">",
                 ReceiverEmail = order.EmailAddress,
+                CcEmails = contactData.Email,
                 CityName = MicrositeId,
                 LanguageId = CurrentLanguageId,
                 OrderNumber = order.OrderNumber.ToString(),
