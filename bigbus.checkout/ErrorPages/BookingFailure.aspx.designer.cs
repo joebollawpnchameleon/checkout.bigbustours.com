@@ -10,7 +10,7 @@
 namespace bigbus.checkout.ErrorPages {
     
     
-    public partial class BookingError {
+    public partial class BookingFailure {
         
         /// <summary>
         /// spnContinueText control.

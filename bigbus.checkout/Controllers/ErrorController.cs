@@ -44,7 +44,7 @@ namespace bigbus.checkout.Controllers
             return View("StandardErrorView");
         }
 
-        public ActionResult BookingError()
+        public ActionResult BookingError(string sid)
         {
             return View("StandardErrorView");
         }

@@ -214,28 +214,29 @@ namespace bigbus.checkout
         void Application_Error(object sender, EventArgs e)
         {
             var exception = Server.GetLastError();
-
-
+            
             HttpException httpException = exception as HttpException;
             if (httpException != null)
             {
                 RouteData routeData = new RouteData();
                 routeData.Values.Add("controller", "Error");
+
                 switch (httpException.GetHttpCode())
                 {
                     case 404:
                         // page not found
-                        routeData.Values.Add("action", "HttpError404");
+                        routeData.Values.Add("action", "BookingError");
                         break;
                     case 500:
                         // server error
-                        routeData.Values.Add("action", "HttpError500");
+                        routeData.Values.Add("action", "BookingError");
                         break;
                     default:
                         routeData.Values.Add("action", "General");
                         break;
                 }
-                routeData.Values.Add("error", exception);
+                
+                routeData.Values.Add("sid", exception);
                 // clear error on server
                 Server.ClearError();
 

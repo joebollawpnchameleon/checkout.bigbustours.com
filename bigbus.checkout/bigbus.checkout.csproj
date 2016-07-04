@@ -426,7 +426,7 @@
     <Content Include="BookingSuccess.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="ErrorPages\BookingError.aspx" />
-    <Content Include="ErrorPages\BookingOrderCreationError.aspx" />
+    <Content Include="ErrorPages\BookingFailure.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -634,12 +634,12 @@
     <Compile Include="ErrorPages\BookingError.aspx.designer.cs">
       <DependentUpon>BookingError.aspx</DependentUpon>
     </Compile>
-    <Compile Include="ErrorPages\BookingOrderCreationError.aspx.cs">
-      <DependentUpon>BookingOrderCreationError.aspx</DependentUpon>
+    <Compile Include="ErrorPages\BookingFailure.aspx.cs">
+      <DependentUpon>BookingFailure.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ErrorPages\BookingOrderCreationError.aspx.designer.cs">
-      <DependentUpon>BookingOrderCreationError.aspx</DependentUpon>
+    <Compile Include="ErrorPages\BookingFailure.aspx.designer.cs">
+      <DependentUpon>BookingFailure.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
