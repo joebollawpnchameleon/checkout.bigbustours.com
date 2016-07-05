@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using bigbus.checkout.EcrWServiceRefV3;
+using Common.Model.Interfaces;
+using System;
 
 namespace bigbus.checkout.Helpers
 {
@@ -10,7 +12,8 @@ namespace bigbus.checkout.Helpers
         private readonly string _agentUiId;
         private readonly Api _clientApi;
         private const int MaxInfoLen = 100;
-       
+        public const string ProductListCacheName = "Ecr_Product_List";
+
         /// <summary>
         /// use this constructor for testing (staging and local)
         /// </summary>
@@ -48,6 +51,28 @@ namespace bigbus.checkout.Helpers
                 ApiKey = _apiKey
             };
             var tourlist = _clientApi.ProductList(productListRequest);
+            return tourlist.Products;
+        }
+
+        public Product[] GetProductList(ICacheProvider cacheProvider)
+        {
+
+            var tourList = cacheProvider.GetFromCache<Product[]>(ProductListCacheName);
+
+            if (tourList != null)
+                return tourList;
+
+            var productListRequest = new ProductListRequest
+            {
+                AgentCode = _agentCode,
+                AgentUID = _agentUiId,
+                ApiKey = _apiKey
+            };
+
+            var tourlist = _clientApi.ProductList(productListRequest);
+
+            cacheProvider.AddToCache(ProductListCacheName, tourlist.Products, DateTime.Now.AddMinutes(20));
+
             return tourlist.Products;
         }
 

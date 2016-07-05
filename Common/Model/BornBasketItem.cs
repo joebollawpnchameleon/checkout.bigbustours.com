@@ -33,8 +33,8 @@ namespace Common.Model
         [JsonProperty("city")]
         public string Microsite { get; set; }
 
-        //[JsonProperty("ItemOrderId")]
-        //public int ItemOrder { get; set; }
+        [JsonProperty("MainProductSKU")]
+        public string MainSku { get; set; }
 
         [JsonProperty("type")]
         public TicketVariation TicketType { get; set; }

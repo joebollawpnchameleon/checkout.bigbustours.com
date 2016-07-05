@@ -1,4 +1,6 @@
 ﻿using bigbus.checkout.data.Model;
+using Common.Model;
+using System.Collections.Generic;
 
 namespace Services.Infrastructure
 {
@@ -15,5 +17,7 @@ namespace Services.Infrastructure
         void CreateTicket(Ticket ticket);
 
         void CreateTicketEcrDimension(TicketEcrDimension dimension);
+
+        List<TestTicket> GetTestTickets();
     }
 }

@@ -62,7 +62,7 @@ namespace Services.Implementation
             //validate all tickets in basket
             foreach (var basketItem in brnBasket.BasketItems)
             {
-                var ticket = _ticketService.GetTicketByEcrSysId(basketItem.Sku);
+                var ticket = _ticketService.GetTicketByEcrSysId(basketItem.MainSku);
 
                 if (ticket == null)
                 {

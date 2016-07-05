@@ -3,6 +3,9 @@ using bigbus.checkout.data.Model;
 using bigbus.checkout.data.Repositories.Infrastructure;
 using Common.Enums;
 using Services.Infrastructure;
+using Common.Model;
+using System.Collections.Generic;
+using System.Data;
 
 namespace Services.Implementation
 {
@@ -69,6 +72,36 @@ namespace Services.Implementation
         public virtual void CreateTicketEcrDimension(TicketEcrDimension dimension)
         {
             EcrProductDimensionRepository.Add(dimension);
+        }
+
+        public virtual List<TestTicket> GetTestTickets()
+        {
+            var dataTable = QueryFunctions.DataTableFromStoredProcedure("GetEcrTicketList");
+
+            if (dataTable == null || dataTable.Rows == null || dataTable.Rows.Count < 1)
+                return null;
+
+            var ticketList = new List<TestTicket>();
+
+            foreach(DataRow row in dataTable.Rows)
+            {
+                ticketList.Add(
+                    new TestTicket
+                    {
+                        TicketId = row["Id"].ToString(),
+                        TicketName = row["Name"].ToString(),
+                        TicketType = row["TicketType"].ToString(),
+                        MicroSiteId = row["Microsite_Id"].ToString(),
+                        CurrencyCode = row["CurrencyCode"].ToString(),
+                        CurrencySymbol = row["CurrencySymbol"].ToString(),
+                        EcrProductCode = row["NCEcrProductCode"].ToString(),
+                        AdditionalDetailsCsv = row["DetailsCsv"].ToString(),
+                        MicroSiteEcrVersionId = Convert.ToInt32(row["MSEcrVersionid"]),
+                    }
+                );
+            }
+
+            return ticketList;
         }
     }
 }

@@ -16,6 +16,9 @@ using Common.Enums;
 using Common.Model;
 using MVC = System.Web.Mvc;
 using Http = System.Web.Http;
+using Services.Implementation;
+using bigbus.checkout.data.Repositories.Implementation;
+using bigbus.checkout.data.Model;
 
 namespace bigbus.checkout.Controllers
 {
@@ -57,10 +60,10 @@ namespace bigbus.checkout.Controllers
 
         public static List<BornBasketItem> TestBasketItems = new List<BornBasketItem>
         {
-            new BornBasketItem{ProductName = "360 Chicago General Admission", Discount = 0, Microsite = "chicago", ProductDimensionUid = "A8A795B7-5F8F-42A8-990C-27630F12AF78", Quantity = 2, Sku = "15721", TicketType = TicketVariation.Adult, UnitCost = (decimal) 24.50, Total = 49 },
-            new BornBasketItem{ProductName = "360 Chicago General Admission", Discount = 0, Microsite = "chicago", ProductDimensionUid = "4223FD0E-7EA6-4239-BEF7-B8E24D903757", Quantity = 1, Sku = "15721", TicketType = TicketVariation.Child, UnitCost = 17, Total = 34 },
-            new BornBasketItem{ProductName = "Deep Sea Fishing (Exclusive) Per Hour", Discount = 0, Microsite = "dubai", ProductDimensionUid = "D5A4BFF0-09DB-44DC-9DF1-C026347F8CA9", Quantity = 2, Sku = "11173", TicketType = TicketVariation.Adult, UnitCost = (decimal)37.65, Total = (decimal)75.3 },
-            new BornBasketItem{ProductName = "Dim Sum Lunch (For Two)", Discount =(decimal) 4.5, Microsite = "hongkong", ProductDimensionUid = "07436026-C5A0-4B38-BAAE-7A35844EECA8", Quantity = 1, Sku = "13198", TicketType = TicketVariation.Adult, UnitCost = (decimal)23.40, Total = (decimal)46.80 }//,
+            new BornBasketItem{ProductName = "360 Chicago General Admission", Discount = 0, Microsite = "chicago", ProductDimensionUid = "A8A795B7-5F8F-42A8-990C-27630F12AF78", Quantity = 2, MainSku = "15721", TicketType = TicketVariation.Adult, UnitCost = (decimal) 24.50, Total = 49 },
+            new BornBasketItem{ProductName = "360 Chicago General Admission", Discount = 0, Microsite = "chicago", ProductDimensionUid = "4223FD0E-7EA6-4239-BEF7-B8E24D903757", Quantity = 1, MainSku = "15721", TicketType = TicketVariation.Child, UnitCost = 17, Total = 34 },
+            new BornBasketItem{ProductName = "Deep Sea Fishing (Exclusive) Per Hour", Discount = 0, Microsite = "dubai", ProductDimensionUid = "D5A4BFF0-09DB-44DC-9DF1-C026347F8CA9", Quantity = 2, MainSku = "11173", TicketType = TicketVariation.Adult, UnitCost = (decimal)37.65, Total = (decimal)75.3 },
+            new BornBasketItem{ProductName = "Dim Sum Lunch (For Two)", Discount =(decimal) 4.5, Microsite = "hongkong", ProductDimensionUid = "07436026-C5A0-4B38-BAAE-7A35844EECA8", Quantity = 1, MainSku = "13198", TicketType = TicketVariation.Adult, UnitCost = (decimal)23.40, Total = (decimal)46.80 }//,
             //new BornBasketItem{ProductName = "360 Chicago General Admission", Discount = 0, Microsite = "chicago", ProductDimensionUid = "4223FD0E-7EA6-4239-BEF7-B8E24D903757", Quantity = 1, Sku = "15721", TicketType = TicketVariation.Child, UnitCost = 17, Total = 34 },
             //new BornBasketItem{ProductName = "360 Chicago General Admission", Discount = 0, Microsite = "chicago", ProductDimensionUid = "4223FD0E-7EA6-4239-BEF7-B8E24D903757", Quantity = 1, Sku = "15721", TicketType = TicketVariation.Child, UnitCost = 17, Total = 34 },
             //new BornBasketItem{ProductName = "360 Chicago General Admission", Discount = 0, Microsite = "chicago", ProductDimensionUid = "4223FD0E-7EA6-4239-BEF7-B8E24D903757", Quantity = 1, Sku = "15721", TicketType = TicketVariation.Child, UnitCost = 17, Total = 34 },
@@ -91,6 +94,43 @@ namespace bigbus.checkout.Controllers
         }
 
         // GET api/<controller>/5
+        //[Http.HttpGet]
+        //[Http.Route("Api/MagentoTest/DumCart/")]
+        //public HttpResponseMessage DumCart(string id)
+        //{
+        //    var jsonString = @"{
+        //            ""items"":[
+        //             {""name"":""360 Chicago General Admission"",""sku"":""15721"",""ProductDimensionUID"":""4ABCEC20-DF14-4942-BD74-820271AEDDA9"",""qty"":2,""price"":29.99,""discount"":0,""total"":59.98,""city"":""chicago"",""type"":""adult""},            
+        //            {""name"":""Art Institute General Admission"",""sku"":""15722"",""ProductDimensionUID"":""76EB57C6-DE0D-455F-9FBE-342D87ADEF6D"",""qty"":1,""price"":23.59,""discount"":3.5,""total"":20.09,""city"":""chicago"",""type"":""adult"",""coupon"":""Coupe-coupe""}],
+        //            ""subtotal"":83.57,""discount"":3.5,""total"":80.07,""coupon"":""TEST-COUPON1"",""currency"":""EUR"",""language"":""eng""
+        //            }";
+
+        //    //if (!string.IsNullOrEmpty(id))
+        //    //{
+        //    //    var indexArr = id.Split('-');
+
+        //    //    if (indexArr.Length > 0)
+        //    //    {
+        //    //        var sbTemp = new StringBuilder();
+        //    //        foreach (var t in indexArr)
+        //    //        {
+        //    //            var test = TestBasketItems[Convert.ToInt32(t)];
+        //    //            var jsonResult = new JavaScriptSerializer().Serialize(test);
+
+        //    //            sbTemp.AppendLine(jsonResult);
+        //    //        }
+        //    //        jsonString = sbTemp.ToString();
+        //    //    }
+        //    //}
+
+        //    JToken json = JObject.Parse(jsonString);
+
+        //    return new HttpResponseMessage()
+        //    {
+        //        Content = new JsonContent(json)
+        //    };
+        //}
+
         [Http.HttpGet]
         [Http.Route("Api/MagentoTest/DumCart/")]
         public HttpResponseMessage DumCart(string id)
@@ -102,24 +142,14 @@ namespace bigbus.checkout.Controllers
                     ""subtotal"":83.57,""discount"":3.5,""total"":80.07,""coupon"":""TEST-COUPON1"",""currency"":""EUR"",""language"":""eng""
                     }";
 
-            //if (!string.IsNullOrEmpty(id))
-            //{
-            //    var indexArr = id.Split('-');
+            if (!string.IsNullOrEmpty(id))
+            {
+                var dumpRepos = new GenericDataRepository<BornBasketDump>();
+                var basketDump = dumpRepos.GetSingle(x => x.ExternalCookieValue != null && x.ExternalCookieValue.Equals(id, StringComparison.CurrentCultureIgnoreCase));
 
-            //    if (indexArr.Length > 0)
-            //    {
-            //        var sbTemp = new StringBuilder();
-            //        foreach (var t in indexArr)
-            //        {
-            //            var test = TestBasketItems[Convert.ToInt32(t)];
-            //            var jsonResult = new JavaScriptSerializer().Serialize(test);
-
-            //            sbTemp.AppendLine(jsonResult);
-            //        }
-            //        jsonString = sbTemp.ToString();
-            //    }
-            //}
-
+                jsonString = basketDump.BasketJsonDump;
+            }
+            
             JToken json = JObject.Parse(jsonString);
 
             return new HttpResponseMessage()

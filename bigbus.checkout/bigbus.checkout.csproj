@@ -263,6 +263,7 @@
     <Content Include="Controls\UserDetails.ascx" />
     <Content Include="Controls\ViatorWidget\Desktop.ascx" />
     <Content Include="Controls\ViatorWidget\Mobile.ascx" />
+    <Content Include="ErrorPages\PageNotFound.aspx" />
     <Content Include="favicon-16x16.png" />
     <Content Include="favicon-194x194.png" />
     <Content Include="favicon-32x32.png" />
@@ -640,6 +641,13 @@
     </Compile>
     <Compile Include="ErrorPages\BookingFailure.aspx.designer.cs">
       <DependentUpon>BookingFailure.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ErrorPages\PageNotFound.aspx.cs">
+      <DependentUpon>PageNotFound.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ErrorPages\PageNotFound.aspx.designer.cs">
+      <DependentUpon>PageNotFound.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

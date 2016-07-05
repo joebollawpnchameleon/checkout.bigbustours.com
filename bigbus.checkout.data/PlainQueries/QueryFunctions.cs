@@ -46,6 +46,7 @@ namespace bigbus.checkout.data.PlainQueries
                  return null;
              }
         }
+        #region DataTable functions
 
         public DataTable DataTableFromStoredProcedure(string storedProcedureName, IEnumerable<SqlParameter> parameters)
         {
@@ -83,6 +84,113 @@ namespace bigbus.checkout.data.PlainQueries
                     conn.Close();
             }
         }
+
+        public DataTable DataTableFromStoredProcedure(string storedProcedureName, SqlParameter param)
+        {
+            SqlConnection conn = null;
+
+            try
+            {
+                var dt = new DataTable();
+
+                using (conn = new SqlConnection(_connString))
+                {
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = storedProcedureName;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add(param);
+
+                        conn.Open();
+                        var reader = cmd.ExecuteReader();
+                        dt.Load(reader);
+                    }
+                }
+
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                if (conn != null && conn.State == ConnectionState.Open)
+                    conn.Close();
+            }
+        }
+
+        public DataTable DataTableFromStoredProcedure(string storedProcedureName, string paramName, string paramValue)
+        {
+            SqlConnection conn = null;
+
+            try
+            {
+                var dt = new DataTable();
+
+                using (conn = new SqlConnection(_connString))
+                {
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = storedProcedureName;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add(new SqlParameter(paramName, paramValue));
+
+                        conn.Open();
+                        var reader = cmd.ExecuteReader();
+                        dt.Load(reader);
+                    }
+                }
+
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                if (conn != null && conn.State == ConnectionState.Open)
+                    conn.Close();
+            }
+        }
+
+        public DataTable DataTableFromStoredProcedure(string storedProcedureName)
+        {
+            SqlConnection conn = null;
+
+            try
+            {
+                var dt = new DataTable();
+
+                using (conn = new SqlConnection(_connString))
+                {
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = storedProcedureName;
+                        cmd.CommandType = CommandType.StoredProcedure;                       
+                        conn.Open();
+                        var reader = cmd.ExecuteReader();
+                        dt.Load(reader);
+                    }
+                }
+
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                if (conn != null && conn.State == ConnectionState.Open)
+                    conn.Close();
+            }
+        }
+
+        #endregion
+
+        #region DataRowfunctions
 
         public DataRow DataRowFromStoredProcedure(string storedProcedureName, IEnumerable<SqlParameter> parameters)
         {
@@ -155,5 +263,7 @@ namespace bigbus.checkout.data.PlainQueries
                     conn.Close();
             }
         }
+
+        #endregion
     }
 }

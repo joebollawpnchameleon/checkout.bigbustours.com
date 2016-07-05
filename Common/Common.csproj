@@ -86,6 +86,7 @@
     <Compile Include="Model\Pci\Status.cs" />
     <Compile Include="Model\ReturnStructure.cs" />
     <Compile Include="Model\SmtpSettings.cs" />
+    <Compile Include="Model\TestTicket.cs" />
     <Compile Include="Model\TimeZoneComparer.cs" />
     <Compile Include="Model\TimeZoneInformation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

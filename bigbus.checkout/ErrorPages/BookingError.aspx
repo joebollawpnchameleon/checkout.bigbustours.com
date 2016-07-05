@@ -10,7 +10,7 @@
         <p><%= GetTranslation("CouldNotPlaceOrderPaymentError") %></p>
         
          <a class="form__continue button button_red button_forward">
-            <span id="spnContinueText" runat="server" class="right"><%= GetTranslation("ContinueToSecurePayment") %></span>
+            <span id="spnContinueText" runat="server" class="right"><%= GetTranslation("Button_ReturnToBasket") %></span>
         </a>
     </section>
 

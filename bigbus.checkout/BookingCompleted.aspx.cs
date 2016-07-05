@@ -251,6 +251,9 @@ namespace bigbus.checkout
 
                 foreach (var diallingCode in newDiallingCodeList)
                 {
+                    if (diallingCode == null)
+                        continue;
+
                     var item = new ListItem(diallingCode.Id, diallingCode.Id);
 
                     if (diallingCode.Code == int.MinValue)
