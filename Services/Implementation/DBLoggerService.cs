@@ -40,12 +40,26 @@ namespace Services.Implementation
 
         public void LogBornBasket(string json, string externalCookieValue)
         {
-            _bornLogRepository.Add(new BornBasketDump
+            var existingBasket =
+                _bornLogRepository.GetSingle(
+                    x =>
+                        !string.IsNullOrEmpty(x.ExternalCookieValue) &&
+                        x.ExternalCookieValue.Equals(externalCookieValue, StringComparison.CurrentCultureIgnoreCase));
+
+            if (existingBasket == null)
             {
-                DateCreated = DateTime.Now,
-                BasketJsonDump = json,
-                ExternalCookieValue = externalCookieValue
-            });
+                _bornLogRepository.Add(new BornBasketDump
+                {
+                    DateCreated = DateTime.Now,
+                    BasketJsonDump = json,
+                    ExternalCookieValue = externalCookieValue
+                });
+            }
+            else
+            {
+                existingBasket.BasketJsonDump = json;
+                _bornLogRepository.Update(existingBasket);
+            }
         }
     }
 }

@@ -42,7 +42,7 @@
         </div>
         <div style="text-align:left;">
             Select checkout language:  &nbsp;
-            <asp:DropDownList id="ddlLanguage" runat="server">
+            <asp:DropDownList id="ddlLanguage" AutoPostBack="True" runat="server">
                 <asp:ListItem Value="eng" Text="English" />
                 <asp:ListItem Value="deu" Text="German" />                
                 <asp:ListItem Value="fra" Text="French" />
@@ -164,7 +164,7 @@
             quantity += offset;
             price = parseFloat(price);
 
-            if (quantity == 0) {
+            if (quantity === 0) {
                 objQuantity.html('');
                 obj.html('');
                 obj.hide();
@@ -212,14 +212,14 @@
                 for (var y in tempArr) {
                     if (tempArr[y] == null)
                         continue;
-                    if (temp != '')
+                    if (temp !== '')
                         temp += ',';
                     temp += '{"sku":"' + y + '", "quantity":' + tempArr[y][0] + ', "price":' + tempArr[y][1] + ',"city":"' + tempArr[y][2] + '"}'
                 }
 
                 temp = '{"productsku":"' + x + '","selections": [' + temp + ']}';
 
-                if (finalXml != '')
+                if (finalXml !== '')
                     finalXml += ',';
 
                 finalXml += temp;

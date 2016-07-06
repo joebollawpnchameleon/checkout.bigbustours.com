@@ -86,7 +86,7 @@ namespace bigbus.checkout
 
                     var productDimension = product.ProductDimensions.FirstOrDefault(x => x.SysID.Equals(childSku, StringComparison.CurrentCultureIgnoreCase));
 
-                    if (productDimension == null || productDimension.Prices == null || productDimension.Prices.Count() < 1)
+                    if (productDimension == null || productDimension.Prices == null || !productDimension.Prices.Any())
                         continue;
 
                     var currency = CurrencyService.GetCurrencyByCode(ddlCurrency.SelectedValue);
@@ -156,9 +156,9 @@ namespace bigbus.checkout
             decimal total = 0.0m;
             var productList = EcrService.GetProductList(CacheProvider);
             const string itemstr = @"""name"":""{0}"",""sku"":""{1}"",""ProductDimensionUID"":""{2}"",""qty"":{3},""price"":{4},""discount"":0.00,""total"":{5},""city"":""{6}"",""type"":""{7}"", ""MainProductSKU"":""{8}""";
+            var lastMicrosite = string.Empty;
 
             dynamic dynJson = JsonConvert.DeserializeObject(jsonSelection);
-
             dynamic selection = dynJson.selection;
 
             foreach(var item in selection)
@@ -166,7 +166,6 @@ namespace bigbus.checkout
                 var productsku = item.productsku.ToString();
                 var selections = item.selections;
                 var product = productList.FirstOrDefault(x => x.SysID.Equals(productsku, StringComparison.CurrentCultureIgnoreCase));
-
                 
                 foreach (var sel in selections)
                 {
@@ -174,6 +173,7 @@ namespace bigbus.checkout
                     var quantity = Convert.ToInt32(sel.quantity);
                     var localsku = sel.sku.ToString();
                     var city = sel.city.ToString();
+                    lastMicrosite = city;
                     total += (price * quantity);
 
                     var productDimension = product.ProductDimensions.FirstOrDefault(x => x.SysID.Equals(localsku, StringComparison.CurrentCultureIgnoreCase));
@@ -187,9 +187,9 @@ namespace bigbus.checkout
             }
 
             allJson.Insert(0, @"{
-                            ""items"":[").AppendLine("]," + System.Environment.NewLine + 
-                            string.Format(@"""subtotal"":{0},""discount"":{1},""total"":{2},""coupon"":""{3}"",""currency"":""{4}"",""language"":""{5}""", 
-                            total, "0.0", total, "null", ddlCurrency.SelectedValue, ddlLanguage.SelectedValue) + System.Environment.NewLine + "}");
+                            ""items"":[").AppendLine("]," + System.Environment.NewLine +
+                            string.Format(@"""subtotal"":{0},""discount"":{1},""total"":{2},""coupon"":""{3}"",""currency"":""{4}"",""language"":""{5}"",""store"":""{6}""",
+                            total, "0.0", total, "null", ddlCurrency.SelectedValue, ddlLanguage.SelectedValue, lastMicrosite) + System.Environment.NewLine + "}");
 
             LoggerService.LogBornBasket(allJson.ToString(), ExternalSessionCookieValue);
         

@@ -88,8 +88,8 @@ namespace Services.Implementation
         public virtual Guid PersistBasket(BornBasket brnBasket)
         {
             //make sure basket is valid before persisting it.
-            if(!IsBornBasketValid(brnBasket))
-                return Guid.Empty;
+            //if(!IsBornBasketValid(brnBasket))
+               // return Guid.Empty;
 
             var itemCount = 0;
 

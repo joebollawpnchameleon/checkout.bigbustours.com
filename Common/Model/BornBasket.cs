@@ -24,6 +24,9 @@ namespace Common.Model
         [JsonProperty("language")]
         public string Language { get; set; }
 
+        [JsonProperty("store")]
+        public string LastMicroSite { get; set; }
+
         [JsonProperty("items")]
         public List<BornBasketItem> BasketItems { get; set; }
 

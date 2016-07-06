@@ -10,7 +10,7 @@ namespace bigbus.checkout
         {
             ltAdditionalMetas.Text += metas;
         }
-
+        
         public Language CurrentLanguage { get; set; }
 
         public bool IsMobileSession { get; set; }

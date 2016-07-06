@@ -133,12 +133,16 @@ namespace bigbus.checkout
                     throw new Exception(payPalReturn.ErrorMessage);
                 }
 
+                //create the order.
                 var order = CheckoutService.CreateOrderPayPal(_session, _basket, newUser, GetClientIpAddress(), CurrentLanguageId,
                     MicrositeId);
-
-                orderId = order.Id.ToString();
-
+              
+                //persist address
                 CheckoutService.CreateAddressPaypal(order, _session, newUser);
+
+                //create barcodes
+                Log("Payment success - Generate barcode");
+                GenerateOrderBarcodes(order);
 
                 //send booking to ECR.
                 Log("Sending booking to ECR basketid: " + _basket.Id);
@@ -147,7 +151,7 @@ namespace bigbus.checkout
                 //result from booking must be there.
                 if (result == null)
                 {
-                    JumpToOrderCreationError("Booking_failed", result.ErrorMessage);
+                    JumpToOrderCreationError("Booking_failed", "SendBooking() to Ecr Failed");
                     return;
                 }
 
@@ -156,6 +160,7 @@ namespace bigbus.checkout
 
                 //Prepare email notifications
                 CreateOrderConfirmationEmail(order);
+                orderId = order.Id.ToString();
 
                 bCheckoutCompleted = true;
             }
@@ -170,10 +175,11 @@ namespace bigbus.checkout
                 Log("PayPal Payment - Session unlocked");
             }
 
+
             //Redirect user to order confirmation page or error
             Response.Redirect(bCheckoutCompleted
                 ? string.Format("~/BookingCompleted.aspx?oid={0}", orderId)
-                : @"~/Error/PayPalProcessingError/standard");
+                : @"~/ErrorPages/BookingError.aspx");
         }
               
         private void UnlockSessionFromOrderCreationLock(Session session)

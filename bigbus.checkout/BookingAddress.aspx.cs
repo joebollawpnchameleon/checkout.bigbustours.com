@@ -66,8 +66,6 @@ namespace bigbus.checkout
                 BasketService.DeleteBasket(dbBasket);
             }
 
-            Log("BookingAddress => LoadBasket().New basket needs retrieval from API. ExternalSessionId: " + ExternalSessionCookieValue);
-
             //retrieve basket from Magento and persist it and create session.
             var basket = ApiConnector.GetExternalBasketByCookie(Server.UrlEncode(ExternalSessionCookieValue));
 
@@ -78,10 +76,18 @@ namespace bigbus.checkout
                 return;
             }
 
-            Log("BookingAddress => LoadBasket().Basket retrieved successfully from BORN. External SessionId: " + ExternalSessionCookieValue);
-
             //this is required for persisting the basket.
             basket.ExternalCookieValue = ExternalSessionCookieValue;
+
+            //make sure basket is valid
+            if (!BasketService.IsBornBasketValid(basket))
+            {
+                DisplayError(GetTranslation("Session_Basket_NotFound"), "BookingAddress => LoadBasket().Invalid BORN Basket: " + ExternalSessionCookieValue);
+                return;
+            }
+
+            Log("BookingAddress => LoadBasket().Basket retrieved successfully from BORN. External SessionId: " + ExternalSessionCookieValue);
+            
             var basketGuid = BasketService.PersistBasket(basket);
 
             DisplayBasketDetails(basket);
@@ -108,7 +114,11 @@ namespace bigbus.checkout
         private void DisplayBasketDetails(BornBasket basket)
         {
             var currency = CurrencyService.GetCurrencyByCode(basket.CurrencyCode);
+            CurrentLanguageId = basket.Language;
+            MicrositeId = basket.LastMicroSite;
             TotalSummary = currency.Symbol + basket.Total;
+
+            LoadMasterValues();
 
             ucBasketDisplay.AddMoreUrl = ConfigurationManager.AppSettings["BornAddMoreTicketUrl"];
             ucBasketDisplay.ParentPage = this;
@@ -117,7 +127,7 @@ namespace bigbus.checkout
 
             var itemList = basket.BasketItems.Select(item => new BasketDisplayVm
             {
-                TicketName = item.ProductName,
+                TicketName = item.ProductName + " " + item.Microsite,
                 Date = GetTranslation("OpenDayTicket"), 
                 Quantity = item.Quantity, 
                 Title = item.TicketType.ToString(),

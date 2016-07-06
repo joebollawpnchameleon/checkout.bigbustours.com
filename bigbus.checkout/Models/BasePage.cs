@@ -58,6 +58,8 @@ namespace bigbus.checkout.Models
         private string _externalSessionId;
         private Session _currentSession;
         private string _currentSessionId;
+        private string _currentLanguageId = "eng";
+        private string _currentMicrosite = "london";
 
         public string ExternalBasketCookieName { get { return ConfigurationManager.AppSettings["External.Basket.CookieName"]; } }
         public string SessionCookieName { get { return ConfigurationManager.AppSettings["Session.CookieName"]; } }
@@ -72,6 +74,8 @@ namespace bigbus.checkout.Models
         public string BarCodeDir { get { return ConfigurationManager.AppSettings["BarCodeDir"]; } }
         public string QrCodeDir { get { return ConfigurationManager.AppSettings["QrCodeDir"]; } }
         public string EmailTemplatePath { get { return ConfigurationManager.AppSettings["EmailTemplatePath"]; } }
+        public string LanguageCookieName { get { return ConfigurationManager.AppSettings["Language.CookieName"]; } }
+        public string MicrositeCookieName { get { return ConfigurationManager.AppSettings["Microsite.CookieName"]; } }
         public string LiveEcrEndPoint
         {
             get { return ConfigurationManager.AppSettings["LiveEcrEndPoint"]; }
@@ -82,9 +86,56 @@ namespace bigbus.checkout.Models
         public string PayPalCancelUrl { get { return ConfigurationManager.AppSettings["PayPal.CancelURL"]; } }
         public string PayPalSuccessUrl { get { return ConfigurationManager.AppSettings["PayPal.SuccessURL"]; } }
 
-        public string CurrentLanguageId { get { return "eng"; } } //***replace with function
-        public string MicrositeId { get { return "london"; } } //*** get from url as in function
-        public string SubSite { get { return "london"; } }  //*** work out from old code
+        public string CurrentLanguageId
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_currentLanguageId))
+                    return _currentLanguageId;
+
+                _currentLanguageId = AuthenticationService.GetCookieValStr(LanguageCookieName);
+                return string.IsNullOrEmpty(_currentLanguageId) ? "eng" : _currentLanguageId;
+            }
+            set
+            {
+                _currentLanguageId = value;
+                AuthenticationService.SetCookie(LanguageCookieName, SessionCookieDomain, _currentLanguageId);
+            }
+        }
+
+        public string MicrositeId
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_currentMicrosite))
+                    return _currentMicrosite;
+
+                _currentMicrosite = AuthenticationService.GetCookieValStr(MicrositeCookieName);
+                return string.IsNullOrEmpty(_currentMicrosite) ? "london" : _currentMicrosite;
+            }
+            set
+            {
+                _currentMicrosite = value;
+                AuthenticationService.SetCookie(MicrositeCookieName, SessionCookieDomain, _currentMicrosite);
+            }
+        }
+
+        public string SubSite
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_currentMicrosite))
+                    return _currentMicrosite;
+
+                _currentMicrosite = AuthenticationService.GetCookieValStr(MicrositeCookieName);
+                return string.IsNullOrEmpty(_currentMicrosite) ? "london" : _currentMicrosite;
+            }
+            set
+            {
+                _currentMicrosite = value;
+                AuthenticationService.SetCookie(MicrositeCookieName, SessionCookieDomain, _currentMicrosite);
+            }
+        } 
 
         public string ExternalSessionCookieValue
         {
@@ -737,6 +788,18 @@ namespace bigbus.checkout.Models
             master.IsMobileSession = false;
             master.MicrositeId = MicrositeId;
             master.HomeUrl = BornBaseUrl + ConfigurationManager.AppSettings["BornHomeTicketUrl"];
+        }
+
+        public void ReLoadMasterValues(string languageId, string micrositeId)
+        {
+            var master = Master as SiteMaster;
+
+            if (master == null)
+                return;
+
+            master.CurrentLanguage = TranslationService.GetLanguage(languageId);
+            master.IsMobileSession = false;
+            master.MicrositeId = micrositeId;
         }
 
         public void RedirectToHomePage()

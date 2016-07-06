@@ -1,4 +1,4 @@
-alter PROC GetEcrTicketList
+Create PROC GetEcrTicketList
 AS
 
 BEGIN
