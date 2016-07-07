@@ -190,6 +190,9 @@ namespace bigbus.checkout.Models
             GetCurrentSession();
 
             _externalSessionId = AuthenticationService.GetExternalSessionId(ExternalBasketCookieName);
+            _currentLanguageId = AuthenticationService.GetCookieValStr(LanguageCookieName);
+            _currentMicrosite = AuthenticationService.GetCookieValStr(MicrositeCookieName);
+
             var cpa = (IContainerProviderAccessor)HttpContext.Current.ApplicationInstance;
             var cp = cpa.ContainerProvider;
             cp.RequestLifetime.InjectProperties(this);
@@ -751,7 +754,7 @@ namespace bigbus.checkout.Models
 
             var itemList = basket.BasketLines.Select(item => new BasketDisplayVm
             {
-                TicketName = TicketService.GetTicketById(item.TicketId.ToString()).Name,
+                TicketName = BasketTicketName(item.TicketId.ToString()),
                 Date = GetTranslation("OpenDayTicket"),
                 Quantity = item.TicketQuantity ?? 1,
                 Title = item.TicketType.ToString(),
@@ -759,6 +762,12 @@ namespace bigbus.checkout.Models
             }).ToList();
 
             ucBasketDisplay.DataSource = itemList;
+        }
+
+        public string BasketTicketName(string ticketId)
+        {
+            var ticket = TicketService.GetTicketById(ticketId);
+            return ticket.Name + " - " + ticket.MicroSiteId;
         }
 
         public List<FrontEndNavigationItem> GetFooterNavigation()

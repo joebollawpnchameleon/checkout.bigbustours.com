@@ -127,7 +127,7 @@ namespace bigbus.checkout
 
             var itemList = basket.BasketItems.Select(item => new BasketDisplayVm
             {
-                TicketName = item.ProductName + " " + item.Microsite,
+                TicketName = item.ProductName + " - " + item.Microsite,
                 Date = GetTranslation("OpenDayTicket"), 
                 Quantity = item.Quantity, 
                 Title = item.TicketType.ToString(),
