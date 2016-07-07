@@ -28,6 +28,7 @@ namespace Services.Implementation
         public IGenericDataRepository<DiallingCode> DiallingCodeRepository { get; set; }
         public IGenericDataRepository<BornBasketDump> BornBasketDumpRepository { get; set; }
         public IGenericDataRepository<TicketEcrDimension> EcrProductDimensionRepository { get; set; }
+        public IGenericDataRepository<HtmlMetaTag> HtmlMetaTagRepository { get; set; }
 
         public ILocalizationService LocalizationService { get; set; }
         public ILoggerService LoggerService { get; set; }

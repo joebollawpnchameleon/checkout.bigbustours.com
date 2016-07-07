@@ -25,6 +25,7 @@ namespace bigbus.checkout.data
 
         #region Models Declaration 
 
+        public virtual DbSet<HtmlMetaTag> HtmlMetaTags { get; set; }
         public virtual DbSet<TicketEcrDimension> EcrProductDimensions { get; set; }
         public virtual DbSet<BornBasketDump> BornBasketDumps { get; set; }
         public virtual DbSet<DiallingCode> DiallingCodes { get; set; }
