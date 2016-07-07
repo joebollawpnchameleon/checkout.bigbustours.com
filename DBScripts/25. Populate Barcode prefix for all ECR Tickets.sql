@@ -1,3 +1,5 @@
+
+
 /* Create barcode prefix for all ecr tickets */
 
 SET NOCOUNT On
@@ -9,10 +11,19 @@ DECLARE @tickettype NVARCHAR(50)
 DECLARE @micrositeid NVARCHAR(50)
 DECLARE @MaxPrefix NVARCHAR(10)
 DECLARE @CountInsert INT
+DECLARE @tab AS TABLE
+        ( 
+		  Id int identity(1,1),
+          Microsite_Id NVARCHAR(50) ,
+          Ticket_Type NVARCHAR(50),
+          BarcodePrefix NVARCHAR(6) ,
+          NextAvailableBarcode int ,
+          NextAvailableDrBarcode int ,
+          Ticket_TicketType NVARCHAR(50),
+          Ticket_Id UNIQUEIDENTIFIER
+        )
 
---SELECT @MaxPrefix  = MAX([BarcodePrefix]) FROM dbo.tb_Barcode
 SET @MaxPrefix = '25100'
-SET @CountInsert = 0
 
 INSERT INTO @tickettab
         ( TicketId, TicketType, MicroSiteId )
@@ -21,7 +32,6 @@ FROM dbo.tb_Ticket t
 LEFT JOIN dbo.tb_Barcode bc
 	ON bc.Ticket_Id = t.Id
 WHERE NCEcrProductCode IS NOT NULL AND bc.Id IS NULL
-
 
 WHILE(SELECT COUNT(TicketId) FROM @tickettab) > 0
 BEGIN
@@ -33,40 +43,21 @@ BEGIN
 
 	IF @tickettype = 'Attraction'
 	BEGIN
-		PRINT(' Attraction - Max ' + CAST(@MaxPrefix AS NVARCHAR(20)))
-
-		SET @MaxPrefix = @MaxPrefix + 1		
-
-		PRINT(' Attraction - Max Incremented ' + CAST(@MaxPrefix AS NVARCHAR(20)))
-
-		INSERT INTO dbo.tb_Barcode
-        ( 
-          Microsite_Id ,
-          Ticket_Type ,
-          BarcodePrefix ,
-          NextAvailableBarcode ,
-          NextAvailableDrBarcode ,
-          Ticket_TicketType ,
-          Ticket_Id 
-        )
+		
+		INSERT INTO @tab
 		SELECT   
           @micrositeid , 
           'all' ,
-          @MaxPrefix , 
+          0 , 
           0 , 
           0 , 
           @tickettype , 
           @ticketid 
         
-		PRINT(' Attraction - Max - after insert ' + CAST(@MaxPrefix AS NVARCHAR(20)))
-		SET @MaxPrefix = @MaxPrefix + 1		
-		PRINT(' Attraction - Max - after insert:' + CAST(@MaxPrefix AS NVARCHAR(20)))
 	END
     ELSE IF @tickettype = 'Tour'
 	BEGIN
 		
-		PRINT(' Tour - max attr ' + CAST(@MaxPrefix AS NVARCHAR(20)))
-
 		DELETE FROM @productdimensiontab
 
 		INSERT INTO @productdimensiontab
@@ -74,38 +65,35 @@ BEGIN
 		FROM dbo.tb_Ticket_EcrProduct_Dimension
 		WHERE TicketId = @TicketId
 
-		SELECT @CountInsert = COUNT(Id) FROM @productdimensiontab
-		
-		PRINT(' Tour - inserting: ' + CAST(@CountInsert AS NVARCHAR(20)))
-
-		INSERT INTO dbo.tb_Barcode
-        ( 
-          Microsite_Id ,
-          Ticket_Type ,
-          BarcodePrefix ,
-          NextAvailableBarcode ,
-          NextAvailableDrBarcode ,
-          Ticket_TicketType ,
-          Ticket_Id 
-        )
+		INSERT INTO @tab
 		SELECT 
 		 @micrositeid , 
           PassengerType ,
-          (@MaxPrefix + Id), 
+          0, 
           0 , 
           0 , 
           @tickettype , 
           @ticketid 
 		FROM @productdimensiontab
-
-		SET @MaxPrefix = @MaxPrefix + @CountInsert + 1
-
-		PRINT(' Tour - max attr - after insert: ' + CAST(@MaxPrefix AS NVARCHAR(20)))
-
+		
 	END    
     
 END
 
---SELECT *
---FROM @tickettab
---ORDER BY TicketType
+update @tab set BarcodePrefix = @MaxPrefix + Id
+
+insert into tb_barcode( 
+          Microsite_Id  ,
+          Ticket_Type,
+          BarcodePrefix ,
+          NextAvailableBarcode ,
+          NextAvailableDrBarcode  ,
+          Ticket_TicketType ,
+          Ticket_Id 
+        )
+select Microsite_Id, Ticket_Type, BarcodePrefix, 0, 0, Ticket_TicketType, Ticket_Id 
+FROM @tab 
+ORDER BY BarcodePrefix
+
+
+

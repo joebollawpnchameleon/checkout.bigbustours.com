@@ -273,7 +273,8 @@ namespace bigbus.checkout.Models
                         {
                             OrderLineId = orderline.Id,
                             GeneratedBarcode = barcode +
-                                               CalculateBarcodeChecksum(barcode.Substring(0, 12))
+                                               CalculateBarcodeChecksum(barcode.Substring(0, 12)),
+                            DateCreated = DateTime.Now
                         };
 
                         CheckoutService.SaveOrderLineBarCode(orderlineGeneratedBarcode);
@@ -374,8 +375,11 @@ namespace bigbus.checkout.Models
 
                 //*** For API one, we need to decide (discuss with ECR)
                 //if we have more than 1 ticket, city or date do not send to ECR as we will get Barcodes
-                var ticketCount = selectedOrderLines.Select(x => x.TicketId).Count();
-                var cityCount = selectedOrderLines.Select(x => x.MicrositeId).Count();
+                var tourOrderLines = selectedOrderLines.Where(x => x.IsTour);
+                var orderLines = tourOrderLines as IList<OrderLine> ?? tourOrderLines.ToList();
+
+                var ticketCount = orderLines.Select(x => x.TicketId).Count();
+                var cityCount = orderLines.Select(x => x.MicrositeId).Count();
 
                 if (ecrVersionId == (int)EcrVersion.One && ticketCount == 1 && cityCount == 1)
                 {                   
