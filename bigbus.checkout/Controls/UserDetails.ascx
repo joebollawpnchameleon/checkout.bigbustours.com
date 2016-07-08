@@ -1,8 +1,8 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UserDetails.ascx.cs" Inherits="bigbus.checkout.Controls.WebUserControl1" %>
     
-    <p class="form__mandatory">* <%= ParentPage.GetTranslation("Youmustfillinthefieldsmarkedwithx") %></p>
+    <%--<p class="form__mandatory">* <%= ParentPage.GetTranslation("Youmustfillinthefieldsmarkedwithx") %></p>--%>
     
-    <div class="form__errors">
+    <div class="form__errors" id="dvErrorSummary" runat="server" Visible="False">
         <div>
             <asp:Literal ID="TsAndCsStarLit" runat="server"></asp:Literal><asp:Literal ID="TsAndCsLit" runat="server"></asp:Literal>
         </div>

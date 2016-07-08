@@ -1,5 +1,10 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="BasketDisplay.ascx.cs" Inherits="bigbus.checkout.Controls.BasketDisplay" %>
 
+ <div class="basket__header">
+    <p class="basket__total"><%= ParentPage.GetTranslation("Total") + ": "  %><span class="title"><%= TotalString %>   </span></p>
+    <p><a class="basket__toggle js-toggle-basket" href="#"><%= ParentPage.GetTranslation("ViewBasket")%></a></p>
+</div>
+
  <div class="basket__container">
 
     <asp:Repeater runat="server" id="rptBasketLines">
@@ -69,7 +74,7 @@
                 </p>
 
                 <p class="basket__total">
-                    <span><%=ParentPage.GetTranslation("Total")%>:</span> <%= TotalString %>
+                    <%=ParentPage.GetTranslation("Total")%>: <span><%= TotalString %></span>
                 </p>
             </div>
         </FooterTemplate>

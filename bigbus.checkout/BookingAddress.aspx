@@ -9,14 +9,11 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="cplhBody" runat="server">
     <header class="content__header">
-        <h1><%= GetTranslation("Booking_Step3") %></h1>
+        <h1><%= GetTranslation("YourDetails") %></h1>
     </header>
 
     <section class="basket">
-        <div class="basket__header">
-            <p class="basket__total"><span class="title"><%= GetTranslation("Total") + ":" +  TotalSummary %>   </span></p>
-            <p><a class="basket__toggle js-toggle-basket" href="#"><%=GetTranslation("ViewBasket")%></a></p>
-        </div>
+       
         <NCK:BasketDisplay id="ucBasketDisplay" ShowActionRow="true" runat="server"/>   
     </section>
     

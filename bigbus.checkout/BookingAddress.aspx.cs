@@ -18,7 +18,8 @@ namespace bigbus.checkout
         #region PageEvents
 
         protected void Page_Load(object sender, EventArgs e)
-        {           
+        {
+            //***  dvErrorSummary.Visible = IsPostBack && !IsValid   -- implement#
 
             if (IsPostBack) return;
 
@@ -116,7 +117,7 @@ namespace bigbus.checkout
             var currency = CurrencyService.GetCurrencyByCode(basket.CurrencyCode);
             CurrentLanguageId = basket.Language;
             MicrositeId = basket.LastMicroSite;
-            TotalSummary = currency.Symbol + basket.Total;
+            TotalSummary = currency.Symbol + basket.Total.ToString("F");
 
             LoadMasterValues();
 

@@ -13,13 +13,7 @@
     </header>
 
     <section class="basket">
-        
-        <div class="basket__header">
-            <p class="basket__total"><span class="title"><%= GetTranslation("Total") + ":" +  TotalSummary %>   </span></p>
-            <p><a class="basket__toggle js-toggle-basket" href="#"><%=GetTranslation("ViewBasket")%></a></p>
-        </div>
         <NCK:BasketDisplay id="ucBasketDisplay" ShowActionRow="False" runat="server"/>
-        
     </section>
     
      <section class="last-step">

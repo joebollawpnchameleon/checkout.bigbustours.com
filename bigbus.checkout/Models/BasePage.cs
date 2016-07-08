@@ -750,7 +750,7 @@ namespace bigbus.checkout.Models
             ucBasketDisplay.AddMoreUrl = ConfigurationManager.AppSettings["BornAddMoreTicketUrl"];
             ucBasketDisplay.ParentPage = this;
            
-            ucBasketDisplay.TotalString = currencySymbol + basket.Total;
+            ucBasketDisplay.TotalString = currencySymbol + basket.Total.ToString("F");
 
             var itemList = basket.BasketLines.Select(item => new BasketDisplayVm
             {

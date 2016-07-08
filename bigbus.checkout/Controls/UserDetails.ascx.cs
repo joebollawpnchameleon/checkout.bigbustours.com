@@ -63,7 +63,6 @@ namespace bigbus.checkout.Controls
                 LoadCountries();
                 InitControls();
             }
-            
         }
 
         private void LoadTitles()
