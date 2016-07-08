@@ -127,6 +127,7 @@
     <Compile Include="Implementation\LocalizationService.cs" />
     <Compile Include="Implementation\NavigationService.cs" />
     <Compile Include="Implementation\NotificationService.cs" />
+    <Compile Include="Implementation\PageContentService.cs" />
     <Compile Include="Implementation\PayPalService.cs" />
     <Compile Include="Implementation\PciApiService.cs" />
     <Compile Include="Implementation\PciApiServiceNoASync.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="Infrastructure\ILoggerService.cs" />
     <Compile Include="Infrastructure\INavigationService.cs" />
     <Compile Include="Infrastructure\INotificationService.cs" />
+    <Compile Include="Infrastructure\IPageContentService.cs" />
     <Compile Include="Infrastructure\IPaypalService.cs" />
     <Compile Include="Infrastructure\IPciApiService.cs" />
     <Compile Include="Infrastructure\IPciApiServiceNoASync.cs" />

@@ -112,6 +112,7 @@ namespace bigbus.checkout
             builder.RegisterType<GenericDataRepository<DiallingCode>>().As<IGenericDataRepository<DiallingCode>>();
             builder.RegisterType<GenericDataRepository<BornBasketDump>>().As<IGenericDataRepository<BornBasketDump>>();
             builder.RegisterType<GenericDataRepository<TicketEcrDimension>>().As<IGenericDataRepository<TicketEcrDimension>>();
+            builder.RegisterType<GenericDataRepository<HtmlMetaTag>>().As<IGenericDataRepository<HtmlMetaTag>>();
 
             builder.RegisterType<TranslationService>().As<ITranslationService>();
             builder.RegisterType<CheckoutService>().As<ICheckoutService>();
@@ -122,6 +123,7 @@ namespace bigbus.checkout
             builder.RegisterType<PdfClientRenderer>().As<IClientRenderService>();
             builder.RegisterType<NotificationService>().As<INotificationService>();
             builder.RegisterType<NavigationService>().As<INavigationService>();
+            builder.RegisterType<PageContentService>().As<IPageContentService>();
 
             if (environmentId.Equals(Common.Enums.Environment.Live.ToString()))
             {

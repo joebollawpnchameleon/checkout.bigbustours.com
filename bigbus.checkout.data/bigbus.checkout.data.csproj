@@ -60,6 +60,7 @@
     <Compile Include="Model\EcrOrderLineBarcode.cs" />
     <Compile Include="Model\Email.cs" />
     <Compile Include="Model\EmailTemplate.cs" />
+    <Compile Include="Model\HtmlMetaTag.cs" />
     <Compile Include="Model\Image.cs" />
     <Compile Include="Model\ImageFolder.cs" />
     <Compile Include="Model\ImageMetaData.cs" />
