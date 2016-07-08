@@ -855,7 +855,7 @@ namespace bigbus.checkout.Models
 
         #region IHasCMSMetaTagHooks Members
 
-        public virtual string Default_PageDescription
+        public virtual string DefaultPageDescription
         {
             get
             {
@@ -864,12 +864,12 @@ namespace bigbus.checkout.Models
             }
         }
 
-        public virtual string Default_PageKeywords
+        public virtual string DefaultPageKeywords
         {
             get { return "Big, Bus, Sightseeing, Tours"; }
         }
 
-        public virtual string Default_PageTitle
+        public virtual string DefaultPageTitle
         {
             get { return "Big Bus Tours"; }
         }
@@ -880,105 +880,102 @@ namespace bigbus.checkout.Models
 
         public void AddMetaTagsToPage()
         {
-            if (AutoLoadChameleonMetaTags)
-            {
-                string pageType = CMS_PageType;
+            if (!AutoLoadChameleonMetaTags) return;
 
-                var regex = new Regex(@"\\[uU]([0-9A-Fa-f]{4})", RegexOptions.IgnoreCase);
-                string pageIdentifier = regex.Replace(CMS_PageIdentifier, match => char.ConvertFromUtf32(Int32.Parse(match.Value.Substring(2), NumberStyles.HexNumber)));
-
+            var pageType = CmsPageType;
+            var regex = new Regex(@"\\[uU]([0-9A-Fa-f]{4})", RegexOptions.IgnoreCase);
+            var pageIdentifier = regex.Replace(CmsPageIdentifier, match => char.ConvertFromUtf32(Int32.Parse(match.Value.Substring(2), NumberStyles.HexNumber)));
                 
-                string desc = Default_PageDescription;
-                string keywords = Default_PageKeywords;
-                string title = Default_PageTitle;
+            var desc = DefaultPageDescription;
+            var keywords = DefaultPageKeywords;
+            var title = DefaultPageTitle;
 
 
-                var tags = PageContentService.GetPageMetaTags(pageType, pageIdentifier);
+            var tags = PageContentService.GetPageMetaTags(pageType, pageIdentifier);
 
-                foreach (var tag in tags)
+            foreach (var tag in tags)
+            {
+                switch (tag.MetaTag)
                 {
-                    switch (tag.MetaTag)
-                    {
-                        case "Keywords":
-                            keywords = tag.Value;
-                            break;
-                        case "Description":
-                            desc = tag.Value;
-                            break;
-                        case "Title":
-                            title = tag.Value;
-                            break;
-                        default:
-                            if (Page.Header != null)
-                            {
-                                Page.Header.Controls.Add(
-                                    new LiteralControl(string.Format("<meta name=\"{0}\" content=\"{1}\" />", tag.MetaTag, tag.Value)));
-                            }
-                            break;
-                    }
+                    case "Keywords":
+                        keywords = tag.Value;
+                        break;
+                    case "Description":
+                        desc = tag.Value;
+                        break;
+                    case "Title":
+                        title = tag.Value;
+                        break;
+                    default:
+                        if (Page.Header != null)
+                        {
+                            Page.Header.Controls.Add(
+                                new LiteralControl(string.Format("<meta name=\"{0}\" content=\"{1}\" />", tag.MetaTag, tag.Value)));
+                        }
+                        break;
+                }
+            }
+
+            if (Page.Header == null)
+            {
+                return;
+            }
+
+            var arr = new Control[Page.Header.Controls.Count];
+
+            if (Page.Header != null)
+            {
+                Page.Header.Controls.CopyTo(arr, 0);
+
+                if (InjectViewportMetaTag)
+                {
+                    Page.Header.Controls.Add(
+                        new LiteralControl(
+                            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, minimum-scale=1\">"));
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(keywords))
+            {
+                var theControls =
+                    arr
+                        .Where(a => a.GetType() == typeof(HtmlMeta))
+                        .Select(a => ((HtmlMeta)a)).Where(a => a.Attributes["Name"] == "Keywords")
+                        .ToList();
+
+                foreach (var theControl in theControls)
+                {
+                    Page.Header.Controls.Remove(theControl);
                 }
 
-                if (Page.Header == null)
+                Page.Header.Controls.Add(new LiteralControl(string.Format("<meta name=\"Keywords\" content=\"{0}\" />", keywords)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(desc))
+            {
+                var theControls =
+                    arr
+                        .Where(a => a.GetType() == typeof(HtmlMeta))
+                        .Select(a => ((HtmlMeta)a)).Where(a => a.Attributes["Name"] == "Description")
+                        .ToList();
+
+                foreach (var theControl in theControls)
                 {
-                    return;
+                    Page.Header.Controls.Remove(theControl);
                 }
 
-                var arr = new Control[Page.Header.Controls.Count];
+                Page.Header.Controls.Add(new LiteralControl(string.Format("<meta name=\"Description\" content=\"{0}\" />", desc)));
+            }
 
-                if (Page.Header != null)
-                {
-                    Page.Header.Controls.CopyTo(arr, 0);
-
-                    if (InjectViewportMetaTag)
-                    {
-                        Page.Header.Controls.Add(
-                            new LiteralControl(
-                                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, minimum-scale=1\">"));
-                    }
-                }
-
-                if (!string.IsNullOrWhiteSpace(keywords))
-                {
-                    List<HtmlMeta> theControls =
-                        arr
-                            .Where(a => a.GetType() == typeof(HtmlMeta))
-                            .Select(a => ((HtmlMeta)a)).Where(a => a.Attributes["Name"] == "Keywords")
-                            .ToList();
-
-                    foreach (HtmlMeta theControl in theControls)
-                    {
-                        Page.Header.Controls.Remove(theControl);
-                    }
-
-                    Page.Header.Controls.Add(new LiteralControl(string.Format("<meta name=\"Keywords\" content=\"{0}\" />", keywords)));
-                }
-
-                if (!string.IsNullOrWhiteSpace(desc))
-                {
-                    List<HtmlMeta> theControls =
-                        arr
-                            .Where(a => a.GetType() == typeof(HtmlMeta))
-                            .Select(a => ((HtmlMeta)a)).Where(a => a.Attributes["Name"] == "Description")
-                            .ToList();
-
-                    foreach (HtmlMeta theControl in theControls)
-                    {
-                        Page.Header.Controls.Remove(theControl);
-                    }
-
-                    Page.Header.Controls.Add(new LiteralControl(string.Format("<meta name=\"Description\" content=\"{0}\" />", desc)));
-                }
-
-                if (!string.IsNullOrWhiteSpace(title))
-                {
-                    Page.Title = title;
-                }
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                Page.Title = title;
             }
         }
 
         protected virtual bool AutoLoadChameleonMetaTags { get { return true; } }
-        public virtual string CMS_PageIdentifier { get { return "Default"; } }
-        public virtual string CMS_PageType { get { return "System"; } }
+        public virtual string CmsPageIdentifier { get { return "Default"; } }
+        public virtual string CmsPageType { get { return "System"; } }
         public virtual bool InjectViewportMetaTag { get { return false; } }
 
         #endregion

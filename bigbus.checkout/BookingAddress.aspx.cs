@@ -14,9 +14,9 @@ namespace bigbus.checkout
     public partial class BookingAddress : BasePage
     {
         protected string TotalSummary { get; set; }
-        public override string Default_PageTitle { get { return string.Concat("Big Bus Tours - ", CurrentSite.Name, " - AddressDetails"); } }
-        public override string CMS_PageType { get { return "BookingAddress"; } }
-        public override string CMS_PageIdentifier { get { return string.Concat("BookingAddress_", MicrositeId, "_", CurrentLanguageId); } }
+        public override string DefaultPageTitle { get { return string.Concat("Big Bus Tours - ", CurrentSite.Name, " - AddressDetails"); } }
+        public override string CmsPageType { get { return "BookingAddress"; } }
+        public override string CmsPageIdentifier { get { return string.Concat("BookingAddress_", MicrositeId, "_", CurrentLanguageId); } }
         protected override bool AutoLoadChameleonMetaTags { get { return true; } }       
         public override bool InjectViewportMetaTag { get { return true; } }
 
