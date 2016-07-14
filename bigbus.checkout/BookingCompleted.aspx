@@ -62,13 +62,7 @@
             }
         %>
 
-            <h3><%=this.GetTranslation("StayInTouch") %></h3>
-
-            <div class="ticket-options_description">
-                <p>
-                    <asp:CheckBox ID="chkReceiveNews" ClientIDMode="Static" runat="server" Checked="false" />&nbsp;<%= this.GetTranslation("Pleasecheckhereifyouwishtoreceive")%>
-                </p>
-            </div>
+           
         </li>
         <asp:PlaceHolder ID="DisplaySurveyLink" runat="server" Visible="false">
             <li class="cf">
@@ -122,10 +116,23 @@
 </section>
 
 <section class="enjoy-trip">
-    <h1><%= GetTranslation("Booking_Success_Enjoy_your_trip") %></h1>
+    <ul class="ticket-options__types">
+    <li class="cf">
+     <h3><%=this.GetTranslation("StayInTouch") %></h3>
+
+    <div class="ticket-options_description">
+        <p>
+            <asp:CheckBox ID="chkReceiveNews" ClientIDMode="Static" runat="server" Checked="false" />&nbsp;<%= this.GetTranslation("Pleasecheckhereifyouwishtoreceive")%>
+        </p>
+    </div>
+
+    <h3><%= GetTranslation("Booking_Success_Enjoy_your_trip") %></h3>
     <asp:LinkButton ID="btnFinish" runat="server" CausesValidation="true" CssClass="button button_forward button_red home-link" OnClientClick="TrackSubscription()" OnClick="btnFinish_Click">
         <span><%= GetTranslation("Finish") %></span>
     </asp:LinkButton>
+        </li>
+        </ul>
+
 </section>
     
 

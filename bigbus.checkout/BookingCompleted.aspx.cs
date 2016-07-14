@@ -26,7 +26,10 @@ namespace bigbus.checkout
         private string _useremail;
         private Order _order;
         private SiteMaster _bookingMaster;
-        
+
+        public override string CmsPageType { get { return "OrderComplete"; } }
+        public override string CmsPageIdentifier { get { return string.Concat("OrderComplete_", MicrositeId, "_", CurrentLanguageId); } }
+        public override string DefaultPageTitle { get { return string.Concat("Big Bus Tours - ", CurrentSite.Name, " - Order complete"); } }
 
         protected string IntileryTagScript { get; set; }
         protected string UserEmail

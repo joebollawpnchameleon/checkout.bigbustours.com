@@ -96,6 +96,8 @@ namespace bigbus.checkout.Models
 
         #endregion
 
+        #region public properties
+
         public string CurrentLanguageId
         {
             get
@@ -175,6 +177,31 @@ namespace bigbus.checkout.Models
             }
         }
 
+        #endregion
+
+        #region page events
+
+        protected void Page_PreInit(object sender, EventArgs e)
+        {
+            GetCurrentSession();
+
+            _externalSessionId = AuthenticationService.GetExternalSessionId(ExternalBasketCookieName);
+            _currentLanguageId = AuthenticationService.GetCookieValStr(LanguageCookieName);
+            _currentMicrosite = AuthenticationService.GetCookieValStr(MicrositeCookieName);
+
+            var cpa = (IContainerProviderAccessor)HttpContext.Current.ApplicationInstance;
+            var cp = cpa.ContainerProvider;
+            cp.RequestLifetime.InjectProperties(this);
+            LoadMasterValues();
+        }
+
+        protected void Page_PreRender(object sender, EventArgs eventArgs)
+        {
+            AddMetaTagsToPage();
+        }
+
+        #endregion
+
         public Session GetCurrentSession()
         {
             if (_currentSession != null)
@@ -193,22 +220,6 @@ namespace bigbus.checkout.Models
             }
 
             return _currentSession;
-        }
-
-        protected void Page_PreInit(object sender, EventArgs e)
-        {
-            GetCurrentSession();
-
-            _externalSessionId = AuthenticationService.GetExternalSessionId(ExternalBasketCookieName);
-            _currentLanguageId = AuthenticationService.GetCookieValStr(LanguageCookieName);
-            _currentMicrosite = AuthenticationService.GetCookieValStr(MicrositeCookieName);
-
-            var cpa = (IContainerProviderAccessor)HttpContext.Current.ApplicationInstance;
-            var cp = cpa.ContainerProvider;
-            cp.RequestLifetime.InjectProperties(this);
-            LoadMasterValues();
-            
-            AddMetaTagsToPage();//use in later event like pageload.
         }
 
         public string GetTranslation(string keyPhrase)
@@ -260,6 +271,7 @@ namespace bigbus.checkout.Models
             }
             return clientIpAddress;
         }
+        
 
         public void GenerateOrderBarcodes(Order order)
         {

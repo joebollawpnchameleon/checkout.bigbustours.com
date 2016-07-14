@@ -13,6 +13,11 @@ namespace bigbus.checkout
         private Session _session;
         private Basket _basket;
         protected string TotalSummary { get; set; }
+        public override string DefaultPageTitle { get { return string.Concat("Big Bus Tours - ", CurrentSite.Name, " - AddressDetails"); } }
+        public override string CmsPageType { get { return "BookingAddress"; } }
+        public override string CmsPageIdentifier { get { return string.Concat("BookingAddress_", MicrositeId, "_", CurrentLanguageId); } }
+        protected override bool AutoLoadChameleonMetaTags { get { return true; } }
+        public override bool InjectViewportMetaTag { get { return true; } }
 
         protected void Page_Load(object sender, EventArgs e)
         {

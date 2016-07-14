@@ -112,15 +112,6 @@ namespace bigbus.checkout {
         protected global::System.Web.UI.WebControls.LinkButton SendToMobileLink;
         
         /// <summary>
-        /// chkReceiveNews control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkReceiveNews;
-        
-        /// <summary>
         /// DisplaySurveyLink control.
         /// </summary>
         /// <remarks>
@@ -137,6 +128,15 @@ namespace bigbus.checkout {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkSurveyMonkey;
+        
+        /// <summary>
+        /// chkReceiveNews control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkReceiveNews;
         
         /// <summary>
         /// btnFinish control.
